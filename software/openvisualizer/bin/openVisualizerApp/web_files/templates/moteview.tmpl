@@ -42,7 +42,7 @@
 		                       <option>{{mote}}</option>
 		                    % end
 		                </select>
-		                <button id="toggle_btn" type="button" class="btn btn-default btn-xs">Toggle</button>
+		                <button id="toggle_btn" type="button" class="btn btn-default btn-xs">Toggle DAGroot state</button>
 		                <script>
 		                    $("#mote_select").change(function() {
 		                        moteid =  $(this).val()
@@ -78,7 +78,7 @@
 			                        console.log('Toggling root for mote ' + moteid);
 			                        $.ajax({
 			                            dataType: "json",
-			                            url: "/toggle_root/" + moteid,
+			                            url: "/toggleDAGroot/" + moteid,
 			                            success: updateForToggle,
 			                            error: errorOnAjax
 			                        });
@@ -110,11 +110,6 @@
 	                        <a class="list-group-item">
 	                            <i class="fa fa-shopping-cart fa-fw"></i> DAG Root?
 	                            <span class="pull-right text-muted small" id="dagroot_fld"><em>No</em>
-	                            </span>
-	                        </a>
-	                        <a class="list-group-item">
-	                            <i class="fa fa-money fa-fw"></i> Bridge mode?
-	                            <span class="pull-right text-muted small" id="bridge_fld"><em>No</em>
 	                            </span>
 	                        </a>
 	                    </div>
@@ -317,7 +312,7 @@
 									        
 									        // Slot Schedule responsive table
 									        if (hasJson) {
-									        	var tbl_body = "<table class=\"table table-striped table-bordered table-hover\" id=\"dataTables-example\"><thead><tr><th>Offset</th><th>Type</th><th>Shared?</th><th>Channel</th><th>Nbr Type</th><th>RX</th><th>TX</th><th>TX ACK</th><th>Last ASN</th></tr></thead><tbody>";
+									        	var tbl_body = "<table class=\"table table-striped table-bordered table-hover\" id=\"dataTables-example\"><thead><tr><th>Offset</th><th>Type</th><th>Shared?</th><th>Channel</th><th>Nbr Type</th><th>RX</th><th>TX</th><th>TX ACK</th><th>TrackId</th><th>Last ASN</th></tr></thead><tbody>";
 
 										        $.each(schedJson, function() {
 											        var tbl_row = "<td>" + this['slotOffset'] + "</td>";
@@ -328,6 +323,7 @@
 											        tbl_row += "<td>" + this['numRx'] + "</td>";
 											        tbl_row += "<td>" + this['numTx'] + "</td>";
 											        tbl_row += "<td>" + this['numTxACK'] + "</td>";
+											        tbl_row += "<td>" + this['trackId'] + "</td>";
 											        tbl_row += "<td>" + this['lastUsedAsn'] + "</td>";
 											        tbl_body += "<tr class=\"odd gradeX\">" + tbl_row + "</tr>";
 												});
