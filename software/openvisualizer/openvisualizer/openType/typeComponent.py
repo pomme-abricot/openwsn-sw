@@ -25,16 +25,11 @@ class typeComponent(openType.openType):
     #MAClow
     COMPONENT_IEEE802154                = 0x08
     COMPONENT_IEEE802154E               = 0x09
-    
-    
-    
-    
-    
     #MAClow<->MAChigh ("virtual components")
     COMPONENT_RES_TO_IEEE802154E        = 0x0a
     COMPONENT_IEEE802154E_TO_RES        = 0x0b
     #MAChigh
-    COMPONENT_RES                       = 0x0c
+    COMPONENT_SIXTOP_RES                = 0x0c
     COMPONENT_NEIGHBORS                 = 0x0d
     COMPONENT_SCHEDULE                  = 0x0e
     #IPHC
@@ -51,33 +46,18 @@ class typeComponent(openType.openType):
     COMPONENT_OPENUDP                   = 0x17
     COMPONENT_OPENCOAP                  = 0x18
     #App test
-    COMPONENT_TCPECHO                   = 0x19
-    COMPONENT_TCPINJECT                 = 0x1a
-    COMPONENT_TCPPRINT                  = 0x1b
-    COMPONENT_UDPECHO                   = 0x1c
-    COMPONENT_UDPINJECT                 = 0x1d
-    COMPONENT_UDPPRINT                  = 0x1e
-    COMPONENT_RSVP                      = 0x1f
+    COMPONENT_C6T                       = 0x19
+    COMPONENT_CEXAMLPLE                 = 0x1a
+    COMPONENT_CINFO                     = 0x1b
+    COMPONENT_CLEDS                     = 0x1c
+    COMPONENT_CSTORM                    = 0x1d
+    COMPONENT_CWELLKNOWN                = 0x1e
+    COMPONENT_TECHO                     = 0x1f
     #App
-    COMPONENT_OHLONE                    = 0x20
-    COMPONENT_HELI                      = 0x21
-    COMPONENT_IMU                       = 0x22
-    COMPONENT_RLEDS                     = 0x23
-    COMPONENT_RREG                      = 0x24
-    COMPONENT_RWELLKNOWN                = 0x25
-    COMPONENT_RT                        = 0x26
-    COMPONENT_REX                       = 0x27
-    COMPONENT_RXL1                      = 0x28
-    COMPONENT_RINFO                     = 0x29
-    COMPONENT_RHELI                     = 0x2a
-    COMPONENT_RRUBE                     = 0x2b
-    COMPONENT_LAYERDEBUG                = 0x2c
-    COMPONENT_UDPRAND                   = 0x2d
-    COMPONENT_UDPSTORM                  = 0x2e
-    COMPONENT_UDPLATENCY                = 0x2f
-    COMPONENT_TEST                      = 0x30
-    COMPONENT_R6T                       = 0x31
-    COMPONENT_SWARMBAND                 = 0x32
+    COMPONENT_TOHLONE                   = 0x20
+    COMPONENT_UECHO                     = 0x21
+    COMPONENT_RRT                       = 0x22
+    COMPONENT_OTF                       = 0x32
     
     def __init__(self):
         # log
@@ -123,8 +103,8 @@ class typeComponent(openType.openType):
         elif type==self.COMPONENT_IEEE802154E_TO_RES:
             self.desc = 'IEEE802154E_TO_RES'
         
-        elif type==self.COMPONENT_RES:
-            self.desc = 'RES'
+        elif type==self.COMPONENT_SIXTOP_RES:
+            self.desc = 'SIXTOP_RES'
         elif type==self.COMPONENT_NEIGHBORS:
             self.desc = 'NEIGHBORS '
         elif type==self.COMPONENT_SCHEDULE:
@@ -153,59 +133,29 @@ class typeComponent(openType.openType):
         elif type==self.COMPONENT_OPENCOAP:
             self.desc = 'OPENCOAP'
         
-        elif type==self.COMPONENT_TCPECHO:
-            self.desc = 'TCPECHO'
-        elif type==self.COMPONENT_TCPINJECT:
-            self.desc = 'TCPINJECT'
-        elif type==self.COMPONENT_TCPPRINT:
-            self.desc = 'TCPPRINT'
-        elif type==self.COMPONENT_UDPECHO:
-            self.desc = 'UDPECHO'
-        elif type==self.COMPONENT_UDPINJECT:
-            self.desc = 'UDPINJECT'
-        elif type==self.COMPONENT_UDPPRINT:
-            self.desc = 'UDPPRINT'
-        elif type==self.COMPONENT_RSVP:
-            self.desc = 'RSVP'
+        elif type==self.COMPONENT_C6T:
+            self.desc = 'C6T'
+        elif type==self.COMPONENT_CEXAMPLE:
+            self.desc = 'CEXAMPLE'
+        elif type==self.COMPONENT_CINFO:
+            self.desc = 'CINFO'
+        elif type==self.COMPONENT_CLEDS:
+            self.desc = 'CLEDS'
+        elif type==self.COMPONENT_CSTORM:
+            self.desc = 'CSTORM'
+        elif type==self.COMPONENT_CWELLKNOWN:
+            self.desc = 'CWELLKNOWN'
+        elif type==self.COMPONENT_TECHO:
+            self.desc = 'TECHO'
         
-        elif type==self.COMPONENT_OHLONE:
-            self.desc = 'OHLONE'
-        elif type==self.COMPONENT_HELI:
-            self.desc = 'HELI'
-        elif type==self.COMPONENT_IMU:
-            self.desc = 'IMU'
-        elif type==self.COMPONENT_RLEDS:
-            self.desc = 'RLEDS'
-        elif type==self.COMPONENT_RREG:
-            self.desc = 'RREG'
-        elif type==self.COMPONENT_RWELLKNOWN:
-            self.desc = 'RWELLKNOWN'
-        elif type==self.COMPONENT_RT:
-            self.desc = 'RT'
-        elif type==self.COMPONENT_REX:
-            self.desc = 'REX'
-        elif type==self.COMPONENT_RXL1:
-            self.desc = 'RXL1'
-        elif type==self.COMPONENT_RINFO:
-            self.desc = 'RINFO'
-        elif type==self.COMPONENT_RHELI:
-            self.desc = 'RHELI'
-        elif type==self.COMPONENT_RRUBE:
-            self.desc = 'RRUBE'
-        elif type==self.COMPONENT_LAYERDEBUG:
-            self.desc = 'LAYERDEBUG'
-        elif type==self.COMPONENT_UDPRAND:
-            self.desc = 'UDPRAND'
-        elif type==self.COMPONENT_UDPSTORM:
-            self.desc = 'UDPSTORM'
-        elif type==self.COMPONENT_UDPLATENCY:
-            self.desc = 'UDPLATENCY'
-        elif type==self.COMPONENT_TEST:
-            self.desc = 'TEST'
-        elif type==self.COMPONENT_R6T:
-            self.desc = 'R6T'
-        elif type==self.COMPONENT_SWARMBAND:
-            self.desc = 'SWARMBAND'
+        elif type==self.COMPONENT_TOHLONE:
+            self.desc = 'TOHLONE'
+        elif type==self.COMPONENT_UECHO:
+            self.desc = 'UECHO'
+        elif type==self.COMPONENT_RRT:
+            self.desc = 'RRT'
+        elif type==self.COMPONENT_OTF:
+            self.desc = 'OTF'
         else:
             self.desc = 'unknown'
             self.addr = None

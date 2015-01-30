@@ -39,6 +39,8 @@ components = {
   32: "TECHO",
   33: "TOHLONE",
   34: "UECHO",
+  35: "RRT",
+  36: "OTF",
 }
 
 errorDescriptions = {
@@ -99,4 +101,8 @@ errorDescriptions = {
   55: "invalid packet frome radio, length {1} (code location {0})",
   56: "busy receiving when stop of serial activity, buffer input length {1} (code location {0})",
   57: "wrong CRC in input Buffer (input length {0})",
+  58: "not enough bandwidth in OTF (trackid {0}, nbCells {1})",
+  59: "Unknown neighbor {0} {1} (4 last bytes)",
+  60: "sixtop current state {0} while {1} is expected",
+  61: "generic error {0} {1}"
 }
