@@ -47,7 +47,7 @@ class typeComponent(openType.openType):
     COMPONENT_OPENCOAP                  = 0x18
     #App test
     COMPONENT_C6T                       = 0x19
-    COMPONENT_CEXAMLPLE                 = 0x1a
+    COMPONENT_CEXAMPLE                  = 0x1a
     COMPONENT_CINFO                     = 0x1b
     COMPONENT_CLEDS                     = 0x1c
     COMPONENT_CSTORM                    = 0x1d
