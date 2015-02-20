@@ -194,40 +194,26 @@ class StateBackoff(StateElem):
         self.data[0]['backoff']             = notif.backoff
 
 class StateQueueRow(StateElem):
-    
-    def update(self,creator,owner):
+
+    def update(self,notif):
         StateElem.update(self)
         if len(self.data)==0:
             self.data.append({})
         
-        if 'creator' not in self.data[0]:
-            self.data[0]['creator']         = typeComponent.typeComponent()
-        self.data[0]['creator'].update(creator)
-        if 'owner' not in self.data[0]:
-            self.data[0]['owner']           = typeComponent.typeComponent()
-        self.data[0]['owner'].update(owner)
 
-class StateQueue(StateElem):
-    
-    def __init__(self):
-        StateElem.__init__(self)
+        self.data[0]['creator']     = notif.creator
+        self.data[0]['owner']             = notif.owner
+
+  
+
+
+        if 'timeoutAsn' not in self.data[0]:
+            self.data[0]['timeoutAsn']     = typeAsn.typeAsn()
+        self.data[0]['timeoutAsn'].update(notif.timeoutAsn_0_1,
+                                           notif.timeoutAsn_2_3,
+                                           notif.timeoutAsn_4)
         
-        for i in range(10):
-            self.data.append(StateQueueRow())
-    
-    def update(self,notif):
-        StateElem.update(self)
-        self.data[0].update(notif.creator_0,notif.owner_0)
-        self.data[1].update(notif.creator_1,notif.owner_1)
-        self.data[2].update(notif.creator_2,notif.owner_2)
-        self.data[3].update(notif.creator_3,notif.owner_3)
-        self.data[4].update(notif.creator_4,notif.owner_4)
-        self.data[5].update(notif.creator_5,notif.owner_5)
-        self.data[6].update(notif.creator_6,notif.owner_6)
-        self.data[7].update(notif.creator_7,notif.owner_7)
-        self.data[8].update(notif.creator_8,notif.owner_8)
-        self.data[9].update(notif.creator_9,notif.owner_9)
-
+   
 class StateNeighborsRow(StateElem):
     
     def update(self,notif):
@@ -450,7 +436,16 @@ class moteState(eventBusClient.eventBusClient):
                                                 )
                                               )
         self.state[self.ST_BACKOFF]         = StateBackoff()
-        self.state[self.ST_QUEUE]           = StateQueue()
+        self.state[self.ST_QUEUE]           = StateTable(
+                                                StateQueueRow,
+                                                columnOrder = '.'.join(
+                                                    [
+                                                        'creator',
+                                                        'owner',
+                                                        'timeoutAsn',
+                                                    ]
+                                                )
+                                              )
         self.state[self.ST_NEIGHBORS]       = StateTable(
                                                 StateNeighborsRow,
                                                 columnOrder = '.'.join(

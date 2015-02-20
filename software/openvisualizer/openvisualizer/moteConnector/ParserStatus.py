@@ -160,28 +160,14 @@ class ParserStatus(Parser.Parser):
                                     3,
                                     8,
                                     'QueueRow',
-                                    '<BBBBBBBBBBBBBBBBBBBB',
+                                    '<BBBBHH',
                                     [
-                                        'creator_0',                 # B
-                                        'owner_0',                   # B
-                                        'creator_1',                 # B
-                                        'owner_1',                   # B
-                                        'creator_2',                 # B
-                                        'owner_2',                   # B
-                                        'creator_3',                 # B
-                                        'owner_3',                   # B
-                                        'creator_4',                 # B
-                                        'owner_4',                   # B
-                                        'creator_5',                 # B
-                                        'owner_5',                   # B
-                                        'creator_6',                 # B
-                                        'owner_6',                   # B
-                                        'creator_7',                 # B
-                                        'owner_7',                   # B
-                                        'creator_8',                 # B
-                                        'owner_8',                   # B
-                                        'creator_9',                 # B
-                                        'owner_9',                   # B
+					'row',			 
+                                        'creator',                 # B
+                                        'owner',                   # B
+                                        'timeoutAsn_4',            # B
+                                        'timeoutAsn_2_3',          # B
+                                        'timeoutAsn_0_1',          # B
                                     ],
                                 )
         self._addFieldsParser   (
