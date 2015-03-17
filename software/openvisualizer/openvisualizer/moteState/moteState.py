@@ -202,9 +202,15 @@ class StateQueueRow(StateElem):
         
 
         self.data[0]['creator']     = notif.creator
-        self.data[0]['owner']             = notif.owner
+        self.data[0]['owner']       = notif.owner
 
-  
+        if 'notif.creator' not in self.data[0]:
+            self.data[0]['creator']         = typeComponent.typeComponent()
+        self.data[0]['creator'].update(notif.creator)
+        if 'notif.owner' not in self.data[0]:
+            self.data[0]['owner']           = typeComponent.typeComponent()
+        self.data[0]['owner'].update(notif.owner)
+
 
 
         if 'timeoutAsn' not in self.data[0]:
