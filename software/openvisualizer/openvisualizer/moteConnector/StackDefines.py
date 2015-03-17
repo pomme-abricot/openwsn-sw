@@ -104,6 +104,7 @@ errorDescriptions = {
   58: "not enough bandwidth in OTF (trackid {0}, nbCells {1})",
   59: "Unknown neighbor {0} {1} (4 last bytes)",
   60: "sixtop current state {0} while {1} is expected",
-  61: "generic error {0} {1}",
-  62: "unknown error {0} {1}"
+  61: "a timeout has been fired. We have to flush 6top packets (we have the state {0})",
+  62: "generic error {0} {1}",
+  63: "unknown error {0} {1}"
 }
