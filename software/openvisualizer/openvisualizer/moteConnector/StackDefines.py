@@ -105,6 +105,7 @@ errorDescriptions = {
   59: "Unknown neighbor {0} {1} (4 last bytes)",
   60: "sixtop current state {0} while {1} is expected",
   61: "a timeout has been fired. We have to flush 6top packets (we have the state {0})",
-  62: "generic error {0} {1}",
-  63: "unknown error {0} {1}"
+  62: "a packet has been removed from the queue (owner {0}, creator {1})",
+  63: "generic error {0} {1}",
+  64: "unknown error {0} {1}"
 }
