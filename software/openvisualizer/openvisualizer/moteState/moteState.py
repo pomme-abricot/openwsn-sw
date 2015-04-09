@@ -177,7 +177,12 @@ class StateScheduleRow(StateElem):
         self.data[0]['numRx']               = notif.numRx
         self.data[0]['numTx']               = notif.numTx
         self.data[0]['numTxACK']            = notif.numTxACK
-        self.data[0]['trackId']             = notif.trackId
+        self.data[0]['trackInstance']       = notif.trackInstance
+        if 'trackOwner' not in self.data[0]:
+            self.data[0]['trackOwner']        = typeAddr.typeAddr()
+        self.data[0]['trackOwner'].update(notif.trackOwner_type,
+                                        notif.trackOwner_bodyH,
+                                        notif.trackOwner_bodyL)
         if 'lastUsedAsn' not in self.data[0]:
             self.data[0]['lastUsedAsn']     = typeAsn.typeAsn()
         self.data[0]['lastUsedAsn'].update(notif.lastUsedAsn_0_1,
@@ -436,7 +441,8 @@ class moteState(eventBusClient.eventBusClient):
                                                         'numRx',
                                                         'numTx',
                                                         'numTxACK',
-                                                        'trackId',
+                                                        'trackInstance',
+                                                        'trackOwner',
                                                         'lastUsedAsn',
                                                     ]
                                                 )
