@@ -33,6 +33,14 @@ moteConnector Package
     :undoc-members:
     :show-inheritance:
 
+:mod:`ParserStat` Module
+------------------------
+
+.. automodule:: openvisualizer.moteConnector.ParserStat
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 :mod:`ParserException` Module
 -----------------------------
 
