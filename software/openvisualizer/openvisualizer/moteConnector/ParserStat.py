@@ -18,7 +18,10 @@ import Parser
 class ParserStat(Parser.Parser):
     
     HEADER_LENGTH  = 2
-    
+    MSPERSLOT      = 15 #ms per slot.
+   
+    #type of stat message 
+    SERTYPE_DATA_GENERATION    = 1
      
     def __init__(self):
         
@@ -48,9 +51,12 @@ class ParserStat(Parser.Parser):
         mycomponent = input[2]   
         asnbytes = input[3:8]
         (self._asn) = struct.unpack('<BHH',''.join([chr(c) for c in asnbytes]))
+        statType = input[8]   
         
       
         #depends on the stat-type
+        if (statType == self.SERTYPE_DATA_GENERATION):
+            print(" SPECIFIC: data generation")
         
 
         print("statserial: addr=", addr, ", mycomponent=", mycomponent, ", asn=", asnbytes)
