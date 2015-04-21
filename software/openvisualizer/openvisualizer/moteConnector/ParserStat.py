@@ -22,10 +22,8 @@ class ParserStat(Parser.Parser):
    
     #type of stat message 
     SERTYPE_DATA_GENERATION    = 1
-
-
      
-    def__init__(self):
+    def __init__(self):
         
         # log
         log.info("create SS instance stat")
@@ -68,7 +66,6 @@ class ParserStat(Parser.Parser):
 
 
 
-
  #======================== private =========================================
  
     def _asndiference(self,init,end):
@@ -91,3 +88,4 @@ class ParserStat(Parser.Parser):
               diff = 0xFFFFFFFF
        
        return diff
+
