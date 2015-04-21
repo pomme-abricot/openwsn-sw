@@ -22,7 +22,7 @@ class ParserStat(Parser.Parser):
    
     #type of stat message 
     SERTYPE_DATA_GENERATION    = 1
-SERTYPE_DATA_RECEPTION    = 2
+
 
      
     def__init__(self):
@@ -59,16 +59,6 @@ SERTYPE_DATA_RECEPTION    = 2
         #depends on the stat-type
         if (statType == self.SERTYPE_DATA_GENERATION):
             print(" SPECIFIC: data generation")
-        
-
-        print("statserial: addr=", addr, ", mycomponent=", mycomponent, ", asn=", asnbytes)
-
-        
-        return ('error',input)
-
-
- if (statType == self.SERTYPE_RECEPTION):
-            print(" SPECIFIC: data reception")
         
 
         print("statserial: addr=", addr, ", mycomponent=", mycomponent, ", asn=", asnbytes)
