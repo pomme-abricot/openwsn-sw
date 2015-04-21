@@ -25,7 +25,7 @@ class ParserStat(Parser.Parser):
 SERTYPE_DATA_RECEPTION    = 2
 
      
-    def __init__(self):
+    def__init__(self):
         
         # log
         log.info("create SS instance stat")
