@@ -5,7 +5,7 @@
 # https://openwsn.atlassian.net/wiki/display/OW/License
 import logging
 log = logging.getLogger('ParserStat')
-log.setLevel(logging.ERROR)
+log.setLevel(logging.INFO)
 log.addHandler(logging.NullHandler())
 
 import struct
@@ -22,16 +22,18 @@ class ParserStat(Parser.Parser):
    
     #type of stat message 
     SERTYPE_DATA_GENERATION    = 1
+    SERTYPE_PKT_TX             = 2
+    SERTYPE_PKT_RX             = 3
      
     def __init__(self):
         
         # log
-        log.info("create SS instance stat")
+        log.debug("create ParserStat instance")
         
         # initialize parent class
         Parser.Parser.__init__(self,self.HEADER_LENGTH)
         
-        self._asn= ['asn_4',                     # B
+        self._asn= ['asn_4',           # B
           'asn_2_3',                   # H
           'asn_0_1',                   # H
          ]
@@ -44,7 +46,7 @@ class ParserStat(Parser.Parser):
         # log
         if log.isEnabledFor(logging.DEBUG):
             log.debug("received data {0}".format(input))
-        print "received data {0}".format(input)
+        #print "received data {0}".format(input)
         
         #headers
         addr = input[:2]  
@@ -57,10 +59,17 @@ class ParserStat(Parser.Parser):
         #depends on the stat-type
         if (statType == self.SERTYPE_DATA_GENERATION):
             print(" SPECIFIC: data generation")
+        elif (statType == self.SERTYPE_PKT_TX):
+            print(" SPECIFIC: frame transmitted")
+        elif (statType == self.SERTYPE_PKT_RX):
+            print(" SPECIFIC: frame received")
         
 
-        print("statserial: addr=", addr, ", mycomponent=", mycomponent, ", asn=", asnbytes)
+        print("{0} ok".format(log.isEnabledFor(logging.INFO)))
 
+        #print()
+        if log.isEnabledFor(logging.INFO):
+            log.info("serialrx: addr={0}, mycomponent={1}, asn={2}".format(addr, mycomponent, asnbytes));
         
         return ('error',input)
 

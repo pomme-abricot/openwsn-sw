@@ -32,7 +32,7 @@ class ParserData(Parser.Parser):
         # initialize parent class
         Parser.Parser.__init__(self,self.HEADER_LENGTH)
         
-        self._asn= ['asn_4',                     # B
+        self._asn= ['asn_4',           # B
           'asn_2_3',                   # H
           'asn_0_1',                   # H
          ]
