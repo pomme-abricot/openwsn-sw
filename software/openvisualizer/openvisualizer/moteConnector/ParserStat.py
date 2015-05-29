@@ -3,6 +3,7 @@
 #  
 # Released under the BSD 3-Clause license as published at the link below.
 # https://openwsn.atlassian.net/wiki/display/OW/License
+
 import logging
 log = logging.getLogger('ParserStat')
 log.setLevel(logging.INFO)
@@ -41,12 +42,38 @@ class ParserStat(Parser.Parser):
     
     #======================== public ==========================================
     
+    #returns a string with the decimal value of a uint16_t
+    def BytesToString(self, bytes):
+        str = ""
+        i = 0
+
+        #print bytes
+
+        for byte in bytes:
+            str = format(eval("{0} + {1} * 256 ** {2}".format(str, byte, i)))
+            #print ("{0}:{1}".format(i, str)) 
+            i = i + 1      
+
+        return(str)
+
+    def BytesToAddr(self, bytes):
+        str = ""
+        i = 0
+
+        for byte in bytes:
+            str = str + "{:02x}".format(byte) 
+            if (i != 7):
+                str = str + "-"
+            i += 1
+
+        return(str)
+
+
     def parseInput(self,input):
         
         # log
         if log.isEnabledFor(logging.DEBUG):
             log.debug("received data {0}".format(input))
-        #print "received data {0}".format(input)
         
         #headers
         addr = input[:2]  
@@ -55,22 +82,41 @@ class ParserStat(Parser.Parser):
         (self._asn) = struct.unpack('<BHH',''.join([chr(c) for c in asnbytes]))
         statType = input[8]   
         
-      
+
         #depends on the stat-type
         if (statType == self.SERTYPE_DATA_GENERATION):
-            print(" SPECIFIC: data generation")
+            log.info("STAT_DATAGEN|addr={0}|comp={1}|asn={2}|type={3}|seqnum={4}|trackinstance={5}|trackowner={6}|".format(
+                ''.join('{:02x}'.format(a) for a in addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToString(input[9:11]),
+                self.BytesToString(input[11:13]),
+                self.BytesToAddr(input[13:21])
+                ));
         elif (statType == self.SERTYPE_PKT_TX):
-            print(" SPECIFIC: frame transmitted")
+            log.info("STAT_PK_RX|addr={0}|comp={1}|asn={2}|type={3}|trackinstance={4}|trackowner={5}|length={6}|txpower={7}|l2Dest={8}".format(
+                ''.join('{:02x}'.format(a) for a in addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToString(input[9:11]),
+                self.BytesToAddr(input[11:19]),
+                input[19],
+                input[20],
+                self.BytesToAddr(input[21:30])
+                ));
+ 
         elif (statType == self.SERTYPE_PKT_RX):
-            print(" SPECIFIC: frame received")
-        
-
-        print("{0} ok".format(log.isEnabledFor(logging.INFO)))
-
-        #print()
-        if log.isEnabledFor(logging.INFO):
-            log.info("serialrx: addr={0}, mycomponent={1}, asn={2}".format(addr, mycomponent, asnbytes));
-        
+           log.info("STAT_PK_RX|addr={0}|comp={1}|asn={2}|type={3}|length={4}".format(
+                ''.join('{:02x}'.format(a) for a in addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                input[9]
+                ));
+ 
+       
         return ('error',input)
 
 
