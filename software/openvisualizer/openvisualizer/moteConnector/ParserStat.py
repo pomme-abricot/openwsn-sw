@@ -26,10 +26,11 @@ class ParserStat(Parser.Parser):
     SERTYPE_PKT_TX             = 2
     SERTYPE_PKT_RX             = 3
      
+ 
     def __init__(self):
         
         # log
-        log.debug("create ParserStat instance")
+        log.debug('create ParserStat instance')
         
         # initialize parent class
         Parser.Parser.__init__(self,self.HEADER_LENGTH)
@@ -44,36 +45,62 @@ class ParserStat(Parser.Parser):
     
     #returns a string with the decimal value of a uint16_t
     def BytesToString(self, bytes):
-        str = ""
+        str = ''
         i = 0
 
         #print bytes
 
         for byte in bytes:
-            str = format(eval("{0} + {1} * 256 ** {2}".format(str, byte, i)))
-            #print ("{0}:{1}".format(i, str)) 
+            str = format(eval('{0} + {1} * 256 ** {2}'.format(str, byte, i)))
+            #print ('{0}:{1}'.format(i, str)) 
             i = i + 1      
 
         return(str)
 
     def BytesToAddr(self, bytes):
-        str = ""
+        str = ''
         i = 0
 
         for byte in bytes:
-            str = str + "{:02x}".format(byte) 
-            if (i != 7):
-                str = str + "-"
+            str = str + '{:02x}'.format(byte) 
+            if (i < len(bytes)-1):
+                str = str + '-'
             i += 1
 
         return(str)
 
+    def ByteToL4protocol(self, byte):
+       
+        IANA = {
+        'IANA_IPv6HOPOPT'                     : 0x00,
+        'IANA_TCP'                            : 0x06,
+        'IANA_UDP'                            : 0x11,
+        'IANA_IPv6ROUTE'                      : 0x2b,
+        'IANA_ICMPv6'                         : 0x3a,
+        'IANA_ICMPv6_ECHO_REQUEST'            :  128,
+        'IANA_ICMPv6_ECHO_REPLY'              :  129,
+        'IANA_ICMPv6_RS'                      :  133,
+        'IANA_ICMPv6_RA'                      :  134,
+        'IANA_ICMPv6_RA_PREFIX_INFORMATION'   :    3,
+        'IANA_ICMPv6_RPL'                     :  155,
+        'IANA_ICMPv6_RPL_DIO'                 : 0x01,
+        'IANA_ICMPv6_RPL_DAO'                 : 0x02,
+        'IANA_RSVP'                           :   46,
+        'IANA_UNDEFINED'                      :  250
+        } 
+
+        for key, value in IANA.iteritems():
+            if value == byte:
+                return(key)
+        return("IANA_UNKNOWN")
+
+ 
 
     def parseInput(self,input):
         
         # log
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("received data {0}".format(input))
+            log.debug('received data {0}'.format(input))
         
         #headers
         addr = input[:2]  
@@ -85,36 +112,44 @@ class ParserStat(Parser.Parser):
 
         #depends on the stat-type
         if (statType == self.SERTYPE_DATA_GENERATION):
-            log.info("STAT_DATAGEN|addr={0}|comp={1}|asn={2}|type={3}|seqnum={4}|trackinstance={5}|trackowner={6}|".format(
-                ''.join('{:02x}'.format(a) for a in addr),
+            log.info('STAT_DATAGEN|addr={0}|comp={1}|asn={2}|type={3}|trackinstance={4}|trackowner={5}|seqnum={6}|'.format(
+                self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
                 statType,
                 self.BytesToString(input[9:11]),
-                self.BytesToString(input[11:13]),
-                self.BytesToAddr(input[13:21])
+                self.BytesToAddr(input[11:19]),
+                self.BytesToString(input[19:20])
                 ));
         elif (statType == self.SERTYPE_PKT_TX):
-            log.info("STAT_PK_RX|addr={0}|comp={1}|asn={2}|type={3}|trackinstance={4}|trackowner={5}|length={6}|txpower={7}|l2Dest={8}".format(
-                ''.join('{:02x}'.format(a) for a in addr),
+            log.info('STAT_PK_TX|addr={0}|comp={1}|asn={2}|type={3}|trackinstance={4}|trackowner={5}|length={6}|l2Dest={7}|txpower={8}|numTxAttempts={9}|l4protocol={10}'.format(
+                self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
                 statType,
                 self.BytesToString(input[9:11]),
                 self.BytesToAddr(input[11:19]),
                 input[19],
-                input[20],
-                self.BytesToAddr(input[21:30])
+                self.BytesToAddr(input[20:28]),
+                input[28],
+                input[29],
+                self.ByteToL4protocol(input[30])
                 ));
- 
         elif (statType == self.SERTYPE_PKT_RX):
-           log.info("STAT_PK_RX|addr={0}|comp={1}|asn={2}|type={3}|length={4}".format(
-                ''.join('{:02x}'.format(a) for a in addr),
+           log.info('STAT_PK_RX|addr={0}|comp={1}|asn={2}|type={3}|trackinstance={4}|trackowner={5}|length={6}|l2Src={7}|rssi={8}|lqi={9}|crc={10}'.format(
+                self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
                 statType,
-                input[9]
+                self.BytesToString(input[9:11]),
+                self.BytesToAddr(input[11:19]),
+                input[19],
+                self.BytesToAddr(input[20:28]),
+                input[28],
+                input[29],
+                input[30]
                 ));
+ 
  
        
         return ('error',input)
@@ -123,24 +158,4 @@ class ParserStat(Parser.Parser):
 
  #======================== private =========================================
  
-    def _asndiference(self,init,end):
-         
-       asninit = struct.unpack('<HHB',''.join([chr(c) for c in init]))
-       asnend  = struct.unpack('<HHB',''.join([chr(c) for c in end]))
-       if (asnend[2] != asninit[2]): #'byte4'
-          return 0xFFFFFFFF
-       else:
-           pass
-       
-       diff = 0;
-       if (asnend[1] == asninit[1]):#'bytes2and3'
-          return asnend[0]-asninit[0]#'bytes0and1'
-       else:
-          if (asnend[1]-asninit[1]==1):##'bytes2and3'              diff  = asnend[0]#'bytes0and1'
-              diff += 0xffff-asninit[0]#'bytes0and1'
-              diff += 1;
-          else:   
-              diff = 0xFFFFFFFF
-       
-       return diff
-
+  
