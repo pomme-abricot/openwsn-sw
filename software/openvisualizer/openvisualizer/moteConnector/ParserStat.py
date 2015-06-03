@@ -94,7 +94,39 @@ class ParserStat(Parser.Parser):
                 return(key)
         return("IANA_UNKNOWN")
 
+    def ByteToFrameType(self, byte):
+        IEEE154_TYPE = {
+        'IEEE154_TYPE_BEACON'                 : 0,
+        'IEEE154_TYPE_DATA'                   : 1,
+        'IEEE154_TYPE_ACK'                    : 2,
+        'IEEE154_TYPE_CMD'                    : 3,
+        'IEEE154_TYPE_UNDEFINED'              : 5
+        }
  
+        for key, value in IEEE154_TYPE.iteritems():
+            if value == byte:
+                return(key)
+        return("FTYPE_UNKNOWN")
+
+
+    def ByteToUDPPort(self, bytes):
+        
+        result = eval(self.BytesToString(bytes))
+        
+
+        WKP = {
+        'WKP_TCP_HTTP'                        :    80,
+        'WKP_TCP_ECHO'                        :     7,
+        'WKP_UDP_COAP'                        :  5683,
+        'WKP_UDP_ECHO'                        :     7,
+        'WKP_UDP_RINGMASTER'                  : 15000
+        }
+
+        for key, value in WKP.iteritems():
+            if value == result:
+                return(key)
+        return("WKP_UNKNOWN")
+
 
     def parseInput(self,input):
         
@@ -112,7 +144,7 @@ class ParserStat(Parser.Parser):
 
         #depends on the stat-type
         if (statType == self.SERTYPE_DATA_GENERATION):
-            log.info('STAT_DATAGEN|addr={0}|comp={1}|asn={2}|type={3}|trackinstance={4}|trackowner={5}|seqnum={6}|'.format(
+            log.info('STAT_DATAGEN|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|seqnum={6}|'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -122,7 +154,7 @@ class ParserStat(Parser.Parser):
                 self.BytesToString(input[19:20])
                 ));
         elif (statType == self.SERTYPE_PKT_TX):
-            log.info('STAT_PK_TX|addr={0}|comp={1}|asn={2}|type={3}|trackinstance={4}|trackowner={5}|length={6}|l2Dest={7}|txpower={8}|numTxAttempts={9}|l4protocol={10}'.format(
+            log.info('STAT_PK_TX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|l2Dest={8}|txpower={9}|numTxAttempts={10}|l4protocol={11}|l4srcport={12}|l4destport={13}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -130,13 +162,16 @@ class ParserStat(Parser.Parser):
                 self.BytesToString(input[9:11]),
                 self.BytesToAddr(input[11:19]),
                 input[19],
-                self.BytesToAddr(input[20:28]),
-                input[28],
+                self.ByteToFrameType(input[20]),
+                self.BytesToAddr(input[21:29]),
                 input[29],
-                self.ByteToL4protocol(input[30])
+                input[30],
+                self.ByteToL4protocol(input[31]),
+                self.ByteToUDPPort(input[32:34]),
+                self.ByteToUDPPort(input[34:36])
                 ));
         elif (statType == self.SERTYPE_PKT_RX):
-           log.info('STAT_PK_RX|addr={0}|comp={1}|asn={2}|type={3}|trackinstance={4}|trackowner={5}|length={6}|l2Src={7}|rssi={8}|lqi={9}|crc={10}'.format(
+           log.info('STAT_PK_RX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|l2Src={8}|rssi={9}|lqi={10}|crc={11}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -144,10 +179,11 @@ class ParserStat(Parser.Parser):
                 self.BytesToString(input[9:11]),
                 self.BytesToAddr(input[11:19]),
                 input[19],
-                self.BytesToAddr(input[20:28]),
-                input[28],
+                self.ByteToFrameType(input[20]),
+                self.BytesToAddr(input[21:29]),
                 input[29],
-                input[30]
+                input[30],
+                input[31]
                 ));
  
  
