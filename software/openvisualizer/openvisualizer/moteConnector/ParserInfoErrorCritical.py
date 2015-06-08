@@ -85,6 +85,11 @@ class ParserInfoErrorCritical(Parser.Parser):
     
     def _translateErrorDescription(self,error_code,arg1,arg2):
         try:
-            return StackDefines.errorDescriptions[error_code].format(arg1,arg2)
+            #special case when an argument is a component: returns its name instead of its code
+            if error_code != 62:
+                return StackDefines.errorDescriptions[error_code].format(arg1,arg2)
+            else:
+                return StackDefines.errorDescriptions[error_code].format(self._translateCallingComponent(arg1),self._translateCallingComponent(arg2))
+            
         except KeyError:
             return "unknown error {0} arg1={1} arg2={2}".format(error_code,arg1,arg2)

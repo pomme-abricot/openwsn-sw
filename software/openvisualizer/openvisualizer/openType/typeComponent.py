@@ -26,38 +26,38 @@ class typeComponent(openType.openType):
     COMPONENT_IEEE802154                = 0x08
     COMPONENT_IEEE802154E               = 0x09
     #MAClow<->MAChigh ("virtual components")
-    COMPONENT_RES_TO_IEEE802154E        = 0x0a
-    COMPONENT_IEEE802154E_TO_RES        = 0x0b
+    COMPONENT_SIXTOP_TO_IEEE802154E     = 0x0a
+    COMPONENT_IEEE802154E_TO_SIXTOP     = 0x0b
     #MAChigh
-    COMPONENT_SIXTOP_RES                = 0x0c
+    COMPONENT_SIXTOP                    = 0x0c
     COMPONENT_NEIGHBORS                 = 0x0d
     COMPONENT_SCHEDULE                  = 0x0e
+    COMPONENT_SIXTOP_RES                = 0x0f
     #IPHC
-    COMPONENT_OPENBRIDGE                = 0x0f
-    COMPONENT_IPHC                      = 0x10
+    COMPONENT_OPENBRIDGE                = 0x10
+    COMPONENT_IPHC                      = 0x11
     #IPv6
-    COMPONENT_FORWARDING                = 0x11
-    COMPONENT_ICMPv6                    = 0x12
-    COMPONENT_ICMPv6ECHO                = 0x13
-    COMPONENT_ICMPv6ROUTER              = 0x14
-    COMPONENT_ICMPv6RPL                 = 0x15
+    COMPONENT_FORWARDING                = 0x12
+    COMPONENT_ICMPv6                    = 0x13
+    COMPONENT_ICMPv6ECHO                = 0x14
+    COMPONENT_ICMPv6ROUTER              = 0x15
+    COMPONENT_ICMPv6RPL                 = 0x16
     #TRAN
-    COMPONENT_OPENTCP                   = 0x16
-    COMPONENT_OPENUDP                   = 0x17
-    COMPONENT_OPENCOAP                  = 0x18
-    #App test
-    COMPONENT_C6T                       = 0x19
-    COMPONENT_CEXAMPLE                  = 0x1a
-    COMPONENT_CINFO                     = 0x1b
-    COMPONENT_CLEDS                     = 0x1c
-    COMPONENT_CSTORM                    = 0x1d
-    COMPONENT_CWELLKNOWN                = 0x1e
-    COMPONENT_TECHO                     = 0x1f
-    #App
-    COMPONENT_TOHLONE                   = 0x20
-    COMPONENT_UECHO                     = 0x21
-    COMPONENT_RRT                       = 0x22
-    COMPONENT_OTF                       = 0x32
+    COMPONENT_OPENTCP                   = 0x17
+    COMPONENT_OPENUDP                   = 0x18
+    COMPONENT_OPENCOAP                  = 0x19
+    #Applications
+    COMPONENT_C6T                       = 0x1a
+    COMPONENT_CEXAMPLE                  = 0x1b
+    COMPONENT_CINFO                     = 0x1c
+    COMPONENT_CLEDS                     = 0x1d
+    COMPONENT_CSTORM                    = 0x1e
+    COMPONENT_CWELLKNOWN                = 0x1f
+    COMPONENT_TECHO                     = 0x20
+    COMPONENT_TOHLONE                   = 0x21
+    COMPONENT_UECHO                     = 0x22
+    COMPONENT_RRT                       = 0x23
+    COMPONENT_OTF                       = 0x24
     
     def __init__(self):
         # log
@@ -98,18 +98,20 @@ class typeComponent(openType.openType):
         elif type==self.COMPONENT_IEEE802154E:
             self.desc = 'IEEE802154E'
         
-        elif type==self.COMPONENT_RES_TO_IEEE802154E:
+        elif type==self.COMPONENT_SIXTOP_TO_IEEE802154E:
             self.desc = 'RES_TO_IEEE802154E'
-        elif type==self.COMPONENT_IEEE802154E_TO_RES:
+        elif type==self.COMPONENT_IEEE802154E_TO_SIXTOP:
             self.desc = 'IEEE802154E_TO_RES'
         
-        elif type==self.COMPONENT_SIXTOP_RES:
-            self.desc = 'SIXTOP_RES'
+        elif type==self.COMPONENT_SIXTOP:
+            self.desc = 'SIXTOP'
         elif type==self.COMPONENT_NEIGHBORS:
             self.desc = 'NEIGHBORS '
         elif type==self.COMPONENT_SCHEDULE:
             self.desc = 'SCHEDULE'
-        
+        elif type==self.COMPONENT_SIXTOP_RES:
+            self.desc = 'SIXTOP_RES'
+       
         elif type==self.COMPONENT_OPENBRIDGE:
             self.desc = 'OPENBRIDGE'
         elif type==self.COMPONENT_IPHC:
