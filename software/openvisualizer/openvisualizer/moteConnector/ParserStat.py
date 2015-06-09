@@ -25,6 +25,10 @@ class ParserStat(Parser.Parser):
     SERTYPE_DATA_GENERATION    = 1
     SERTYPE_PKT_TX             = 2
     SERTYPE_PKT_RX             = 3
+    SERTYPE_CELL_ADD           = 4
+    SERTYPE_CELL_REMOVE        = 5
+    SERTYPE_ACK_TX             = 6
+    SERTYPE_ACK_RX             = 7
      
  
     def __init__(self):
@@ -185,10 +189,53 @@ class ParserStat(Parser.Parser):
                 input[30],
                 input[31]
                 ));
- 
+        elif (statType == self.SERTYPE_CELL_ADD):
+           print('STAT_CELL_ADD|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToString(input[9:11]),
+                self.BytesToAddr(input[11:19]),
+                input[19],
+                input[20],
+                input[21],
+                input[22],
+                self.BytesToAddr(input[23:31])
+                ));       
+        elif (statType == self.SERTYPE_CELL_REMOVE):
+           print('STAT_CELL_REMOVE|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToString(input[9:11]),
+                self.BytesToAddr(input[11:19]),
+                input[19],
+                input[20],
+                input[21],
+                input[22],
+                self.BytesToAddr(input[23:31])
+                ));
+        elif (statType == self.SERTYPE_ACK_TX):
+           print('STAT_ACK_TX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType
+                ));
+        elif (statType == self.SERTYPE_ACK_RX):
+           print('STAT_ACK_RX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType
+                ));
+        else:
+            print('received data {0}'.format(input))
  
        
-        return ('error',input)
+        return ('error', input)
 
 
 
