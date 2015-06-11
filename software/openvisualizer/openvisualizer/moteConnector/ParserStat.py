@@ -190,7 +190,7 @@ class ParserStat(Parser.Parser):
                 input[31]
                 ));
         elif (statType == self.SERTYPE_CELL_ADD):
-           print('STAT_CELL_ADD|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
+           log.info('STAT_CELL_ADD|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -218,14 +218,14 @@ class ParserStat(Parser.Parser):
                 self.BytesToAddr(input[23:31])
                 ));
         elif (statType == self.SERTYPE_ACK_TX):
-           print('STAT_ACK_TX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
+           log.info('STAT_ACK_TX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
                 statType
                 ));
         elif (statType == self.SERTYPE_ACK_RX):
-           print('STAT_ACK_RX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
+           log.info('STAT_ACK_RX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
