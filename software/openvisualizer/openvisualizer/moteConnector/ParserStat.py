@@ -29,7 +29,7 @@ class ParserStat(Parser.Parser):
     SERTYPE_CELL_REMOVE        = 5
     SERTYPE_ACK_TX             = 6
     SERTYPE_ACK_RX             = 7
-     
+    SERTYPE_PKT_TIMEOUT        = 8
  
     def __init__(self):
         
@@ -230,6 +230,23 @@ class ParserStat(Parser.Parser):
                 mycomponent,
                 self.BytesToString(asnbytes),
                 statType
+                ));
+        elif (statType == self.SERTYPE_PKT_TIMEOUT):
+            log.info('STAT_PK_TIMEOUT|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|l2Dest={8}|txpower={9}|numTxAttempts={10}|l4protocol={11}|l4srcport={12}|l4destport={13}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToString(input[9:11]),
+                self.BytesToAddr(input[11:19]),
+                input[19],
+                self.ByteToFrameType(input[20]),
+                self.BytesToAddr(input[21:29]),
+                input[29],
+                input[30],
+                self.ByteToL4protocol(input[31]),
+                self.ByteToUDPPort(input[32:34]),
+                self.ByteToUDPPort(input[34:36])
                 ));
         else:
             print('received data {0}'.format(input))
