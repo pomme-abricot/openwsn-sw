@@ -68,8 +68,8 @@ class ParserPrintf(Parser.Parser):
 
         for byte in bytes:
             str = str + '{:02x}'.format(byte) 
-            if (i < len(bytes)-1):
-                str = str + '-'
+            #if (i < len(bytes)-1):
+            #    str = str + '-'
             i += 1
 
         return(str)
@@ -90,6 +90,13 @@ class ParserPrintf(Parser.Parser):
         msg = input[8:]
 
         print("from {0}:{1}(asn={2}):{3}".format(
+                self.BytesToAddr(addr),
+                COMPONENT,
+                self.BytesToString(asnbytes),
+                self.BytesToStr(msg)
+                ))
+        
+        log.info("from {0}:{1}(asn={2}):{3}".format(
                 self.BytesToAddr(addr),
                 COMPONENT,
                 self.BytesToString(asnbytes),

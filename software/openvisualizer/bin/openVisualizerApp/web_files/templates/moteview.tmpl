@@ -336,12 +336,14 @@
 
 									        // Package Queue responsive table
 									        if (hasJson) {
-									        	var tbl_body = "<table class=\"table table-striped table-bordered table-hover\" id=\"dataTables-example\"><thead><tr><th>Creator</th><th>Owner</th><th>Timeout ASN</th></tr></thead><tbody>";
+									        	var tbl_body = "<table class=\"table table-striped table-bordered table-hover\" id=\"dataTables-example\"><thead><tr><th>Creator</th><th>Owner</th><th>Timeout ASN</th><th>track instance</th><th>track owner</th></tr></thead><tbody>";
 									        
 										        $.each(queueJson, function() {
 											        var tbl_row = "<td>" + this['creator'] + "</td>";
 											        tbl_row += "<td>" + this['owner'] + "</td>";
-												tbl_row += "<td>" + this['timeoutAsn'] + "</td>";
+												    tbl_row += "<td>" + this['timeoutAsn'] + "</td>";
+											        tbl_row += "<td>" + this['trackInstance'] + "</td>";
+											        tbl_row += "<td>" + this['trackOwner'] + "</td>";
 											        tbl_body += "<tr class=\"odd gradeX\">" + tbl_row + "</tr>";
 												});
 

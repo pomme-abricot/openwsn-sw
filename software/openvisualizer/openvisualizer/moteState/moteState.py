@@ -223,7 +223,13 @@ class StateQueueRow(StateElem):
         self.data[0]['timeoutAsn'].update(notif.timeoutAsn_0_1,
                                            notif.timeoutAsn_2_3,
                                            notif.timeoutAsn_4)
-        
+        self.data[0]['trackInstance']       = notif.trackInstance
+        if 'trackOwner' not in self.data[0]:
+            self.data[0]['trackOwner']        = typeAddr.typeAddr()
+        self.data[0]['trackOwner'].update(notif.trackOwner_type,
+                                        notif.trackOwner_bodyH,
+                                        notif.trackOwner_bodyL)
+      
    
 class StateNeighborsRow(StateElem):
     
@@ -455,7 +461,8 @@ class moteState(eventBusClient.eventBusClient):
                                                         'creator',
                                                         'owner',
                                                         'timeoutAsn',
-                                                    ]
+                                                        'trackInstance',
+                                                        'trackOwner',                                                    ]
                                                 )
                                               )
         self.state[self.ST_NEIGHBORS]       = StateTable(

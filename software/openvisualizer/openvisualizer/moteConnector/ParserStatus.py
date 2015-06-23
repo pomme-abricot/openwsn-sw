@@ -163,14 +163,19 @@ class ParserStatus(Parser.Parser):
                                     3,
                                     8,
                                     'QueueRow',
-                                    '<BBBBHH',
+                                    '<BBBBHHHBQQB', #BQQ',
                                     [
-					'row',			 
+					                    'row',			           # B
                                         'creator',                 # B
                                         'owner',                   # B
                                         'timeoutAsn_4',            # B
-                                        'timeoutAsn_2_3',          # B
-                                        'timeoutAsn_0_1',          # B
+                                        'timeoutAsn_2_3',          # H
+                                        'timeoutAsn_0_1',          # H
+                                        'trackInstance',           # H
+                                        'trackOwner_type',         # B
+                                        'trackOwner_bodyH',        # Q
+                                        'trackOwner_bodyL',        # Q
+                                        'garbage',                 # B (alignment to an even nb. of bytes)
                                     ],
                                 )
         self._addFieldsParser   (
