@@ -67,8 +67,8 @@ class ParserStat(Parser.Parser):
 
         for byte in bytes:
             str = str + '{:02x}'.format(byte) 
-            if (i < len(bytes)-1):
-                str = str + '-'
+            #if (i < len(bytes)-1):
+            #    str = str + '-'
             i += 1
 
         return(str)
