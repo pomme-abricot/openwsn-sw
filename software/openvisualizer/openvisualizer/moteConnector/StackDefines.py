@@ -108,6 +108,9 @@ errorDescriptions = {
   62: "a packet has been removed from the queue (owner {0}, creator {1})",
   63: "the best effort track cannot have an owner (here type {0} and addr {1})",
   64: "not enough space in openqueue for non prioritar packets",
-  65: "generic error {0} {1}",
-  66: "unknown error {0} {1}"
+  65: "received frame with invalid CRC",
+  66: "invalid IEEE 802.15.4e headers",
+  67: "buffer overflow for output in openserial ({0} bytes had to be written)",
+  68: "generic error {0} {1}",
+  69: "unknown error {0} {1}"
 }

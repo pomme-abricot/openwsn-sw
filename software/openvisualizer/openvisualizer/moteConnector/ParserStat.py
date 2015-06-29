@@ -248,6 +248,7 @@ class ParserStat(Parser.Parser):
                 self.ByteToUDPPort(input[32:34]),
                 self.ByteToUDPPort(input[34:36])
                 ));
+
         else:
             print('received data {0}'.format(input))
  
