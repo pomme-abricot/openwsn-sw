@@ -137,6 +137,7 @@ class ParserStat(Parser.Parser):
         # log
         if log.isEnabledFor(logging.DEBUG):
             log.debug('received data {0}'.format(input))
+        log.debug('received data {0}'.format(input))
         
         #headers
         addr = input[:2]  
@@ -158,7 +159,7 @@ class ParserStat(Parser.Parser):
                 self.BytesToString(input[19:20])
                 ));
         elif (statType == self.SERTYPE_PKT_TX):
-            log.info('STAT_PK_TX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|l2Dest={8}|txpower={9}|numTxAttempts={10}|l4protocol={11}|l4srcport={12}|l4destport={13}'.format(
+            log.info('STAT_PK_TX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Dest={10}|txpower={11}|numTxAttempts={12}|l4protocol={13}|l4srcport={14}|l4destport={15}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -167,15 +168,17 @@ class ParserStat(Parser.Parser):
                 self.BytesToAddr(input[11:19]),
                 input[19],
                 self.ByteToFrameType(input[20]),
-                self.BytesToAddr(input[21:29]),
-                input[29],
-                input[30],
-                self.ByteToL4protocol(input[31]),
-                self.ByteToUDPPort(input[32:34]),
-                self.ByteToUDPPort(input[34:36])
+                self.BytesToString(input[21:23]),
+                input[23],
+                self.BytesToAddr(input[24:32]),
+                input[32],
+                input[33],
+                self.ByteToL4protocol(input[34]),
+                self.ByteToUDPPort(input[35:37]),
+                self.ByteToUDPPort(input[37:39])
                 ));
         elif (statType == self.SERTYPE_PKT_RX):
-           log.info('STAT_PK_RX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|l2Src={8}|rssi={9}|lqi={10}|crc={11}'.format(
+          log.info('STAT_PK_RX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Src={10}|rssi={11}|lqi={12}|crc={13}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -184,10 +187,12 @@ class ParserStat(Parser.Parser):
                 self.BytesToAddr(input[11:19]),
                 input[19],
                 self.ByteToFrameType(input[20]),
-                self.BytesToAddr(input[21:29]),
-                input[29],
-                input[30],
-                input[31]
+                self.BytesToString(input[21:23]),
+                input[23],
+                self.BytesToAddr(input[24:32]),
+                input[32],
+                input[33],
+                input[34]
                 ));
         elif (statType == self.SERTYPE_CELL_ADD):
            log.info('STAT_CELL_ADD|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
