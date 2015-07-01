@@ -89,14 +89,14 @@ class ParserPrintf(Parser.Parser):
         (self._asn) = struct.unpack('<BHH',''.join([chr(c) for c in asnbytes]))
         msg = input[8:]
 
-        print("from {0}:{1}(asn={2}):{3}".format(
+        print("(asn={2}) from {0}:{1}:{3}".format(
                 self.BytesToAddr(addr),
                 COMPONENT,
                 self.BytesToString(asnbytes),
                 self.BytesToStr(msg)
                 ))
         
-        log.info("from {0}:{1}(asn={2}):{3}".format(
+        log.info("(asn={2}) from {0}:{1}:{3}".format(
                 self.BytesToAddr(addr),
                 COMPONENT,
                 self.BytesToString(asnbytes),
