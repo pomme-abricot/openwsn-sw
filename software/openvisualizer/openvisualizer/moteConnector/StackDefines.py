@@ -110,7 +110,8 @@ errorDescriptions = {
   64: "not enough space in openqueue for non prioritar packets",
   65: "received frame with invalid CRC",
   66: "invalid IEEE 802.15.4e headers",
-  67: "buffer overflow for output in openserial (location {0}, length {1})",
-  68: "generic error {0} {1}",
-  69: "unknown error {0} {1}"
+  67: "buffer overflow for output in openserial (indexWrite {0}, IndexRead {1})",
+  68: "buffer overflow: too many packets (space left {0}, reserved for management {1})",
+  69: "generic error {0} {1}",
+  70: "unknown error {0} {1}"
 }

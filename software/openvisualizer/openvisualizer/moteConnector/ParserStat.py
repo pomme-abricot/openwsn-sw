@@ -30,6 +30,8 @@ class ParserStat(Parser.Parser):
     SERTYPE_ACK_TX             = 6
     SERTYPE_ACK_RX             = 7
     SERTYPE_PKT_TIMEOUT        = 8
+    SERTYPE_PKT_ERROR          = 9
+    SERTYPE_PKT_BUFFEROVERFLOW = 10
  
     def __init__(self):
         
@@ -252,6 +254,40 @@ class ParserStat(Parser.Parser):
                 self.ByteToL4protocol(input[31]),
                 self.ByteToUDPPort(input[32:34]),
                 self.ByteToUDPPort(input[34:36])
+                ));
+        elif (statType == self.SERTYPE_PKT_ERROR):
+            log.info('STAT_PK_ERROR|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|l2Dest={8}|txpower={9}|numTxAttempts={10}|l4protocol={11}|l4srcport={12}|l4destport={13}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToString(input[9:11]),
+                self.BytesToAddr(input[11:19]),
+                input[19],
+                self.ByteToFrameType(input[20]),
+                self.BytesToAddr(input[21:29]),
+                input[29],
+                input[30],
+                self.ByteToL4protocol(input[31]),
+                self.ByteToUDPPort(input[32:34]),
+                self.ByteToUDPPort(input[34:36])
+                ));
+        elif (statType == self.SERTYPE_PKT_BUFFEROVERFLOW):
+          log.info('STAT_PK_OVERFLOW|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Src={10}|rssi={11}|lqi={12}|crc={13}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToString(input[9:11]),
+                self.BytesToAddr(input[11:19]),
+                input[19],
+                self.ByteToFrameType(input[20]),
+                self.BytesToString(input[21:23]),
+                input[23],
+                self.BytesToAddr(input[24:32]),
+                input[32],
+                input[33],
+                input[34]
                 ));
 
         else:
