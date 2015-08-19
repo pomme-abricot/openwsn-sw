@@ -32,6 +32,8 @@ class ParserStat(Parser.Parser):
     SERTYPE_PKT_TIMEOUT        = 8
     SERTYPE_PKT_ERROR          = 9
     SERTYPE_PKT_BUFFEROVERFLOW = 10
+    SERTYPE_DIOTX              = 11
+    SERTYPE_DAOTX              = 12
  
     def __init__(self):
         
@@ -290,8 +292,25 @@ class ParserStat(Parser.Parser):
                 input[34]
                 ));
 
+        elif (statType == self.SERTYPE_DIOTX):
+          log.info('STAT_DIOTX|addr={0}|comp={1}|asn={2}|statType={3}|'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType
+                ));
+
+        elif (statType == self.SERTYPE_DAOTX):
+          log.info('STAT_DAOTX|addr={0}|comp={1}|asn={2}|statType={3}|parent={4}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToAddr(input[9:17])
+                ));
+
         else:
-            print('received data {0}'.format(input))
+            print('received data {0}, type {1}'.format(input, statType))
  
        
         return ('error', input)
