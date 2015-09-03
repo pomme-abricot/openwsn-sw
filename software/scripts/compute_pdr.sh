@@ -24,11 +24,21 @@ echo "$NBNODES nodes (+dagroot)"
 #get the pdr
 for addr_l in `cat $NODESLIST` 
 do
-	echo "node $addr_long:"
+    #converts the long address (64B) into a short one (16B)
 	addr_long_to_short $addr_l
 	addr_s=$result
+
+
+	echo "node $addr_s:"
+
+
+#cat $1 | grep STAT_DATAGEN | grep "addr=$addr_s"
+
 	PKTX=`cat $1 | grep STAT_DATAGEN | grep "addr=$addr_s" | wc -l | cut -d " " -f 1`
-	PKRX=`cat $1 | grep STAT_PK_RX | grep "owner=$addr_l" | wc -l | cut -d " " -f 1 `
+	PKRX=`cat $1 | grep STAT_PK_RX | grep "owner=$addr_l" | grep "crc=1" | wc -l | cut -d " " -f 1 `
+
+    cat $1 | grep STAT_PK_RX | grep "owner=$addr_l"  > tmp.$addr_s
+
 
 	PDR=`echo "$PKRX / $PKTX" | bc -l`
 	echo "pdr=$PDR ($PKRX / $PKTX)"

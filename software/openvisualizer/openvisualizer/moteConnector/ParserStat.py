@@ -51,7 +51,10 @@ class ParserStat(Parser.Parser):
     
     #======================== public ==========================================
     
-    #returns a string with the decimal value of a uint16_t
+    #======================== conversion ==========================================
+    
+ 
+ #returns a string with the decimal value of a uint16_t
     def BytesToString(self, bytes):
         str = ''
         i = 0
@@ -76,6 +79,7 @@ class ParserStat(Parser.Parser):
             i += 1
 
         return(str)
+
 
     def ByteToL4protocol(self, byte):
        
@@ -136,6 +140,57 @@ class ParserStat(Parser.Parser):
         return("WKP_UNKNOWN")
 
 
+
+    #======================== write logs (factroized) ==========================================
+ 
+       #info to write when a packet is transmitted
+    def LogPktTx(self, addr, mycomponent, asnbytes, statType, input, code):
+        log.info('{18}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Dest={10}|txpower={11}|numTxAttempts={12}|l4protocol={13}|l4srcport={14}|l4destport={15}|l3src={16}|l3dest={17}'.format(
+            self.BytesToAddr(addr),
+            mycomponent,
+            self.BytesToString(asnbytes),
+            statType,
+            self.BytesToString(input[9:11]),
+            self.BytesToAddr(input[11:19]),
+            input[19],
+            self.ByteToFrameType(input[20]),
+            self.BytesToString(input[21:23]),
+            input[23],
+            self.BytesToAddr(input[24:32]),
+            input[32],
+            input[33],
+            self.ByteToL4protocol(input[34]),
+            self.ByteToUDPPort(input[35:37]),
+            self.ByteToUDPPort(input[37:39]),
+            self.BytesToAddr(input[39:47]),
+            self.BytesToAddr(input[47:55]),
+            code
+            ));
+
+    #info to write when a packet is received
+    def LogPktRx(self, addr, mycomponent, asnbytes, statType, input, code):
+      log.info('{14}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Src={10}|rssi={11}|lqi={12}|crc={13}'.format(
+            self.BytesToAddr(addr),
+            mycomponent,
+            self.BytesToString(asnbytes),
+            statType,
+            self.BytesToString(input[9:11]),
+            self.BytesToAddr(input[11:19]),
+            input[19],
+            self.ByteToFrameType(input[20]),
+            self.BytesToString(input[21:23]),
+            input[23],
+            self.BytesToAddr(input[24:32]),
+            input[32],
+            input[33],
+            input[34],
+            code
+            ));
+
+
+
+   #======================== parses and writes the logs  ==========================================
+ 
     def parseInput(self,input):
         
         # log
@@ -163,41 +218,12 @@ class ParserStat(Parser.Parser):
                 self.BytesToString(input[19:20])
                 ));
         elif (statType == self.SERTYPE_PKT_TX):
-            log.info('STAT_PK_TX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Dest={10}|txpower={11}|numTxAttempts={12}|l4protocol={13}|l4srcport={14}|l4destport={15}'.format(
-                self.BytesToAddr(addr),
-                mycomponent,
-                self.BytesToString(asnbytes),
-                statType,
-                self.BytesToString(input[9:11]),
-                self.BytesToAddr(input[11:19]),
-                input[19],
-                self.ByteToFrameType(input[20]),
-                self.BytesToString(input[21:23]),
-                input[23],
-                self.BytesToAddr(input[24:32]),
-                input[32],
-                input[33],
-                self.ByteToL4protocol(input[34]),
-                self.ByteToUDPPort(input[35:37]),
-                self.ByteToUDPPort(input[37:39])
-                ));
+            self.LogPktTx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_TX");
+
         elif (statType == self.SERTYPE_PKT_RX):
-          log.info('STAT_PK_RX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Src={10}|rssi={11}|lqi={12}|crc={13}'.format(
-                self.BytesToAddr(addr),
-                mycomponent,
-                self.BytesToString(asnbytes),
-                statType,
-                self.BytesToString(input[9:11]),
-                self.BytesToAddr(input[11:19]),
-                input[19],
-                self.ByteToFrameType(input[20]),
-                self.BytesToString(input[21:23]),
-                input[23],
-                self.BytesToAddr(input[24:32]),
-                input[32],
-                input[33],
-                input[34]
-                ));
+           self.LogPktRx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_RX");
+
+
         elif (statType == self.SERTYPE_CELL_ADD):
            log.info('STAT_CELL_ADD|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
                 self.BytesToAddr(addr),
@@ -241,56 +267,13 @@ class ParserStat(Parser.Parser):
                 statType
                 ));
         elif (statType == self.SERTYPE_PKT_TIMEOUT):
-            log.info('STAT_PK_TIMEOUT|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|l2Dest={8}|txpower={9}|numTxAttempts={10}|l4protocol={11}|l4srcport={12}|l4destport={13}'.format(
-                self.BytesToAddr(addr),
-                mycomponent,
-                self.BytesToString(asnbytes),
-                statType,
-                self.BytesToString(input[9:11]),
-                self.BytesToAddr(input[11:19]),
-                input[19],
-                self.ByteToFrameType(input[20]),
-                self.BytesToAddr(input[21:29]),
-                input[29],
-                input[30],
-                self.ByteToL4protocol(input[31]),
-                self.ByteToUDPPort(input[32:34]),
-                self.ByteToUDPPort(input[34:36])
-                ));
+           self.LogPktTx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_TIMEOUT");
+
         elif (statType == self.SERTYPE_PKT_ERROR):
-            log.info('STAT_PK_ERROR|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|l2Dest={8}|txpower={9}|numTxAttempts={10}|l4protocol={11}|l4srcport={12}|l4destport={13}'.format(
-                self.BytesToAddr(addr),
-                mycomponent,
-                self.BytesToString(asnbytes),
-                statType,
-                self.BytesToString(input[9:11]),
-                self.BytesToAddr(input[11:19]),
-                input[19],
-                self.ByteToFrameType(input[20]),
-                self.BytesToAddr(input[21:29]),
-                input[29],
-                input[30],
-                self.ByteToL4protocol(input[31]),
-                self.ByteToUDPPort(input[32:34]),
-                self.ByteToUDPPort(input[34:36])
-                ));
+            self.LogPktTx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_ERROR");
+
         elif (statType == self.SERTYPE_PKT_BUFFEROVERFLOW):
-          log.info('STAT_PK_OVERFLOW|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Src={10}|rssi={11}|lqi={12}|crc={13}'.format(
-                self.BytesToAddr(addr),
-                mycomponent,
-                self.BytesToString(asnbytes),
-                statType,
-                self.BytesToString(input[9:11]),
-                self.BytesToAddr(input[11:19]),
-                input[19],
-                self.ByteToFrameType(input[20]),
-                self.BytesToString(input[21:23]),
-                input[23],
-                self.BytesToAddr(input[24:32]),
-                input[32],
-                input[33],
-                input[34]
-                ));
+            self.LogPktTx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_BUFFEROVERFLOW");
 
         elif (statType == self.SERTYPE_DIOTX):
           log.info('STAT_DIOTX|addr={0}|comp={1}|asn={2}|statType={3}|'.format(
