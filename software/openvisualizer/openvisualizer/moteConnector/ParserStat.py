@@ -23,17 +23,18 @@ class ParserStat(Parser.Parser):
    
     #type of stat message 
     SERTYPE_DATA_GENERATION    = 1
-    SERTYPE_PKT_TX             = 2
-    SERTYPE_PKT_RX             = 3
-    SERTYPE_CELL_ADD           = 4
-    SERTYPE_CELL_REMOVE        = 5
-    SERTYPE_ACK_TX             = 6
-    SERTYPE_ACK_RX             = 7
-    SERTYPE_PKT_TIMEOUT        = 8
-    SERTYPE_PKT_ERROR          = 9
-    SERTYPE_PKT_BUFFEROVERFLOW = 10
-    SERTYPE_DIOTX              = 11
-    SERTYPE_DAOTX              = 12
+    SERTYPE_DATA_RX            = 2
+    SERTYPE_PKT_TX             = 3
+    SERTYPE_PKT_RX             = 4
+    SERTYPE_CELL_ADD           = 5
+    SERTYPE_CELL_REMOVE        = 6
+    SERTYPE_ACK_TX             = 7
+    SERTYPE_ACK_RX             = 8
+    SERTYPE_PKT_TIMEOUT        = 9
+    SERTYPE_PKT_ERROR          = 10
+    SERTYPE_PKT_BUFFEROVERFLOW = 11
+    SERTYPE_DIOTX              = 12
+    SERTYPE_DAOTX              = 13
  
     def __init__(self):
         
@@ -123,8 +124,7 @@ class ParserStat(Parser.Parser):
 
     def ByteToUDPPort(self, bytes):
         
-        result = eval(self.BytesToString(bytes))
-        
+        result = eval(self.BytesToString(bytes))        
 
         WKP = {
         'WKP_TCP_HTTP'                        :    80,
@@ -162,8 +162,8 @@ class ParserStat(Parser.Parser):
             self.ByteToL4protocol(input[34]),
             self.ByteToUDPPort(input[35:37]),
             self.ByteToUDPPort(input[37:39]),
-            self.BytesToAddr(input[39:47]),
-            self.BytesToAddr(input[47:55]),
+            self.BytesToAddr(input[39:55]),
+            self.BytesToAddr(input[55:71]),
             code
             ));
 
@@ -208,14 +208,26 @@ class ParserStat(Parser.Parser):
 
         #depends on the stat-type
         if (statType == self.SERTYPE_DATA_GENERATION):
-            log.info('STAT_DATAGEN|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|seqnum={6}|'.format(
+            log.info('STAT_DATAGEN|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|seqnum={6}|l3Dest={7}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
                 statType,
                 self.BytesToString(input[9:11]),
                 self.BytesToAddr(input[11:19]),
-                self.BytesToString(input[19:20])
+                self.BytesToString(input[19:21]),
+                self.BytesToAddr(input[21:37])
+                ));
+        elif (statType == self.SERTYPE_DATA_RX):
+            log.info('STAT_DATARX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|seqnum={6}|l3Dest={7}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToString(input[9:11]),
+                self.BytesToAddr(input[11:19]),
+                self.BytesToString(input[19:21]),
+                self.BytesToAddr(input[21:37])
                 ));
         elif (statType == self.SERTYPE_PKT_TX):
             self.LogPktTx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_TX");
@@ -273,7 +285,7 @@ class ParserStat(Parser.Parser):
             self.LogPktTx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_ERROR");
 
         elif (statType == self.SERTYPE_PKT_BUFFEROVERFLOW):
-            self.LogPktTx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_BUFFEROVERFLOW");
+            self.LogPktRx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_BUFFEROVERFLOW");
 
         elif (statType == self.SERTYPE_DIOTX):
           log.info('STAT_DIOTX|addr={0}|comp={1}|asn={2}|statType={3}|'.format(
