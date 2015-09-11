@@ -11,8 +11,11 @@ function addr_long_to_short {
 TMPFILE=`mktemp` || exit 1
 NODESLIST=`mktemp` || exit 1
 
+echo "TMPFILE: $TMPFILE"
+echo "NODESLIST: $NODESLIST"
 
-grep STAT_DATAGEN $1 | cut -d "|" -f 7 | cut -d "=" -f 2 > $TMPFILE
+
+grep STAT_DATARX $1 | cut -d "|" -f 9 | cut -d "=" -f 2 > $TMPFILE
 
 #get the node list
 sort -u $TMPFILE > $NODESLIST
@@ -29,15 +32,15 @@ do
 	addr_s=$result
 
 
-	echo "node $addr_s:"
+	echo "node $addr_s: ($addr_l)"
 
 
 #cat $1 | grep STAT_DATAGEN | grep "addr=$addr_s"
 
-	PKTX=`cat $1 | grep STAT_DATAGEN | grep "addr=$addr_s" | wc -l | cut -d " " -f 1`
-	PKRX=`cat $1 | grep STAT_PK_RX | grep "owner=$addr_l" | grep "crc=1" | wc -l | cut -d " " -f 1 `
+	PKTX=`cat $1 | grep STAT_DATAGEN | grep "l2Src=$addr_l" | wc -l | cut -d " " -f 1`
+	PKRX=`cat $1 | grep STAT_DATARX | grep "l2Src=$addr_l" | wc -l | cut -d " " -f 1 `
 
-    cat $1 | grep STAT_PK_RX | grep "owner=$addr_l"  > tmp.$addr_s
+ 
 
 
 	PDR=`echo "$PKRX / $PKTX" | bc -l`
