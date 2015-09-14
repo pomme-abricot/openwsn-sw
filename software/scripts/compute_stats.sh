@@ -7,10 +7,17 @@ function addr_long_to_short {
 
 }
 
+if [ $# -ne 2 ]
+then
+    echo "usage: $0 logfile asn_min"
+    exit 2
+fi 
+
 
 #constants
 TIMESLOT_DURATION=15
 THRESHOLD_NB_PKTX=0.8   #if a node generates XX% packets less than the other ones (avg), do not consider it (it crashed probably)    
+ASN_MIN=$2
 
 
 #Temporary files
@@ -58,36 +65,41 @@ do
         ASN_TX=`cat $TMPGEN | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
         ASN_RX=`cat $TMPRX | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
 
-        #nb of packets generated
-        (( array_pktx[index]++ ))
-
-        #the packet was received: lets' increase the delay
-        if [ -n "$ASN_RX" ]
+        #I only consider the packets after the bootstrap period
+        if [ $ASN_TX -gt $ASN_MIN ]
         then
 
-            #search for duplicates, and keep only the first reception
-            eval ASN_RX_ARRAY=($ASN_RX)
-            if [ ${#ASN_RX_ARRAY[@]} -gt 1 ]
-            then
-                #echo "duplicate"
-                ASN_RX=${ASN_RX_ARRAY[0]}
-                (( array_pkdup[index]++ ))
-            fi
-        
-            #echo "|$ASN_RX| - |$ASN_TX|"
+            #nb of packets generated
+            (( array_pktx[index]++ ))
 
-            #compute the delay (in ASN)
-            hop_delay=`echo "$ASN_RX - $ASN_TX" | bc -l` 
-            array_delay[$index]=`echo "${array_delay[$index]} + $hop_delay" | bc -l` 
-       
-            #nb of received packets
-            (( array_pkrx[index]++ ))
-
-            #bug
-            if [ "$hop_delay" -le "0" ]
+            #the packet was received: lets' increase the delay
+            if [ -n "$ASN_RX" ] 
             then
-                echo "ERROR  - negative delay for one hop"
-                exit
+
+                #search for duplicates, and keep only the first reception
+                eval ASN_RX_ARRAY=($ASN_RX)
+                if [ ${#ASN_RX_ARRAY[@]} -gt 1 ]
+                then
+                    #echo "duplicate"
+                    ASN_RX=${ASN_RX_ARRAY[0]}
+                    (( array_pkdup[index]++ ))
+                fi
+            
+                #echo "|$ASN_RX| - |$ASN_TX|"
+
+                #compute the delay (in ASN)
+                hop_delay=`echo "$ASN_RX - $ASN_TX" | bc -l` 
+                array_delay[$index]=`echo "${array_delay[$index]} + $hop_delay" | bc -l` 
+           
+                #nb of received packets
+                (( array_pkrx[index]++ ))
+
+                #bug
+                if [ "$hop_delay" -le "0" ]
+                then
+                    echo "ERROR  - negative delay for one hop"
+                    exit
+                fi
             fi
         fi
 
