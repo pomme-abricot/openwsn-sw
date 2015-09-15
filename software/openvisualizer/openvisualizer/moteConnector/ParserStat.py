@@ -215,9 +215,9 @@ class ParserStat(Parser.Parser):
                 statType,
                 self.BytesToString(input[9:11]),
                 self.BytesToAddr(input[11:19]),
-                self.BytesToString(input[19:21]),
-                self.BytesToAddr(input[21:29]),
-                self.BytesToAddr(input[29:37])
+                self.BytesToString(input[19:23]),
+                self.BytesToAddr(input[23:31]),
+                self.BytesToAddr(input[31:39])
                 ));
         elif (statType == self.SERTYPE_DATA_RX):
             log.info('STAT_DATARX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|seqnum={6}|l2Src={7}|l2Dest={8}'.format(
@@ -227,9 +227,9 @@ class ParserStat(Parser.Parser):
                 statType,
                 self.BytesToString(input[9:11]),
                 self.BytesToAddr(input[11:19]),
-                self.BytesToString(input[19:21]),
-                self.BytesToAddr(input[21:29]),
-                self.BytesToAddr(input[29:37])
+                self.BytesToString(input[19:23]),
+                self.BytesToAddr(input[23:31]),
+                self.BytesToAddr(input[31:39])
                 ));
         elif (statType == self.SERTYPE_PKT_TX):
             self.LogPktTx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_TX");
