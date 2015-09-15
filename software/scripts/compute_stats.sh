@@ -2,9 +2,7 @@
 
 #converts a long address (8 bytes) into a short one (2 bytes)
 function addr_long_to_short {
-#	return ${1:12:4}
 	result=${1:12:4}
-
 }
 
 if [ $# -ne 2 ]
@@ -16,7 +14,7 @@ fi
 
 #constants
 TIMESLOT_DURATION=15
-THRESHOLD_NB_PKTX=0.8   #if a node generates XX% packets less than the other ones (avg), do not consider it (it crashed probably)    
+NB_PKGEN_MIN=100         #to be statistically signficant, a node must generate more than XX packets    
 ASN_MIN=$2
 
 
@@ -64,9 +62,18 @@ do
         #ASNs picked in the logs
         ASN_TX=`cat $TMPGEN | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
         ASN_RX=`cat $TMPRX | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
+        
+
+        #discard this packet when this sequence number was txed several times
+        eval ASN_TX_ARRAY=($ASN_TX)
+        if [ ${#ASN_TX_ARRAY[@]} -gt 1 ]
+        then
+           ASN_TX=0
+        fi
+
 
         #I only consider the packets after the bootstrap period
-        if [ $ASN_TX -gt $ASN_MIN ]
+        if [ "$ASN_TX" -gt "$ASN_MIN" ]
         then
 
             #nb of packets generated
@@ -123,18 +130,6 @@ do
 done
 
 
-#computes the threshold value to detect crashed nodes (i.e. minimum number of transmitted packets)
-global_pktx=0
-nbnodes=0
-for i in ${!array_pktx[*]} 
-do
-    global_pktx=`echo "$global_pktx + ${array_pktx[$i]}" | bc`
-    (( nbnodes++ ))
-done 
-threshold=`echo "scale=0; ($global_pktx * $THRESHOLD_NB_PKTX / $nbnodes)" | bc`
-echo "threshold value=$threshold"
-
-
 #compute the average stats
 global_nbnodes=0
 global_pktx=0
@@ -143,7 +138,7 @@ global_pkdup=0
 global_delay=0
 for i in ${!array_pktx[*]} 
 do
-    if [ ${array_pktx[$i]} -gt $threshold ]
+    if [ ${array_pktx[$i]} -gt $NB_PKGEN_MIN ]
     then
         (( global_nbnodes++ ))
         global_pktx=`echo "$global_pktx +  ${array_pktx[$i]}" | bc`
