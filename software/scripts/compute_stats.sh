@@ -5,9 +5,11 @@ function addr_long_to_short {
 	result=${1:12:4}
 }
 
-if [ $# -ne 2 ]
+
+#bug if more than 2 arguments, and less than 1
+if [ $# -gt 2 ] || [ $# -lt 1 ]
 then
-    echo "usage: $0 logfile asn_min"
+    echo "usage: $0 asn_min [logfile]"
     exit 2
 fi 
 
@@ -15,7 +17,20 @@ fi
 #constants
 TIMESLOT_DURATION=15
 NB_PKGEN_MIN=100         #to be statistically signficant, a node must generate more than XX packets    
-ASN_MIN=$2
+ASN_MIN=$1
+if [ $# -eq 1 ]
+then
+	LOGFILE="/home/theoleyre/exp-iotlab/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log";
+else
+	LOGFILE=$2;
+fi
+
+echo "Handling logfile $LOGFILE"
+if [ ! -f $LOGFILE ]
+then
+	echo "File '$LOGFILE' doesn't exist"
+	exit 3
+fi
 
 
 #Temporary files
@@ -25,7 +40,7 @@ TMPGEN=`mktemp` || exit 1
 TMPRX=`mktemp` || exit 1
 
 
-grep STAT_DATARX $1 | cut -d "|" -f 9 | cut -d "=" -f 2 > $TMPFILE
+grep STAT_DATARX $LOGFILE | cut -d "|" -f 9 | cut -d "=" -f 2 > $TMPFILE
 
 #get the node list
 sort -u $TMPFILE > $NODESLIST
@@ -41,7 +56,7 @@ do
 	addr_long_to_short $addr_l
 	addr_s=$result
 
-	#echo "node $addr_s: ($addr_l)"
+	echo "node $addr_s: ($addr_l)"
 
     #nb of packets received
     array_addrs[$index]=$addr_s
@@ -51,8 +66,8 @@ do
     array_pkdup[$index]=0
     
     #prepare the stats for this node
-    cat $1 | grep STAT_DATAGEN | grep "l2Src=$addr_l" > $TMPGEN
-    cat $1 | grep STAT_DATARX | grep "l2Src=$addr_l" > $TMPRX
+    cat $LOGFILE | grep STAT_DATAGEN | grep "l2Src=$addr_l" > $TMPGEN
+    cat $LOGFILE | grep STAT_DATARX | grep "l2Src=$addr_l" > $TMPRX
 
     #get the list of seqnum generated
     SEQNUMS=`cat $TMPGEN | cut -d "|" -f 8 | cut -d "=" -f 2` 
@@ -62,15 +77,13 @@ do
         #ASNs picked in the logs
         ASN_TX=`cat $TMPGEN | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
         ASN_RX=`cat $TMPRX | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
-        
-
+       
         #discard this packet when this sequence number was txed several times
         eval ASN_TX_ARRAY=($ASN_TX)
         if [ ${#ASN_TX_ARRAY[@]} -gt 1 ]
         then
            ASN_TX=0
         fi
-
 
         #I only consider the packets after the bootstrap period
         if [ "$ASN_TX" -gt "$ASN_MIN" ]
