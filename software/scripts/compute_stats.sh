@@ -15,9 +15,10 @@ fi
 
 
 #constants
-TIMESLOT_DURATION=15
-NB_PKGEN_MIN=100         #to be statistically signficant, a node must generate more than XX packets    
+TIMESLOT_DURATION=15	# in milliseconds
+RATIO_PK_RX=0.7			# at least this ratio of pk has to be transmitted to consider this source (else it probably crashed during the experiment)
 ASN_MIN=$1
+MAX_NB_PK_TX=0 			# initialization
 if [ $# -eq 1 ]
 then
 	LOGFILE="/home/theoleyre/exp-iotlab/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log";
@@ -138,6 +139,12 @@ do
     echo "avg_delay(ms)[$addr_s]=`echo "${array_delay[$index]} / ${array_pkrx[$index]} * 15" | bc -l`"
     echo "----------"
 
+	#remember the max nb. of pkts txed
+	if [ "$MAX_NB_PK_TX" -eq "0" ] || [ "${array_pktx[$index]}" -ge "$MAX_NB_PK_TX" ]
+	then
+		MAX_NB_PK_TX=${array_pktx[$index]}
+	fi
+
     #next node to consider
     (( index++ ))
 done
@@ -149,6 +156,9 @@ global_pktx=0
 global_pkrx=0
 global_pkdup=0
 global_delay=0
+NB_PKGEN_MIN=`echo "scale=0;$MAX_NB_PK_TX * $RATIO_PK_RX / 1" | bc`
+NB_NODES_DISCARDED=0
+echo "val=$NB_PKGEN_MIN"
 for i in ${!array_pktx[*]} 
 do
     if [ ${array_pktx[$i]} -gt $NB_PKGEN_MIN ]
@@ -158,11 +168,15 @@ do
         global_pkrx=`echo "$global_pkrx +  ${array_pkrx[$i]}" | bc`
         global_pkdup=`echo "$global_pkdup +  ${array_pkdup[$i]}" | bc`
         global_delay=`echo "$global_delay +  ${array_delay[$i]}" | bc`
+    else
+    	((NB_NODES_DISCARDED=NB_NODES_DISCARDED+1))
     fi
 done
 
 echo "--------AVG--------"
 echo "nb_nodes=$global_nbnodes"
+echo "nb_pk_tx_significant=$NB_PKGEN_MIN"
+echo "nb_nodes_discarded=$NB_NODES_DISCARDED"
 echo "nb_pk_tx[avg]=`echo "$global_pktx / $global_nbnodes"| bc -l`"
 echo "nb_pk_rx[avg]=`echo "$global_pkrx / $global_nbnodes"| bc -l`"
 echo "ratio_duplicates[avg]=`echo "$global_pkdup / ($global_pkrx * $global_nbnodes)"| bc -l`"
