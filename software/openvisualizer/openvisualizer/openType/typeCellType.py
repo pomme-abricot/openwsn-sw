@@ -19,6 +19,7 @@ class typeCellType(openType.openType):
     CELLTYPE_TXRX            = 4
     CELLTYPE_SERIALRX        = 5
     CELLTYPE_MORESERIALRX    = 6
+    CELLTYPE_BUSY            = 7
     
     def __init__(self):
         # log
@@ -48,6 +49,8 @@ class typeCellType(openType.openType):
             self.desc = 'SERIALRX'
         elif type==self.CELLTYPE_MORESERIALRX:
             self.desc = 'MORESERIALRX'
+        elif type==self.CELLTYPE_BUSY:
+            self.desc = 'BUSY'
         else:
             self.desc = 'unknown'
             self.addr = None
