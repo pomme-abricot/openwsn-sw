@@ -10,26 +10,29 @@ StateElem class.
 '''
 import logging
 log = logging.getLogger('moteState')
-log.setLevel(logging.ERROR)
+log.setLevel(logging.INFO)
 log.addHandler(logging.NullHandler())
 
 import copy
 import time
 import threading
 import json
+import time
+from datetime import datetime
+
 
 from openvisualizer.moteConnector import ParserStatus
 from openvisualizer.eventBus      import eventBusClient
-from openvisualizer.openType      import openType,         \
-                                         typeAsn,          \
-                                         typeAddr,         \
-                                         typeCellType,     \
-                                         typeComponent,    \
+from openvisualizer.openType      import openType, \
+                                         typeAsn, \
+                                         typeAddr, \
+                                         typeCellType, \
+                                         typeComponent, \
                                          typeRssi
 
 class OpenEncoder(json.JSONEncoder):
     def default(self, obj):
-        if   isinstance(obj, (StateElem,openType.openType)):
+        if   isinstance(obj, (StateElem, openType.openType)):
             return { obj.__class__.__name__: obj.__dict__ }
         else:
             return super(OpenEncoder, self).default(obj)
@@ -38,19 +41,26 @@ class StateElem(object):
     '''
     Abstract superclass for internal mote state classes.
     '''
-    
+   
     def __init__(self):
-        self.meta                      = [{}]
-        self.data                      = []
+        self.meta = [{}]
+        self.data = []
         
-        self.meta[0]['numUpdates']     = 0
-        self.meta[0]['lastUpdated']    = None
-    
+        self.meta[0]['numUpdates'] = 0
+        self.meta[0]['lastUpdated'] = None
+        self.meta[0]['lastPrint'] = datetime.now()         
+        
+        
+        
     #======================== public ==========================================
     
     def update(self):
-        self.meta[0]['lastUpdated']    = time.time()
-        self.meta[0]['numUpdates']    += 1
+        self.meta[0]['lastUpdated'] = time.time()
+        self.meta[0]['numUpdates'] += 1
+        
+        
+    def returnI(self):
+        return(self.i)
     
     def toJson(self, aspect='all', isPrettyPrint=False):
         '''
@@ -70,7 +80,7 @@ class StateElem(object):
                 is a list of the selected aspect's content.
         '''
         content = None
-        if aspect   == 'all':
+        if aspect == 'all':
             content = self._toDict()
         elif aspect == 'data':
             content = self._elemToDict(self.data)
@@ -80,8 +90,8 @@ class StateElem(object):
             raise ValueError('No aspect named {0}'.format(aspect))
             
         return json.dumps(content,
-                          sort_keys = bool(isPrettyPrint),
-                          indent    = 4 if isPrettyPrint else None)
+                          sort_keys=bool(isPrettyPrint),
+                          indent=4 if isPrettyPrint else None)
     
     def __str__(self):
         return self.toJson(isPrettyPrint=True)
@@ -94,26 +104,26 @@ class StateElem(object):
         returnVal['data'] = self._elemToDict(self.data)
         return returnVal
     
-    def _elemToDict(self,elem):
+    def _elemToDict(self, elem):
         returnval = []
         for rowNum in range(len(elem)):
-            if   isinstance(elem[rowNum],dict):
+            if   isinstance(elem[rowNum], dict):
                 returnval.append({})
-                for k,v in elem[rowNum].items():
-                    if isinstance(v,(list, tuple)):
-                        returnval[-1][k]    = [m._toDict() for m in v]
+                for k, v in elem[rowNum].items():
+                    if isinstance(v, (list, tuple)):
+                        returnval[-1][k] = [m._toDict() for m in v]
                     else:
-                        if   isinstance(v,openType.openType):
+                        if   isinstance(v, openType.openType):
                            returnval[-1][k] = str(v)
-                        elif isinstance(v,type):
+                        elif isinstance(v, type):
                            returnval[-1][k] = v.__name__
                         else:
                            returnval[-1][k] = v
-            elif isinstance(elem[rowNum],StateElem):
+            elif isinstance(elem[rowNum], StateElem):
                 parsedRow = elem[rowNum]._toDict()
                 assert('data' in parsedRow)
-                assert(len(parsedRow['data'])<2)
-                if len(parsedRow['data'])==1:
+                assert(len(parsedRow['data']) < 2)
+                if len(parsedRow['data']) == 1:
                     returnval.append(parsedRow['data'][0])
             else:
                 raise SystemError("can not parse elem of type {0}".format(type(elem[rowNum])))
@@ -121,113 +131,118 @@ class StateElem(object):
 
 class StateOutputBuffer(StateElem):
     
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
-        self.data[0]['index_write']         = notif.index_write
-        self.data[0]['index_read']          = notif.index_read
-        self.data[0]['buffer_write']        = notif.buffer_write
-        self.data[0]['buffer_read']         = notif.buffer_read
+        self.data[0]['index_write'] = notif.index_write
+        self.data[0]['index_read'] = notif.index_read
+        self.data[0]['buffer_write'] = notif.buffer_write
+        self.data[0]['buffer_read'] = notif.buffer_read
 
 class StateAsn(StateElem):
     
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
         if 'asn' not in self.data[0]:
-            self.data[0]['asn']             = typeAsn.typeAsn()
+            self.data[0]['asn'] = typeAsn.typeAsn()
         self.data[0]['asn'].update(notif.asn_0_1,
                                    notif.asn_2_3,
                                    notif.asn_4)
 
 class StateMacStats(StateElem):
     
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
-        self.data[0]['numSyncPkt']          = notif.numSyncPkt
-        self.data[0]['numSyncAck']          = notif.numSyncAck
-        self.data[0]['minCorrection']       = notif.minCorrection
-        self.data[0]['maxCorrection']       = notif.maxCorrection
-        self.data[0]['numDeSync']           = notif.numDeSync
-        if notif.numTicsTotal!=0:
-            dutyCycle                       = (float(notif.numTicsOn)/float(notif.numTicsTotal))*100
-            self.data[0]['dutyCycle']       = '{0:.02f}%'.format(dutyCycle)
+        self.data[0]['numSyncPkt'] = notif.numSyncPkt
+        self.data[0]['numSyncAck'] = notif.numSyncAck
+        self.data[0]['minCorrection'] = notif.minCorrection
+        self.data[0]['maxCorrection'] = notif.maxCorrection
+        self.data[0]['numDeSync'] = notif.numDeSync
+        if notif.numTicsTotal != 0:
+            dutyCycle = (float(notif.numTicsOn) / float(notif.numTicsTotal)) * 100
+            self.data[0]['dutyCycle'] = '{0:.02f}%'.format(dutyCycle)
+            # print('duty-cycle-ratio:{0}'.format(self.data[0]['dutyCycle']));
         else:
-            self.data[0]['dutyCycle']       = '?'
+            self.data[0]['dutyCycle'] = '?'
+            
+ 
+
+            
 
 class StateScheduleRow(StateElem):
 
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
-        self.data[0]['slotOffset']          = notif.slotOffset
+        self.data[0]['slotOffset'] = notif.slotOffset
         if 'type' not in self.data[0]:
-            self.data[0]['type']            = typeCellType.typeCellType()
+            self.data[0]['type'] = typeCellType.typeCellType()
         self.data[0]['type'].update(notif.type)
-        self.data[0]['shared']              = notif.shared
-        self.data[0]['channelOffset']       = notif.channelOffset
+        self.data[0]['shared'] = notif.shared
+        self.data[0]['channelOffset'] = notif.channelOffset
         if 'neighbor' not in self.data[0]:
-            self.data[0]['neighbor']        = typeAddr.typeAddr()
+            self.data[0]['neighbor'] = typeAddr.typeAddr()
         self.data[0]['neighbor'].update(notif.neighbor_type,
                                         notif.neighbor_bodyH,
                                         notif.neighbor_bodyL)
-        self.data[0]['numRx']               = notif.numRx
-        self.data[0]['numTx']               = notif.numTx
-        self.data[0]['numTxACK']            = notif.numTxACK
-        self.data[0]['trackInstance']       = notif.trackInstance
+        self.data[0]['numRx'] = notif.numRx
+        self.data[0]['numTx'] = notif.numTx
+        self.data[0]['numTxACK'] = notif.numTxACK
+        self.data[0]['trackInstance'] = notif.trackInstance
         if 'trackOwner' not in self.data[0]:
-            self.data[0]['trackOwner']        = typeAddr.typeAddr()
+            self.data[0]['trackOwner'] = typeAddr.typeAddr()
         self.data[0]['trackOwner'].update(notif.trackOwner_type,
                                         notif.trackOwner_bodyH,
                                         notif.trackOwner_bodyL)
         if 'lastUsedAsn' not in self.data[0]:
-            self.data[0]['lastUsedAsn']     = typeAsn.typeAsn()
+            self.data[0]['lastUsedAsn'] = typeAsn.typeAsn()
         self.data[0]['lastUsedAsn'].update(notif.lastUsedAsn_0_1,
                                            notif.lastUsedAsn_2_3,
                                            notif.lastUsedAsn_4)
 
 class StateBackoff(StateElem):
     
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
-        self.data[0]['backoffExponent']     = notif.backoffExponent
-        self.data[0]['backoff']             = notif.backoff
+        self.data[0]['backoffExponent'] = notif.backoffExponent
+        self.data[0]['backoff'] = notif.backoff
 
 class StateQueueRow(StateElem):
 
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
         
 
-        self.data[0]['creator']     = notif.creator
-        self.data[0]['owner']       = notif.owner
+        self.data[0]['creator'] = notif.creator
+        self.data[0]['owner'] = notif.owner
 
         if 'notif.creator' not in self.data[0]:
-            self.data[0]['creator']         = typeComponent.typeComponent()
+            self.data[0]['creator'] = typeComponent.typeComponent()
         self.data[0]['creator'].update(notif.creator)
         if 'notif.owner' not in self.data[0]:
-            self.data[0]['owner']           = typeComponent.typeComponent()
+            self.data[0]['owner'] = typeComponent.typeComponent()
         self.data[0]['owner'].update(notif.owner)
 
 
 
         if 'timeoutAsn' not in self.data[0]:
-            self.data[0]['timeoutAsn']     = typeAsn.typeAsn()
+            self.data[0]['timeoutAsn'] = typeAsn.typeAsn()
         self.data[0]['timeoutAsn'].update(notif.timeoutAsn_0_1,
                                            notif.timeoutAsn_2_3,
                                            notif.timeoutAsn_4)
-        self.data[0]['trackInstance']       = notif.trackInstance
+        self.data[0]['trackInstance'] = notif.trackInstance
         if 'trackOwner' not in self.data[0]:
-            self.data[0]['trackOwner']        = typeAddr.typeAddr()
+            self.data[0]['trackOwner'] = typeAddr.typeAddr()
         self.data[0]['trackOwner'].update(notif.trackOwner_type,
                                         notif.trackOwner_bodyH,
                                         notif.trackOwner_bodyL)
@@ -235,49 +250,49 @@ class StateQueueRow(StateElem):
    
 class StateNeighborsRow(StateElem):
     
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
-        self.data[0]['used']                     = notif.used
-        self.data[0]['parentPreference']         = notif.parentPreference
-        self.data[0]['stableNeighbor']           = notif.stableNeighbor
-        self.data[0]['switchStabilityCounter']   = notif.switchStabilityCounter
-        self.data[0]['joinPrio']                 = notif.joinPrio
+        self.data[0]['used'] = notif.used
+        self.data[0]['parentPreference'] = notif.parentPreference
+        self.data[0]['stableNeighbor'] = notif.stableNeighbor
+        self.data[0]['switchStabilityCounter'] = notif.switchStabilityCounter
+        self.data[0]['joinPrio'] = notif.joinPrio
         if 'addr' not in self.data[0]:
-            self.data[0]['addr']                 = typeAddr.typeAddr()
+            self.data[0]['addr'] = typeAddr.typeAddr()
         self.data[0]['addr'].update(notif.addr_type,
                                     notif.addr_bodyH,
                                     notif.addr_bodyL)
-        self.data[0]['DAGrank']                  = notif.DAGrank
+        self.data[0]['DAGrank'] = notif.DAGrank
         if 'rssi' not in self.data[0]:
-            self.data[0]['rssi']                 = typeRssi.typeRssi()
+            self.data[0]['rssi'] = typeRssi.typeRssi()
         self.data[0]['rssi'].update(notif.rssi)
-        self.data[0]['numRx']                    = notif.numRx
-        self.data[0]['numTx']                    = notif.numTx
-        self.data[0]['numTxACK']                 = notif.numTxACK
-        self.data[0]['numWraps']                 = notif.numWraps
+        self.data[0]['numRx'] = notif.numRx
+        self.data[0]['numTx'] = notif.numTx
+        self.data[0]['numTxACK'] = notif.numTxACK
+        self.data[0]['numWraps'] = notif.numWraps
         if 'asn' not in self.data[0]:
-            self.data[0]['asn']                  = typeAsn.typeAsn()
+            self.data[0]['asn'] = typeAsn.typeAsn()
         self.data[0]['asn'].update(notif.asn_0_1,
                                    notif.asn_2_3,
                                    notif.asn_4)
 
 class StateIsSync(StateElem):
     
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
-        self.data[0]['isSync']              = notif.isSync
+        self.data[0]['isSync'] = notif.isSync
 
 class StateIdManager(StateElem):
     
-    def __init__(self,eventBusClient,moteConnector):
+    def __init__(self, eventBusClient, moteConnector):
         StateElem.__init__(self)
-        self.eventBusClient  = eventBusClient
-        self.moteConnector   = moteConnector
-        self.isDAGroot       = None
+        self.eventBusClient = eventBusClient
+        self.moteConnector = moteConnector
+        self.isDAGroot = None
     
     def get16bAddr(self):
         try:
@@ -285,35 +300,35 @@ class StateIdManager(StateElem):
         except IndexError:
             return None
     
-    def update(self,notif):
+    def update(self, notif):
     
         # update state
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
         
-        self.data[0]['isDAGroot']           = notif.isDAGroot
+        self.data[0]['isDAGroot'] = notif.isDAGroot
         
         if 'myPANID' not  in self.data[0]:
-            self.data[0]['myPANID']         = typeAddr.typeAddr()
-            self.data[0]['myPANID'].desc    = 'panId'
-        self.data[0]['myPANID'].addr        = [
+            self.data[0]['myPANID'] = typeAddr.typeAddr()
+            self.data[0]['myPANID'].desc = 'panId'
+        self.data[0]['myPANID'].addr = [
             notif.myPANID_0,
             notif.myPANID_1,
         ]
         
         if 'my16bID' not  in self.data[0]:
-            self.data[0]['my16bID']         = typeAddr.typeAddr()
-            self.data[0]['my16bID'].desc    = '16b'
-        self.data[0]['my16bID'].addr        = [
+            self.data[0]['my16bID'] = typeAddr.typeAddr()
+            self.data[0]['my16bID'].desc = '16b'
+        self.data[0]['my16bID'].addr = [
             notif.my16bID_0,
             notif.my16bID_1,
         ]
         
         if 'my64bID' not  in self.data[0]:
-            self.data[0]['my64bID']         = typeAddr.typeAddr()
-            self.data[0]['my64bID'].desc    = '64b'
-        self.data[0]['my64bID'].addr        = [
+            self.data[0]['my64bID'] = typeAddr.typeAddr()
+            self.data[0]['my64bID'].desc = '64b'
+        self.data[0]['my64bID'].addr = [
             notif.my64bID_0,
             notif.my64bID_1,
             notif.my64bID_2,
@@ -325,9 +340,9 @@ class StateIdManager(StateElem):
         ]
         
         if 'myPrefix' not  in self.data[0]:
-            self.data[0]['myPrefix']        = typeAddr.typeAddr()
-            self.data[0]['myPrefix'].desc   = 'prefix'
-        self.data[0]['myPrefix'].addr       = [
+            self.data[0]['myPrefix'] = typeAddr.typeAddr()
+            self.data[0]['myPrefix'].desc = 'prefix'
+        self.data[0]['myPrefix'].addr = [
             notif.myPrefix_0,
             notif.myPrefix_1,
             notif.myPrefix_2,
@@ -339,12 +354,12 @@ class StateIdManager(StateElem):
         ]
         
         # announce information about the DAG root to the eventBus
-        if  self.isDAGroot!=self.data[0]['isDAGroot']:
+        if  self.isDAGroot != self.data[0]['isDAGroot']:
             
             # dispatch
             self.eventBusClient.dispatch(
-                signal        = 'infoDagRoot',
-                data          = {
+                signal='infoDagRoot',
+                data={
                                     'isDAGroot':    self.data[0]['isDAGroot'],
                                     'eui64':        self.data[0]['my64bID'].addr,
                                     'serialPort':   self.moteConnector.serialport,
@@ -356,52 +371,52 @@ class StateIdManager(StateElem):
 
 class StateMyDagRank(StateElem):
     
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
-        self.data[0]['myDAGrank']           = notif.myDAGrank
+        self.data[0]['myDAGrank'] = notif.myDAGrank
 
 class StatekaPeriod(StateElem):
     
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
-        self.data[0]['kaPeriod']            = notif.kaPeriod
+        self.data[0]['kaPeriod'] = notif.kaPeriod
 
 class StateTable(StateElem):
 
-    def __init__(self,rowClass,columnOrder=None):
+    def __init__(self, rowClass, columnOrder=None):
         StateElem.__init__(self)
-        self.meta[0]['rowClass']            = rowClass
+        self.meta[0]['rowClass'] = rowClass
         if columnOrder:
-            self.meta[0]['columnOrder']     = columnOrder
-        self.data                           = []
+            self.meta[0]['columnOrder'] = columnOrder
+        self.data = []
 
-    def update(self,notif):
+    def update(self, notif):
         StateElem.update(self)
-        while len(self.data)<notif.row+1:
+        while len(self.data) < notif.row + 1:
             self.data.append(self.meta[0]['rowClass']())
         self.data[notif.row].update(notif)
 
 class moteState(eventBusClient.eventBusClient):
     
-    ST_OUPUTBUFFER      = 'OutputBuffer'
-    ST_ASN              = 'Asn'
-    ST_MACSTATS         = 'MacStats'
-    ST_SCHEDULEROW      = 'ScheduleRow'
-    ST_SCHEDULE         = 'Schedule'
-    ST_BACKOFF          = 'Backoff'
-    ST_QUEUEROW         = 'QueueRow'
-    ST_QUEUE            = 'Queue'
-    ST_NEIGHBORSROW     = 'NeighborsRow'
-    ST_NEIGHBORS        = 'Neighbors'
-    ST_ISSYNC           = 'IsSync'
-    ST_IDMANAGER        = 'IdManager'
-    ST_MYDAGRANK        = 'MyDagRank'
-    ST_KAPERIOD         = 'kaPeriod'
-    ST_ALL              = [
+    ST_OUPUTBUFFER = 'OutputBuffer'
+    ST_ASN = 'Asn'
+    ST_MACSTATS = 'MacStats'
+    ST_SCHEDULEROW = 'ScheduleRow'
+    ST_SCHEDULE = 'Schedule'
+    ST_BACKOFF = 'Backoff'
+    ST_QUEUEROW = 'QueueRow'
+    ST_QUEUE = 'Queue'
+    ST_NEIGHBORSROW = 'NeighborsRow'
+    ST_NEIGHBORS = 'Neighbors'
+    ST_ISSYNC = 'IsSync'
+    ST_IDMANAGER = 'IdManager'
+    ST_MYDAGRANK = 'MyDagRank'
+    ST_KAPERIOD = 'kaPeriod'
+    ST_ALL = [
         ST_OUPUTBUFFER,
         ST_ASN,
         ST_MACSTATS,
@@ -410,36 +425,36 @@ class moteState(eventBusClient.eventBusClient):
         ST_QUEUE,
         ST_NEIGHBORS,
         ST_ISSYNC,
-        ST_IDMANAGER, 
+        ST_IDMANAGER,
         ST_MYDAGRANK,
         ST_KAPERIOD,
     ]
     
-    TRIGGER_DAGROOT     = 'DAGroot'
-    TRIGGER_ALL         = [
+    TRIGGER_DAGROOT = 'DAGroot'
+    TRIGGER_ALL = [
         TRIGGER_DAGROOT,
     ]
     
-    def __init__(self,moteConnector):
+    def __init__(self, moteConnector):
         
         # log
         log.info("create instance")
         
         # store params
-        self.moteConnector   = moteConnector
+        self.moteConnector = moteConnector
         
       
         # local variables
-        self.parserStatus                   = ParserStatus.ParserStatus()
-        self.stateLock                      = threading.Lock()
-        self.state                          = {}
+        self.parserStatus = ParserStatus.ParserStatus()
+        self.stateLock = threading.Lock()
+        self.state = {}
         
-        self.state[self.ST_OUPUTBUFFER]     = StateOutputBuffer()
-        self.state[self.ST_ASN]             = StateAsn()
-        self.state[self.ST_MACSTATS]        = StateMacStats()
-        self.state[self.ST_SCHEDULE]        = StateTable(
+        self.state[self.ST_OUPUTBUFFER] = StateOutputBuffer()
+        self.state[self.ST_ASN] = StateAsn()
+        self.state[self.ST_MACSTATS] = StateMacStats()
+        self.state[self.ST_SCHEDULE] = StateTable(
                                                 StateScheduleRow,
-                                                columnOrder = '.'.join(
+                                                columnOrder='.'.join(
                                                     [
                                                         'slotOffset',
                                                         'type',
@@ -455,21 +470,21 @@ class moteState(eventBusClient.eventBusClient):
                                                     ]
                                                 )
                                               )
-        self.state[self.ST_BACKOFF]         = StateBackoff()
-        self.state[self.ST_QUEUE]           = StateTable(
+        self.state[self.ST_BACKOFF] = StateBackoff()
+        self.state[self.ST_QUEUE] = StateTable(
                                                 StateQueueRow,
-                                                columnOrder = '.'.join(
+                                                columnOrder='.'.join(
                                                     [
                                                         'creator',
                                                         'owner',
                                                         'timeoutAsn',
                                                         'trackInstance',
-                                                        'trackOwner',                                                    ]
+                                                        'trackOwner', ]
                                                 )
                                               )
-        self.state[self.ST_NEIGHBORS]       = StateTable(
+        self.state[self.ST_NEIGHBORS] = StateTable(
                                                 StateNeighborsRow,
-                                                columnOrder = '.'.join(
+                                                columnOrder='.'.join(
                                                     [
                                                         'used',
                                                         'parentPreference',
@@ -486,13 +501,13 @@ class moteState(eventBusClient.eventBusClient):
                                                         'joinPrio'
                                                     ]
                                                 ))
-        self.state[self.ST_ISSYNC]          = StateIsSync()
-        self.state[self.ST_IDMANAGER]       = StateIdManager(
+        self.state[self.ST_ISSYNC] = StateIsSync()
+        self.state[self.ST_IDMANAGER] = StateIdManager(
                                                 self,
                                                 self.moteConnector
                                               )
-        self.state[self.ST_MYDAGRANK]       = StateMyDagRank()
-        self.state[self.ST_KAPERIOD]        = StatekaPeriod()
+        self.state[self.ST_MYDAGRANK] = StateMyDagRank()
+        self.state[self.ST_KAPERIOD] = StatekaPeriod()
         
         self.notifHandlers = {
             self.parserStatus.named_tuple[self.ST_OUPUTBUFFER]:
@@ -522,8 +537,8 @@ class moteState(eventBusClient.eventBusClient):
         # initialize parent class
         eventBusClient.eventBusClient.__init__(
             self,
-            name             = 'moteState@{0}'.format(self.moteConnector.serialport),
-            registrations    = [
+            name='moteState@{0}'.format(self.moteConnector.serialport),
+            registrations=[
                 {
                     'sender'      : 'moteConnector@{0}'.format(self.moteConnector.serialport),
                     'signal'      : 'fromMote.status',
@@ -542,7 +557,7 @@ class moteState(eventBusClient.eventBusClient):
         
         return returnVal
     
-    def getStateElem(self,elemName):
+    def getStateElem(self, elemName):
         
         if elemName not in self.state:
             raise ValueError('No state called {0}'.format(elemName))
@@ -553,12 +568,12 @@ class moteState(eventBusClient.eventBusClient):
         
         return returnVal
     
-    def triggerAction(self,action):
+    def triggerAction(self, action):
         
         # dispatch
         self.dispatch(
-            signal        = 'cmdToMote',
-            data          = {
+            signal='cmdToMote',
+            data={
                                 'serialPort':    self.moteConnector.serialport,
                                 'action':        action,
                             },
@@ -566,7 +581,7 @@ class moteState(eventBusClient.eventBusClient):
     
     #======================== private =========================================
     
-    def _receivedStatus_notif(self,sender,signal,data):
+    def _receivedStatus_notif(self, sender, signal, data):
         
         # log
         if log.isEnabledFor(logging.DEBUG):
@@ -577,8 +592,8 @@ class moteState(eventBusClient.eventBusClient):
         
         # call handler
         found = False
-        for k,v in self.notifHandlers.items():
-            if self._isnamedtupleinstance(data,k):
+        for k, v in self.notifHandlers.items():
+            if self._isnamedtupleinstance(data, k):
                 found = True
                 v(data)
                 break
@@ -586,8 +601,8 @@ class moteState(eventBusClient.eventBusClient):
         # unlock the state data
         self.stateLock.release()
         
-        if found==False:
+        if found == False:
             raise SystemError("No handler for data {0}".format(data))
     
-    def _isnamedtupleinstance(self,var,tupleInstance):
-        return var._fields==tupleInstance._fields
+    def _isnamedtupleinstance(self, var, tupleInstance):
+        return var._fields == tupleInstance._fields

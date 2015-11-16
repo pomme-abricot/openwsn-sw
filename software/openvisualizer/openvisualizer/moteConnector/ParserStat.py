@@ -16,6 +16,8 @@ from pydispatch import dispatcher
 from ParserException import ParserException
 import Parser
 
+
+
 class ParserStat(Parser.Parser):
     
     HEADER_LENGTH  = 2
@@ -35,6 +37,8 @@ class ParserStat(Parser.Parser):
     SERTYPE_PKT_BUFFEROVERFLOW = 11
     SERTYPE_DIOTX              = 12
     SERTYPE_DAOTX              = 13
+    SERTYPE_NODESTATE          = 14
+
  
     def __init__(self):
         
@@ -48,7 +52,10 @@ class ParserStat(Parser.Parser):
           'asn_2_3',                   # H
           'asn_0_1',                   # H
          ]
-    
+
+
+       
+
     
     #======================== public ==========================================
     
@@ -198,6 +205,8 @@ class ParserStat(Parser.Parser):
             log.debug('received data {0}'.format(input))
         log.debug('received data {0}'.format(input))
         
+        
+        
         #headers
         addr = input[:2]  
         mycomponent = input[2]   
@@ -305,6 +314,18 @@ class ParserStat(Parser.Parser):
                 statType,
                 self.BytesToAddr(input[9:17])
                 ));
+                
+        elif (statType == self.SERTYPE_NODESTATE):
+          log.info('STAT_NODESTATE|addr={0}|comp={1}|asn={2}|statType={3}|TicsOn={4}|TicsTotal={5}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                input[9:13],
+                input[13:17]
+                ));
+
+   
 
         else:
             print('received data {0}, type {1}'.format(input, statType))

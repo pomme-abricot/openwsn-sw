@@ -122,7 +122,7 @@ class ParserStatus(Parser.Parser):
                                         'maxCorrection',             # h
                                         'numDeSync',                 # B
                                         'numTicsOn',                 # I
-                                        'numTicsTotal',              # I
+                                        'numTicsTotal',              # I                                        
                                     ],
                                 )
         self._addFieldsParser   (
