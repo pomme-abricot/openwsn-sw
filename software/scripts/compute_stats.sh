@@ -15,6 +15,7 @@ fi
 
 
 #constants
+TABFILE="results.csv"
 TIMESLOT_DURATION=15	# in milliseconds
 RATIO_PK_RX=0.7			# at least this ratio of pk has to be transmitted to consider this source (else it probably crashed during the experiment)
 ASN_MIN=$1
@@ -192,6 +193,8 @@ global_pdr_avg=`echo "$global_pkrx / $global_pktx"| bc -l`
 global_delay_avg=`echo "$global_delay / $global_pkrx"| bc -l`
 global_jain_pdr=`echo "($sum_pdr)^2 / ($sum2_pdr * $global_nbnodes)"| bc -l`
 global_jain_delay=`echo "($sum_delay)^2 / ($sum2_delay * $global_nbnodes)"| bc -l`
+global_dupratio=`echo "$global_pkdup / ($global_pkrx * $global_nbnodes)"| bc -l`
+
 
 echo "--------AVG--------"
 echo "nb_nodes=$global_nbnodes"
@@ -199,13 +202,21 @@ echo "nb_pk_tx_significant=$NB_PKGEN_MIN"
 echo "nb_nodes_discarded=$NB_NODES_DISCARDED"
 echo "nb_pk_tx[avg]=`echo "$global_pktx / $global_nbnodes"| bc -l`"
 echo "nb_pk_rx[avg]=`echo "$global_pkrx / $global_nbnodes"| bc -l`"
-echo "dupuratio_data[avg]=`echo "$global_pkdup / ($global_pkrx * $global_nbnodes)"| bc -l`"
+echo "dupuratio_data[avg]=$global_dupratio"
 echo "pdr_data[avg]=$global_pdr_avg" 
 echo "jain_pdr=$global_jain_pdr"
 echo "avg_delay(ASN)[avg]=$global_delay_avg"
 echo "avg_delay(ms)[avg]=`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`"
 echo "jain_delay=$global_jain_delay"
 echo "-------------------"
+
+
+if [ ! -f $TABFILE ]
+then
+	echo "nb_nodes	nb_pk_tx_significant	nb_nodes_discarded	nb_pk_tx	nb_pk_rx	dupuratio_data	pdr_data	jain_pdr	avg_delay(ASN)	avg_delay(ms)	jain_delay" > $TABFILE
+fi
+
+echo "$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $global_nbnodes"| bc -l`	`echo "$global_pkrx / $global_nbnodes"| bc -l`	$global_dupratio	$global_pdr_avg	$global_jain_pdr	$global_delay_avg	`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`	$global_jain_delay" >> $TABFILE
 
 
 
