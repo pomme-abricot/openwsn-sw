@@ -16,7 +16,7 @@ from pydispatch import dispatcher
 from ParserException import ParserException
 import Parser
 
-
+from array import array
 
 class ParserStat(Parser.Parser):
     
@@ -244,11 +244,11 @@ class ParserStat(Parser.Parser):
             self.LogPktTx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_TX");
 
         elif (statType == self.SERTYPE_PKT_RX):
-           self.LogPktRx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_RX");
+            self.LogPktRx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_RX");
 
 
         elif (statType == self.SERTYPE_CELL_ADD):
-           log.info('STAT_CELL_ADD|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
+            log.info('STAT_CELL_ADD|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -262,7 +262,7 @@ class ParserStat(Parser.Parser):
                 self.BytesToAddr(input[23:31])
                 ));       
         elif (statType == self.SERTYPE_CELL_REMOVE):
-           log.info('STAT_CELL_REMOVE|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
+            log.info('STAT_CELL_REMOVE|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -276,14 +276,14 @@ class ParserStat(Parser.Parser):
                 self.BytesToAddr(input[23:31])
                 ));
         elif (statType == self.SERTYPE_ACK_TX):
-           log.info('STAT_ACK_TX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
+            log.info('STAT_ACK_TX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
                 statType
                 ));
         elif (statType == self.SERTYPE_ACK_RX):
-           log.info('STAT_ACK_RX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
+            log.info('STAT_ACK_RX|addr={0}|comp={1}|asn={2}|statType={3}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -299,7 +299,7 @@ class ParserStat(Parser.Parser):
             self.LogPktRx(addr, mycomponent, asnbytes, statType, input, "STAT_PK_BUFFEROVERFLOW");
 
         elif (statType == self.SERTYPE_DIOTX):
-          log.info('STAT_DIOTX|addr={0}|comp={1}|asn={2}|statType={3}|'.format(
+            log.info('STAT_DIOTX|addr={0}|comp={1}|asn={2}|statType={3}|'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -307,7 +307,7 @@ class ParserStat(Parser.Parser):
                 ));
 
         elif (statType == self.SERTYPE_DAOTX):
-          log.info('STAT_DAOTX|addr={0}|comp={1}|asn={2}|statType={3}|parent={4}'.format(
+            log.info('STAT_DAOTX|addr={0}|comp={1}|asn={2}|statType={3}|parent={4}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -316,13 +316,22 @@ class ParserStat(Parser.Parser):
                 ));
                 
         elif (statType == self.SERTYPE_NODESTATE):
-          log.info('STAT_NODESTATE|addr={0}|comp={1}|asn={2}|statType={3}|TicsOn={4}|TicsTotal={5}'.format(
+            
+            TicsOn = struct.unpack('<I',''.join([chr(c) for c in input[9:13]]))[0]
+            TicsTotal = struct.unpack('<I',''.join([chr(c) for c in input[13:17]]))[0]
+            if (TicsTotal > 0):
+                dcr = float(TicsOn) / float(TicsTotal) * 100
+            else:
+                dcr = 100
+                
+                
+            log.info('STAT_NODESTATE|addr={0}|comp={1}|asn={2}|statType={3}|DutyCycleRatio={4}|NumDeSync={5}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
                 statType,
-                input[9:13],
-                input[13:17]
+                dcr,
+                input[17]
                 ));
 
    
