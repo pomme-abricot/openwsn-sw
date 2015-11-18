@@ -114,13 +114,14 @@ class ParserStatus(Parser.Parser):
                                     3,
                                     5,
                                     'MacStats',
-                                    '<BBhhBII',
+                                    '<BBhhBBII',
                                     [
                                         'numSyncPkt' ,               # B
                                         'numSyncAck',                # B
                                         'minCorrection',             # h
                                         'maxCorrection',             # h
                                         'numDeSync',                 # B
+                                        'isSync',                    # B
                                         'numTicsOn',                 # I
                                         'numTicsTotal',              # I                                        
                                     ],

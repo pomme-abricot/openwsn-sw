@@ -230,6 +230,11 @@
 	                                                        </span>
 	                                                    </a>
 	                                                    <a class="list-group-item">
+	                                                        <i class="fa fa-upload fa-fw"></i> Is Sync.
+	                                                        <span class="pull-right text-muted small" id="issync_fld"><em></em>
+	                                                        </span>
+	                                                    </a>
+	                                                    <a class="list-group-item">
 	                                                        <i class="fa fa-upload fa-fw"></i> Radio Duty Cycle
 	                                                        <span class="pull-right text-muted small" id="dutycycle_fld"><em></em>
 	                                                        </span>
@@ -319,6 +324,7 @@
 									        $("#syncpkts_fld").text(     hasJson ? macstatsJson.numSyncPkt         : '');
 									        $("#syncacks_fld").text(     hasJson ? macstatsJson.numSyncAck         : '');
 									        $("#desyncpkts_fld").text(   hasJson ? macstatsJson.numDeSync          : '');
+									        $("#issync_fld").text(       hasJson ? macstatsJson.isSync             : '');
 									        $("#dutycycle_fld").text(    hasJson ? macstatsJson.dutyCycle          : '');
                                             $("#kaperiod_fld").text(     hasJson ? kaPeriodJson.kaPeriod           : '');
 									        

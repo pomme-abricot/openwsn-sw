@@ -163,6 +163,7 @@ class StateMacStats(StateElem):
         self.data[0]['minCorrection'] = notif.minCorrection
         self.data[0]['maxCorrection'] = notif.maxCorrection
         self.data[0]['numDeSync'] = notif.numDeSync
+	self.data[0]['isSync'] = notif.isSync
         if notif.numTicsTotal != 0:
             dutyCycle = (float(notif.numTicsOn) / float(notif.numTicsTotal)) * 100
             self.data[0]['dutyCycle'] = '{0:.02f}%'.format(dutyCycle)
