@@ -113,6 +113,8 @@ errorDescriptions = {
   67: "serial overflow for output in openserial (indexWrite {0}, location {1})",
   68: "buffer overflow: too many packets (space left {0}, reserved for management {1})",
   69: "too many cells to reserve in the sixtop request (asked {0}, max {1})",
-  70: "generic error {0} {1}",
-  71: "unknown error, location {0}, arg {1}"
+  70: "a packet cannot be allocated for component {0} when the node is not synchronized",
+  71: "the component {0} cannot trigger this command (location {1})",
+  72: "generic error {0} {1}",
+  73: "unknown error, location {0}, arg {1}"
 }
