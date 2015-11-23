@@ -115,6 +115,7 @@ errorDescriptions = {
   69: "too many cells to reserve in the sixtop request (asked {0}, max {1})",
   70: "a packet cannot be allocated for component {0} when the node is not synchronized",
   71: "the component {0} cannot trigger this command (location {1})",
-  72: "generic error {0} {1}",
-  73: "unknown error, location {0}, arg {1}"
+  72: "Sixtop cannot remove any cell to the parent {0}{1} (none existing)",
+  73: "generic error {0} {1}",
+  74: "unknown error, location {0}, arg {1}"
 }
