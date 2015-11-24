@@ -16,6 +16,8 @@ fi
 
 #constants
 TABFILE="results.csv"
+DELAYDISTRIBFILE="delay_distrib.txt"
+LOSSDISTRIBFILE="loss_distrib.txt"
 TIMESLOT_DURATION=15	# in milliseconds
 RATIO_PK_RX=0.7			# at least this ratio of pk has to be transmitted to consider this source (else it probably crashed during the experiment)
 ASN_MIN=$1
@@ -40,6 +42,8 @@ TMPFILE=`mktemp` || exit 1
 NODESLIST=`mktemp` || exit 1
 TMPGEN=`mktemp` || exit 1
 TMPRX=`mktemp` || exit 1
+rm $DELAYDISTRIBFILE
+rm $LOSSDISTRIBFILE
 
 
 grep STAT_DATARX $LOGFILE | cut -d "|" -f 9 | cut -d "=" -f 2 > $TMPFILE
@@ -94,6 +98,7 @@ do
             #nb of packets generated
             (( array_pktx[index]++ ))
 
+
             #the packet was received: lets' increase the delay
             if [ -n "$ASN_RX" ] 
             then
@@ -117,12 +122,19 @@ do
                 (( array_pkrx[index]++ ))
 
                 #bug
-                if [ "$hop_delay" -le "0" ]
+                if [ "$hop_delay" -lt "0" ]
                 then
-                    echo "ERROR  - negative delay for one hop"
+                    echo "ERROR  - negative delay for one hop: $hop_delay (asn_tx $ASN_TX, asn_rx $ASN_RX, src $addr_s, seqnum $seqnum) "
                     exit
                 fi
+                
+           		#distribution of delays (delay = -1 if the packet is dropped)
+            	echo "$ASN_TX	$hop_delay" >> $DELAYDISTRIBFILE
+			else
+           		echo "$ASN_TX" >> $LOSSDISTRIBFILE
+
             fi
+            
         fi
 
     done
@@ -211,6 +223,7 @@ echo "jain_delay=$global_jain_delay"
 echo "-------------------"
 
 
+#stats in a csv file
 if [ ! -f $TABFILE ]
 then
 	echo "nb_nodes	nb_pk_tx_significant	nb_nodes_discarded	nb_pk_tx	nb_pk_rx	dupuratio_data	pdr_data	jain_pdr	avg_delay(ASN)	avg_delay(ms)	jain_delay" > $TABFILE
@@ -219,6 +232,8 @@ fi
 echo "$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $global_nbnodes"| bc -l`	`echo "$global_pkrx / $global_nbnodes"| bc -l`	$global_dupratio	$global_pdr_avg	$global_jain_pdr	$global_delay_avg	`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`	$global_jain_delay" >> $TABFILE
 
 
+#delay distribution
+gnuplot < delay_distrib.graph  > delay_distrib.pdf
 
 
 

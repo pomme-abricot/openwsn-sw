@@ -1,0 +1,22 @@
+set encoding utf8
+set macros
+set terminal postscript eps enhanced color 24
+
+#key
+#set key top outside horizontal autotitle columnhead
+
+#y
+set ylabel "Delay"
+set xlabel "Time (in ASN)"
+
+
+#options
+set style data histogram
+set style histogram rowstacked
+set style fill solid 1.0 noborder
+
+#set boxwidth 0.75
+#set xtics ("Duplicates" 1, "Seqnums" 2, "Acked Duplicates" 3)
+
+#the data
+plot "delay_distrib.txt" using 1:2 with points title "end-to-end delay", "loss_distrib.txt" using 1:(1) with points title "losses"
