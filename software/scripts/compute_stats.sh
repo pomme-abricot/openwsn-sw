@@ -18,10 +18,12 @@ fi
 TABFILE="results.csv"
 DELAYDISTRIBFILE="delay_distrib.txt"
 LOSSDISTRIBFILE="loss_distrib.txt"
+RCVDDISTRIBFILE="rcvd_distrib.txt"
 TIMESLOT_DURATION=15	# in milliseconds
 RATIO_PK_RX=0.7			# at least this ratio of pk has to be transmitted to consider this source (else it probably crashed during the experiment)
 ASN_MIN=$1
 MAX_NB_PK_TX=0 			# initialization
+ASN_AGGREGATE_INTERVAL=5000	#average pk lossses every ASN_AGGREGATE_INTERVAL ASN
 if [ $# -eq 1 ]
 then
 	LOGFILE="/home/theoleyre/exp-iotlab/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log";
@@ -44,6 +46,7 @@ TMPGEN=`mktemp` || exit 1
 TMPRX=`mktemp` || exit 1
 rm $DELAYDISTRIBFILE
 rm $LOSSDISTRIBFILE
+rm $RCVDDISTRIBFILE
 
 
 grep STAT_DATARX $LOGFILE | cut -d "|" -f 9 | cut -d "=" -f 2 > $TMPFILE
@@ -70,6 +73,10 @@ do
     array_pktx[$index]=0
     array_delay[$index]=0
     array_pkdup[$index]=0
+    index_agg=0
+    index_agg_max=0
+    index_agg_min=-1
+ 
     
     #prepare the stats for this node
     cat $LOGFILE | grep STAT_DATAGEN | grep "l2Src=$addr_l" > $TMPGEN
@@ -84,6 +91,28 @@ do
         ASN_TX=`cat $TMPGEN | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
         ASN_RX=`cat $TMPRX | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
        
+        #to aggregate values (for histograms)
+        index_agg_cur=`echo "$ASN_TX / $ASN_AGGREGATE_INTERVAL" | bc` 
+        if [ $index_agg_cur -ne $index_agg ]
+        then
+        	index_agg=$index_agg_cur
+        	#echo $index_agg_cur
+        	
+        	if [ $index_agg_min -eq -1 ] || [ $index_agg_min -gt $index_agg_cur ]
+        	then
+        		index_agg_min=$index_agg_cur
+        	fi
+        	
+        	
+        	if [ $index_agg -gt $index_agg_max ]
+        	then
+        		index_agg_max=$index_agg
+        		pk_rcvd[$index_agg]=0
+				pk_losses[$index_agg]=0
+        	fi
+        fi
+       
+       
         #discard this packet when this sequence number was txed several times
         eval ASN_TX_ARRAY=($ASN_TX)
         if [ ${#ASN_TX_ARRAY[@]} -gt 1 ]
@@ -97,8 +126,7 @@ do
 
             #nb of packets generated
             (( array_pktx[index]++ ))
-
-
+		
             #the packet was received: lets' increase the delay
             if [ -n "$ASN_RX" ] 
             then
@@ -111,7 +139,8 @@ do
                     ASN_RX=${ASN_RX_ARRAY[0]}
                     (( array_pkdup[index]++ ))
                 fi
-            
+                
+           
                 #echo "|$ASN_RX| - |$ASN_TX|"
 
                 #compute the delay (in ASN)
@@ -130,10 +159,12 @@ do
                 
            		#distribution of delays (delay = -1 if the packet is dropped)
             	echo "$ASN_TX	$hop_delay" >> $DELAYDISTRIBFILE
+				
+				(( pk_rcvd[$index_agg] ++ ))
 			else
-           		echo "$ASN_TX" >> $LOSSDISTRIBFILE
+				(( pk_losses[$index_agg] ++ ))
 
-            fi
+            fi  
             
         fi
 
@@ -161,6 +192,12 @@ do
     #next node to consider
     (( index++ ))
 done
+
+
+#cumulative number (averaged every $ASN_AGGREGATE_INTERVAL
+echo "$ASN_RX	$pk_losses" >> $LOSSDISTRIBFILE
+echo "$ASN_RX	$pk_rcvd" >> $RCVDDISTRIBFILE
+
 
 
 #compute the average stats
@@ -223,6 +260,16 @@ echo "jain_delay=$global_jain_delay"
 echo "-------------------"
 
 
+# losses distribution (histogram over all the nodes)
+for (( index=$index_agg_min ; index<=$index_agg_max; index++ ))
+do
+	ASN_AGG=`echo "$index * $ASN_AGGREGATE_INTERVAL" | bc`  
+	echo "$ASN_AGG	${pk_losses[$index]}" >> $LOSSDISTRIBFILE
+	echo "$ASN_AGG	${pk_rcvd[$index]}" >> $RCVDDISTRIBFILE
+done
+
+
+
 #stats in a csv file
 if [ ! -f $TABFILE ]
 then
@@ -232,8 +279,11 @@ fi
 echo "$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $global_nbnodes"| bc -l`	`echo "$global_pkrx / $global_nbnodes"| bc -l`	$global_dupratio	$global_pdr_avg	$global_jain_pdr	$global_delay_avg	`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`	$global_jain_delay" >> $TABFILE
 
 
-#delay distribution
+
+
+#plot some distributions
 gnuplot < delay_distrib.graph  > delay_distrib.pdf
+gnuplot < loss_distrib.graph  > loss_distrib.pdf
 
 
 

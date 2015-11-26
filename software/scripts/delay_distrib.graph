@@ -8,7 +8,7 @@ set terminal postscript eps enhanced color 24
 #y
 set ylabel "Delay"
 set xlabel "Time (in ASN)"
-
+set xtics 10000
 
 #options
 set style data histogram
@@ -19,4 +19,7 @@ set style fill solid 1.0 noborder
 #set xtics ("Duplicates" 1, "Seqnums" 2, "Acked Duplicates" 3)
 
 #the data
-plot "delay_distrib.txt" using 1:2 with points title "end-to-end delay", "loss_distrib.txt" using 1:(1) with points title "losses"
+plot "delay_distrib.txt" using 1:2 with points title "end-to-end delay (in ms)"#, "loss_distrib.txt" using 1:(1) with points title "losses"
+
+#set style data histogram
+#plot "loss_distrib.txt" using 1:2 title "losses"
