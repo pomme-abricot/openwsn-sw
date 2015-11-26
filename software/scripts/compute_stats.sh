@@ -19,6 +19,9 @@ TABFILE="results.csv"
 DELAYDISTRIBFILE="delay_distrib.txt"
 LOSSDISTRIBFILE="loss_distrib.txt"
 RCVDDISTRIBFILE="rcvd_distrib.txt"
+
+
+
 TIMESLOT_DURATION=15	# in milliseconds
 RATIO_PK_RX=0.7			# at least this ratio of pk has to be transmitted to consider this source (else it probably crashed during the experiment)
 ASN_MIN=$1
@@ -194,9 +197,6 @@ do
 done
 
 
-#cumulative number (averaged every $ASN_AGGREGATE_INTERVAL
-echo "$ASN_RX	$pk_losses" >> $LOSSDISTRIBFILE
-echo "$ASN_RX	$pk_rcvd" >> $RCVDDISTRIBFILE
 
 
 
@@ -260,7 +260,7 @@ echo "jain_delay=$global_jain_delay"
 echo "-------------------"
 
 
-# losses distribution (histogram over all the nodes)
+# losses/delay distribution (histogram over all the nodes)
 for (( index=$index_agg_min ; index<=$index_agg_max; index++ ))
 do
 	ASN_AGG=`echo "$index * $ASN_AGGREGATE_INTERVAL" | bc`  
@@ -285,6 +285,13 @@ echo "$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $g
 gnuplot < delay_distrib.graph  > delay_distrib.pdf
 gnuplot < loss_distrib.graph  > loss_distrib.pdf
 
+
+#move graphs
+RESFILE=`mktemp "delay_distrib.XXXXXX.pdf"`
+mv delay_distrib.pdf figs/$RESFILE
+RESFILE2="${RESFILE/delay_distrib/loss_distrib}"
+echo $RESFILE2
+mv loss_distrib.pdf figs/$RESFILE2
 
 
 
