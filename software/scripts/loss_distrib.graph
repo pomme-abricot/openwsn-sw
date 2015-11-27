@@ -1,6 +1,6 @@
 set encoding utf8
 set macros
-set terminal postscript eps enhanced color 24
+set terminal pdf
 
 #key
 #set key top outside horizontal autotitle columnhead
@@ -8,8 +8,7 @@ set terminal postscript eps enhanced color 24
 #y
 set ylabel "Number of packets"
 set xlabel "Time (in ASN)"
-set xtics 50000
-set yrange [0:120]
+#set yrange [0:120]
 
 #options
 #set style data histogram

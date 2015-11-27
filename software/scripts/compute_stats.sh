@@ -110,7 +110,7 @@ do
         	
         	if [ $index_agg -gt $index_agg_max ]
         	then
-        		echo "new asn interval $index_agg"
+        		#echo "new asn interval $index_agg"
         		index_agg_max=$index_agg
         		pk_rcvd[$index_agg]=0
 				pk_losses[$index_agg]=0
@@ -167,7 +167,7 @@ do
 				
 				(( pk_rcvd[$index_agg] ++ ))
 			else
-				echo "loss: $addr_s $seqnum $ASN_TX"
+				#echo "loss: $addr_s $seqnum $ASN_TX"
 				(( pk_losses[$index_agg] ++ ))
 
             fi  
