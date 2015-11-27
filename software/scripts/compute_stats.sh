@@ -6,10 +6,10 @@ function addr_long_to_short {
 }
 
 
-#bug if more than 2 arguments, and less than 1
-if [ $# -gt 2 ] || [ $# -lt 1 ]
+#bug if more than 3 arguments, and less than 1
+if [ $# -gt 3 ] || [ $# -lt 2 ]
 then
-    echo "usage: $0 asn_min [logfile]"
+    echo "usage: $0 asn_min asn_agg [logfile]"
     exit 2
 fi 
 
@@ -26,12 +26,12 @@ TIMESLOT_DURATION=15	# in milliseconds
 RATIO_PK_RX=0.7			# at least this ratio of pk has to be transmitted to consider this source (else it probably crashed during the experiment)
 ASN_MIN=$1
 MAX_NB_PK_TX=0 			# initialization
-ASN_AGGREGATE_INTERVAL=5000	#average pk lossses every ASN_AGGREGATE_INTERVAL ASN
-if [ $# -eq 1 ]
+ASN_AGGREGATE_INTERVAL=$2	#average pk lossses every ASN_AGGREGATE_INTERVAL ASN
+if [ $# -eq 2 ]
 then
 	LOGFILE="/home/theoleyre/exp-iotlab/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log";
 else
-	LOGFILE=$2;
+	LOGFILE=$3;
 fi
 
 echo "Handling logfile $LOGFILE"
@@ -47,9 +47,9 @@ TMPFILE=`mktemp` || exit 1
 NODESLIST=`mktemp` || exit 1
 TMPGEN=`mktemp` || exit 1
 TMPRX=`mktemp` || exit 1
-rm $DELAYDISTRIBFILE
-rm $LOSSDISTRIBFILE
-rm $RCVDDISTRIBFILE
+rm -rf $DELAYDISTRIBFILE
+rm -rf $LOSSDISTRIBFILE
+rm -rf $RCVDDISTRIBFILE
 
 
 grep STAT_DATARX $LOGFILE | cut -d "|" -f 9 | cut -d "=" -f 2 > $TMPFILE
@@ -60,6 +60,10 @@ NBNODES=`wc -l $NODESLIST | cut -d " " -f 1`
 #echo "$NBNODES nodes (+dagroot)"
 
 index=0
+index_agg=0
+index_agg_max=0
+index_agg_min=-1
+
 
 #get the list of seqnums for each source
 for addr_l in `cat $NODESLIST` 
@@ -76,9 +80,6 @@ do
     array_pktx[$index]=0
     array_delay[$index]=0
     array_pkdup[$index]=0
-    index_agg=0
-    index_agg_max=0
-    index_agg_min=-1
  
     
     #prepare the stats for this node
@@ -109,6 +110,7 @@ do
         	
         	if [ $index_agg -gt $index_agg_max ]
         	then
+        		echo "new asn interval $index_agg"
         		index_agg_max=$index_agg
         		pk_rcvd[$index_agg]=0
 				pk_losses[$index_agg]=0
@@ -165,6 +167,7 @@ do
 				
 				(( pk_rcvd[$index_agg] ++ ))
 			else
+				echo "loss: $addr_s $seqnum $ASN_TX"
 				(( pk_losses[$index_agg] ++ ))
 
             fi  
@@ -287,11 +290,11 @@ gnuplot < loss_distrib.graph  > loss_distrib.pdf
 
 
 #move graphs
-RESFILE=`mktemp "delay_distrib.XXXXXX.pdf"`
-mv delay_distrib.pdf figs/$RESFILE
+RESFILE=`mktemp "figs/delay_distrib.XXXXXX.pdf"`
+mv delay_distrib.pdf $RESFILE
 RESFILE2="${RESFILE/delay_distrib/loss_distrib}"
 echo $RESFILE2
-mv loss_distrib.pdf figs/$RESFILE2
+mv loss_distrib.pdf $RESFILE2
 
 
 
