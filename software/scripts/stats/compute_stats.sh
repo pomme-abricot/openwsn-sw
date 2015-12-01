@@ -65,6 +65,7 @@ index_agg_max=0
 index_agg_min=-1
 
 
+
 #get the list of seqnums for each source
 for addr_l in `cat $NODESLIST` 
 do
@@ -95,6 +96,7 @@ do
         ASN_TX=`cat $TMPGEN | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
         ASN_RX=`cat $TMPRX | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
        
+        
         #to aggregate values (for histograms)
         index_agg_cur=`echo "$ASN_TX / $ASN_AGGREGATE_INTERVAL" | bc` 
         if [ $index_agg_cur -ne $index_agg ]
@@ -116,7 +118,7 @@ do
 				pk_losses[$index_agg]=0
         	fi
         fi
-       
+
        
         #discard this packet when this sequence number was txed several times
         eval ASN_TX_ARRAY=($ASN_TX)
@@ -200,6 +202,11 @@ do
 done
 
 
+if [ $index_agg_min -eq -1 ]
+then
+	echo "Error: no packet transmitted"
+	exit 2
+fi
 
 
 
@@ -285,16 +292,20 @@ echo "$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $g
 
 
 #plot some distributions
-gnuplot < delay_distrib.graph  > delay_distrib.pdf
-gnuplot < loss_distrib.graph  > loss_distrib.pdf
+if [ -e delay_distrib.graph ]
+then 
+	gnuplot < delay_distrib.graph  > delay_distrib.pdf
+	gnuplot < loss_distrib.graph  > loss_distrib.pdf
 
+	#move graphs
+	RESFILE=`mktemp "figs/delay_distrib.XXXXXX.pdf"`
+	mv delay_distrib.pdf $RESFILE
+	RESFILE2="${RESFILE/delay_distrib/loss_distrib}"
+	echo $RESFILE2
+	mv loss_distrib.pdf $RESFILE2
 
-#move graphs
-RESFILE=`mktemp "figs/delay_distrib.XXXXXX.pdf"`
-mv delay_distrib.pdf $RESFILE
-RESFILE2="${RESFILE/delay_distrib/loss_distrib}"
-echo $RESFILE2
-mv loss_distrib.pdf $RESFILE2
+fi
+
 
 
 

@@ -15,9 +15,10 @@ fi
 HOMEEXP="$HOME/exp-iotlab"
 export OPTIONS="distribshared=$1 tracks=$2"
 SITE="strasbourg"
-DURATION_MIN="1"
-DURATION_s=`echo "$DURATION_MIN * 60" | bc`
-NBNODES=10
+DURATION_MIN="2"
+DURATION_S=`echo "$DURATION_MIN * 60" | bc`
+NBNODES=2
+CURDIR=`pwd`
 
 
 
@@ -84,7 +85,7 @@ CHILD_OPENVIZ=$!
 echo "openvizualizer running with pid $CHILD_OPENVIZ"
 sleep $DURATION_S
 echo "I am now killing openvizualizer, that's the end of the experiment ($DURATION_S seconds)"
-kill $CHILD_OPENVIZ
+sudo kill $CHILD_OPENVIZ
 
 
 
@@ -108,8 +109,10 @@ sudo chown -R $USER $LOGDIR
 
 
 #compute the graphs
-
-
+cd $LOGDIR
+echo "entering $LOGDIR"
+echo "$CURDIR/../stats/compute_stats.sh 0 500 openVisualizer.log"
+$CURDIR/../stats/compute_stats.sh 0 500 $LOGDIR/openVisualizer.log
 
 
 
