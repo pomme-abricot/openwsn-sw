@@ -290,21 +290,22 @@ echo "$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $g
 
 
 
-
 #plot some distributions
-if [ -e delay_distrib.graph ]
-then 
-	gnuplot < delay_distrib.graph  > delay_distrib.pdf
-	gnuplot < loss_distrib.graph  > loss_distrib.pdf
+gnuplot < /home/theoleyre/scripts/stats/delay_distrib.graph  > delay_distrib.pdf
+gnuplot < /home/theoleyre/scripts/stats/loss_distrib.graph  > loss_distrib.pdf
 
-	#move graphs
-	RESFILE=`mktemp "figs/delay_distrib.XXXXXX.pdf"`
-	mv delay_distrib.pdf $RESFILE
-	RESFILE2="${RESFILE/delay_distrib/loss_distrib}"
-	echo $RESFILE2
-	mv loss_distrib.pdf $RESFILE2
-
+#move graphs
+if [ ! -d "figs" ]
+then
+	mkdir figs
 fi
+RESFILE=`mktemp "figs/delay_distrib.XXXXXX.pdf"`
+mv delay_distrib.pdf $RESFILE
+RESFILE2="${RESFILE/delay_distrib/loss_distrib}"
+echo $RESFILE2
+mv loss_distrib.pdf $RESFILE2
+
+
 
 
 

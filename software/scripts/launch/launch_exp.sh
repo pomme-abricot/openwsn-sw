@@ -15,10 +15,17 @@ fi
 HOMEEXP="$HOME/exp-iotlab"
 export OPTIONS="distribshared=$1 tracks=$2"
 SITE="strasbourg"
-DURATION_MIN="2"
+DURATION_MIN="15"
 DURATION_S=`echo "$DURATION_MIN * 60" | bc`
-NBNODES=2
+NBNODES=5
 CURDIR=`pwd`
+ASN_AGG=2000
+
+
+#resync the sink and node firmwares
+echo "entering directory $HOMEEXP"
+cd $HOMEEXP
+./git_mirroring.sh
 
 
 
@@ -38,17 +45,17 @@ make build-openwsn-m3
 
 
 #destination for the logs / results
-OPTIONS="${OPTIONS// /-}"
+OPTIONS="${OPTIONS// /,}"
 if [ ! -d "$HOME/stats" ]
 then
 	mkdir "$HOME/stats/"
 fi
-if [ ! -d "$HOME/stats/$OPTIONS" ]
+if [ ! -d "$HOME/stats/$OPTIONS,nbnodes=$NBNODES" ]
 then
-	mkdir "$HOME/stats/$OPTIONS"
+	mkdir "$HOME/stats/$OPTIONS,nbnodes=$NBNODES"
 
 fi
-LOGDIR=`mktemp -d "$HOME/stats/$OPTIONS/XXXXXX"`
+LOGDIR=`mktemp -d "$HOME/stats/$OPTIONS,nbnodes=$NBNODES/XXXXXX"`
 LOGSUFFIX=`echo $LOGDIR | rev | cut -d "/" -f 1 | rev` 
 echo "Push results in directory $LOGDIR"
 
@@ -111,8 +118,8 @@ sudo chown -R $USER $LOGDIR
 #compute the graphs
 cd $LOGDIR
 echo "entering $LOGDIR"
-echo "$CURDIR/../stats/compute_stats.sh 0 500 openVisualizer.log"
-$CURDIR/../stats/compute_stats.sh 0 500 $LOGDIR/openVisualizer.log
+echo "$CURDIR/../stats/compute_stats.sh 0 $ASN_AGG openVisualizer.log"
+$CURDIR/../stats/compute_stats.sh 0 $ASN_AGG openVisualizer.log
 
 
 
