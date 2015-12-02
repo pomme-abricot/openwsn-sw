@@ -14,12 +14,16 @@ fi
 #VARIABLES
 HOMEEXP="$HOME/exp-iotlab"
 export OPTIONS="distribshared=$1 tracks=$2"
-SITE="strasbourg"
-DURATION_MIN="15"
+SITE="grenoble"
+DURATION_MIN="30"
 DURATION_S=`echo "$DURATION_MIN * 60" | bc`
-NBNODES=5
+NBNODES=10
 CURDIR=`pwd`
 ASN_AGG=2000
+ASN_START=4000
+FIRSTNODE=96		#m3-96 is the first node of the list
+NODESINCR=4		#select ids with a difference of 2
+
 
 
 #resync the sink and node firmwares
@@ -61,12 +65,42 @@ echo "Push results in directory $LOGDIR"
 
 
 
+#stop the previous experiments (sanity check)
+#REP=`experiment-cli -u theoleyr -p x9HBHvm8`
+#for id in `cat $REP | grep  
+#not so simple !
 
-#reserve the nodes and flash them
+#reserve the nodes and : compute the exact list of nodes to reserve
+#line grenoble : 96-178
+NODELIST="$FIRSTNODE"
+for (( i=1; i<=$NBNODES; i+=1 ))
+do
+	NODE=`echo "$i * $NODESINCR + $FIRSTNODE" | bc`
+	NODELIST="$NODELIST+$NODE"
+done
+
+
+echo "experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX  -d $DURATION_MIN -l $SITE,m3,$NODELIST"
+experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX  -d $DURATION_MIN -l $SITE,m3,$NODELIST > $LOGDIR/launch.res
+cat $LOGDIR/launch.res
+expid=`cat $LOGDIR/launch.res | grep id | cut -d ":" -f 2`
+echo "Experiment id $expid"
+
+#wait the experiments has been laucnhed
+res=""
+while [ -z "$res" ]
+do
+	res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
+	echo $res
+	sleep 1
+	res=`echo "$res" | grep "Running"`
+done
+
+#flash them
 cd $HOMEEXP/tools
 echo "entering $HOMEEXP/tools"
-echo "python ExpOpenWSN.py --nb-nodes $NBNODES --name $LOGSUFFIX --site $SITE --duration $DURATION_MIN"
-python ExpOpenWSN.py --nb-nodes $NBNODES --name $LOGSUFFIX --site $SITE --duration $DURATION_MIN
+echo "python ExpOpenWSN.py" #  --nbnodes $NBNODES --name $LOGSUFFIX --site $SITE --duration $DURATION_MIN"
+python ExpOpenWSN.py #--nb-nodes $NBNODES --name $LOGSUFFIX --site $SITE --duration $DURATION_MIN
 if [ $? -ne 0 ]
 then
 	echo "Error: cannot upload the firmware to iotlab"
@@ -118,8 +152,8 @@ sudo chown -R $USER $LOGDIR
 #compute the graphs
 cd $LOGDIR
 echo "entering $LOGDIR"
-echo "$CURDIR/../stats/compute_stats.sh 0 $ASN_AGG openVisualizer.log"
-$CURDIR/../stats/compute_stats.sh 0 $ASN_AGG openVisualizer.log
+echo "$CURDIR/../stats/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log"
+$CURDIR/../stats/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log
 
 
 
