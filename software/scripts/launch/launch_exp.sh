@@ -2,9 +2,9 @@
 
 
 
-if [ $# -ne 2 ]
+if [ $# -ne 6 ]
 then
-	echo "usage $0 arecelldistrib trackactive"
+	echo "usage $0 celldistrib trackactive scenario nbnodes nodesep dirresult"
 	exit 3
 fi
 
@@ -17,14 +17,20 @@ export OPTIONS="distribshared=$1 tracks=$2"
 SITE="grenoble"
 DURATION_MIN="30"
 DURATION_S=`echo "$DURATION_MIN * 60" | bc`
-NBNODES=10
+NBNODES=$4
 CURDIR=`pwd`
 ASN_AGG=2000
 ASN_START=4000
-FIRSTNODE=96		#m3-96 is the first node of the list
-NODESINCR=4		#select ids with a difference of 2
 
-
+#scenarios
+if [ "$3" = "line" ]
+then
+	FIRSTNODE=96		#m3-96 is the first node of the list
+	NODESINCR=$5		#select ids with a difference of X	
+else 
+	echo "unknown scenario ($3)"
+	exit 3
+fi
 
 #resync the sink and node firmwares
 echo "entering directory $HOMEEXP"
@@ -54,12 +60,16 @@ if [ ! -d "$HOME/stats" ]
 then
 	mkdir "$HOME/stats/"
 fi
-if [ ! -d "$HOME/stats/$OPTIONS,nbnodes=$NBNODES" ]
+if [ ! -d "$HOME/stats/$6" ]
 then
-	mkdir "$HOME/stats/$OPTIONS,nbnodes=$NBNODES"
+	mkdir "$HOME/stats/$6"
+fi
+if [ ! -d "$HOME/stats/$6/$OPTIONS,nbnodes=$NBNODES" ]
+then
+	mkdir "$HOME/stats/$6/$OPTIONS,nbnodes=$NBNODES"
 
 fi
-LOGDIR=`mktemp -d "$HOME/stats/$OPTIONS,nbnodes=$NBNODES/XXXXXX"`
+LOGDIR=`mktemp -d "$HOME/stats/$6/$OPTIONS,nbnodes=$NBNODES/XXXXXX"`
 LOGSUFFIX=`echo $LOGDIR | rev | cut -d "/" -f 1 | rev` 
 echo "Push results in directory $LOGDIR"
 

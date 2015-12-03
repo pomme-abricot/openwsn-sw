@@ -52,6 +52,23 @@ rm -rf $LOSSDISTRIBFILE
 rm -rf $RCVDDISTRIBFILE
 
 
+#get the parameters (the nodes MUST have the same parameters (I consider only the last one)
+DISTRIBCELLS=`grep DISTCELLS $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
+TRACKSACTIVE=`grep TRACK $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
+RPLMETRIC=`grep RPLMETRIC $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
+SCHEDALGO=`grep SCHEDALGO $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
+
+if [ -z "$DISTRIBCELLS" ] || [ -z "$TRACKSACTIVE" ]  || [ -z "$RPLMETRIC" ]  || [ -z "$SCHEDALGO" ] 
+then
+	echo "errror: we don't know the parameters used for this experiment"
+	echo "DISTRIBCELLS=$DISTRIBCELLS"
+	echo "TRACKSACTIVE=$TRACKSACTIVE"
+	echo "RPLMETRIC=$RPLMETRIC"
+	echo "SCHEDALGO=$SCHEDALGO"
+	exit
+fi
+
+
 grep STAT_DATARX $LOGFILE | cut -d "|" -f 9 | cut -d "=" -f 2 > $TMPFILE
 
 #get the node list
@@ -283,10 +300,11 @@ done
 #stats in a csv file
 if [ ! -f $TABFILE ]
 then
-	echo "nb_nodes	nb_pk_tx_significant	nb_nodes_discarded	nb_pk_tx	nb_pk_rx	dupuratio_data	pdr_data	jain_pdr	avg_delay(ASN)	avg_delay(ms)	jain_delay" > $TABFILE
+	echo "dist_cells	tracks	rplmetric	schedalgo	nb_nodes	nb_pk_tx_significant	nb_nodes_discarded	nb_pk_tx	nb_pk_rx	dupuratio_data	pdr_data	jain_pdr	avg_delay(ASN)	avg_delay(ms)	jain_delay" > $TABFILE
 fi
 
-echo "$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $global_nbnodes"| bc -l`	`echo "$global_pkrx / $global_nbnodes"| bc -l`	$global_dupratio	$global_pdr_avg	$global_jain_pdr	$global_delay_avg	`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`	$global_jain_delay" >> $TABFILE
+
+echo "$DISTRIBCELLS	$TRACKSACTIVE	$RPLMETRIC	$SCHEDALGO	$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $global_nbnodes"| bc -l`	`echo "$global_pkrx / $global_nbnodes"| bc -l`	$global_dupratio	$global_pdr_avg	$global_jain_pdr	$global_delay_avg	`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`	$global_jain_delay" >> $TABFILE
 
 
 
@@ -308,7 +326,7 @@ mv loss_distrib.pdf $RESFILE2
 
 
 
-
-
+rm $TMPGEN
+rm $TMPRX
 rm $TMPFILE
 rm $NODESLIST
