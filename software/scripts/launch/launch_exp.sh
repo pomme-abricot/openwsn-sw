@@ -4,7 +4,7 @@
 
 if [ $# -ne 6 ]
 then
-	echo "usage $0 celldistrib trackactive scenario nbnodes nodesep dirresult"
+	echo "usage $0 celldistrib trackactive rplmetric schedalgo scenario nbnodes nodesep dirresult"
 	exit 3
 fi
 
@@ -13,22 +13,22 @@ fi
 
 #VARIABLES
 HOMEEXP="$HOME/exp-iotlab"
-export OPTIONS="distribshared=$1 tracks=$2"
+export OPTIONS="distribshared=$1 tracks=$2 rplmetric=$3 schedalgo=$4 "
 SITE="grenoble"
 DURATION_MIN="30"
 DURATION_S=`echo "$DURATION_MIN * 60" | bc`
-NBNODES=$4
+NBNODES=$6
 CURDIR=`pwd`
 ASN_AGG=2000
 ASN_START=4000
 
 #scenarios
-if [ "$3" = "line" ]
+if [ "$5" = "line" ]
 then
 	FIRSTNODE=96		#m3-96 is the first node of the list
-	NODESINCR=$5		#select ids with a difference of X	
+	NODESINCR=$7		#select ids with a difference of X	
 else 
-	echo "unknown scenario ($3)"
+	echo "unknown scenario ($5)"
 	exit 3
 fi
 
@@ -56,6 +56,7 @@ make build-openwsn-m3
 
 #destination for the logs / results
 OPTIONS="${OPTIONS// /,}"
+OPTIONS="rplmetric=$OPTIONS"
 if [ ! -d "$HOME/stats" ]
 then
 	mkdir "$HOME/stats/"
@@ -162,8 +163,8 @@ sudo chown -R $USER $LOGDIR
 #compute the graphs
 cd $LOGDIR
 echo "entering $LOGDIR"
-echo "$CURDIR/../stats/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log"
-$CURDIR/../stats/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log
+echo "$CURDIR/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log"
+$CURDIR/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log
 
 
 

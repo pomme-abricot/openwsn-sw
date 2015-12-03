@@ -1,0 +1,15 @@
+load "../common.plt"
+
+# legend, labels & axis
+set xlabel "Inter Packet Time [s]"
+set ylabel "Delay [s]"
+set key right bottom
+
+#the data
+plot "flood-multialgo=1-bopalgo=1.txt" using 1:63 title 'Duplicates - original BOP' ls 1,\
+"flood-multialgo=3-bopalgo=1.txt" using 1:63 title 'Acked Duplicates - original BOP' ls 2,\
+"flood-multialgo=2-bopalgo=1.txt" using 1:63 title 'Seqnums - original BOP' ls 3,\
+"flood-multialgo=1-bopalgo=2.txt" using 1:63 title 'Duplicates - CBOP' ls 4,\
+"flood-multialgo=3-bopalgo=2.txt" using 1:63 title 'Acked Duplicates - CBOP' ls 5,\
+"flood-multialgo=2-bopalgo=2.txt" using 1:63 title 'Seqnums - CBOP' ls 6
+
