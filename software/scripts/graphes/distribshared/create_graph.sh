@@ -1,7 +1,5 @@
 #!/bin/bash
 
-exit
-
 
 for f in `ls *$1*.graph`
 do

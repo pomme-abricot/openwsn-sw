@@ -4,18 +4,18 @@
 BASENAME|distribshared
 
 #go to the correct directory
-#DIRS_IN_LIST|test
+SUBDIRS_LIST|03122015
 
 #the algos
 SCHEDALGO_LIST|2
-RPLMETRIC_LIST|1
+RPLMETRIC_LIST|2
 DISTRCELLS_LIST|0 1
 TRACK_LIST|1
 
 
 #The column id for the x-coordinate of the graph (i.e. the parameter)
 #the load
-X_COORD_POS|1
+X_COORD_POS|5
 
 #Number of columns that are fixed
 NB_FIXED_COLS|5
