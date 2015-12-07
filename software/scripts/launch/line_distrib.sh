@@ -5,12 +5,13 @@
 RPLMETRIC=2
 SCHEDALGO=2
 TRACK=1
-NODESEP=4
+NODESEP=2
 
-for zz in {1..3..1}
-do
 
-for nbnodes in {12..27..5}
+#./launch_exp.sh 1 1 2 2 line 5 2 distribshared
+#exit
+
+for nbnodes in {8..25..2}
 do
 	for algo_distrib_cells in {0..1}
 	do
@@ -20,4 +21,4 @@ do
 	done
 done 
 
-done
+

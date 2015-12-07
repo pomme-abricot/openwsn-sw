@@ -57,14 +57,16 @@ DISTRIBCELLS=`grep DISTCELLS $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
 TRACKSACTIVE=`grep TRACK $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
 RPLMETRIC=`grep RPLMETRIC $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
 SCHEDALGO=`grep SCHEDALGO $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
+CEX_PERIOD=`grep CEX_PERIOD $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
 
-if [ -z "$DISTRIBCELLS" ] || [ -z "$TRACKSACTIVE" ]  || [ -z "$RPLMETRIC" ]  || [ -z "$SCHEDALGO" ] 
+if [ -z "$DISTRIBCELLS" ] || [ -z "$TRACKSACTIVE" ]  || [ -z "$RPLMETRIC" ]  || [ -z "$SCHEDALGO" ]  || [ -z "$CEX_PERIOD" ] 
 then
 	echo "errror: we don't know the parameters used for this experiment"
 	echo "DISTRIBCELLS=$DISTRIBCELLS"
 	echo "TRACKSACTIVE=$TRACKSACTIVE"
 	echo "RPLMETRIC=$RPLMETRIC"
 	echo "SCHEDALGO=$SCHEDALGO"
+	echo "CEX_PERIOD=$CEX_PERIOD"
 	exit
 fi
 
@@ -115,8 +117,9 @@ do
        
         
         #to aggregate values (for histograms)
-        index_agg_cur=`echo "$ASN_TX / $ASN_AGGREGATE_INTERVAL" | bc` 
-        if [ $index_agg_cur -ne $index_agg ]
+        index_agg_cur=`echo "$ASN_TX / $ASN_AGGREGATE_INTERVAL" | bc`
+	#echo "$index_agg_cur -ne $index_agg ($seqnum $addr_s)"
+        if [ "$index_agg_cur" -ne "$index_agg" ]
         then
         	index_agg=$index_agg_cur
         	#echo $index_agg_cur
@@ -300,11 +303,11 @@ done
 #stats in a csv file
 if [ ! -f $TABFILE ]
 then
-	echo "dist_cells	tracks	rplmetric	schedalgo	nb_nodes	nb_pk_tx_significant	nb_nodes_discarded	nb_pk_tx	nb_pk_rx	dupuratio_data	pdr_data	jain_pdr	avg_delay(ASN)	avg_delay(ms)	jain_delay" > $TABFILE
+	echo "dist_cells	tracks	rplmetric	schedalgo	nb_nodes	cex_period	nb_pk_tx_significant	nb_nodes_discarded	nb_pk_tx	nb_pk_rx	dupuratio_data	pdr_data	jain_pdr	avg_delay(ASN)	avg_delay(ms)	jain_delay" > $TABFILE
 fi
 
 
-echo "$DISTRIBCELLS	$TRACKSACTIVE	$RPLMETRIC	$SCHEDALGO	$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $global_nbnodes"| bc -l`	`echo "$global_pkrx / $global_nbnodes"| bc -l`	$global_dupratio	$global_pdr_avg	$global_jain_pdr	$global_delay_avg	`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`	$global_jain_delay" >> $TABFILE
+echo "$DISTRIBCELLS	$TRACKSACTIVE	$RPLMETRIC	$SCHEDALGO	$CEX_PERIOD	$global_nbnodes	$NB_PKGEN_MIN	$NB_NODES_DISCARDED	`echo "$global_pktx / $global_nbnodes"| bc -l`	`echo "$global_pkrx / $global_nbnodes"| bc -l`	$global_dupratio	$global_pdr_avg	$global_jain_pdr	$global_delay_avg	`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`	$global_jain_delay" >> $TABFILE
 
 
 

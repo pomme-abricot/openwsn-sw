@@ -4,7 +4,7 @@
 BASENAME|distribshared
 
 #go to the correct directory
-SUBDIRS_LIST|03122015
+SUBDIRS_LIST|03122015 04122015 04122015B
 
 #the algos
 SCHEDALGO_LIST|2
@@ -21,4 +21,4 @@ X_COORD_POS|5
 NB_FIXED_COLS|5
 
 #Nb of columns (discard lines with less or more values)
-NB_OF_COLS|15
+NB_OF_COLS|16

@@ -2,6 +2,7 @@
 
 
 
+
 if [ $# -ne 8 ]
 then
 	echo "usage $0 celldistrib trackactive rplmetric schedalgo scenario nbnodes nodesep dirresult"
@@ -9,11 +10,15 @@ then
 fi
 
 
+#flush everything
+sudo killall /usr/bin/python > /dev/null 2> /dev/null
+sudo killall socat > /dev/null 2> /dev/null
+sudo killall ssh > /dev/null 2> /dev/null
+sudo killall sleep > /dev/null 2> /dev/null
+
 
 
 #VARIABLES
-HOMEEXP="$HOME/exp-iotlab"
-export OPTIONS="distribshared=$1 tracks=$2 rplmetric=$3 schedalgo=$4"
 SITE="grenoble"
 DURATION_MIN="30"
 DURATION_S=`echo "$DURATION_MIN * 60" | bc`
@@ -21,20 +26,34 @@ NBNODES=$6
 CURDIR=`pwd`
 ASN_AGG=2000
 ASN_START=4000
+CEXAMPLE_PERIOD=`echo "1000 * $NBNODES" | bc`		#one packet every nb_nodes seconds 
+
+
+#arguments to compile the firmware
+HOMEEXP="$HOME/exp-iotlab"
+export OPTIONS="distribshared=$1 tracks=$2 rplmetric=$3 schedalgo=$4 cex_period=$CEXAMPLE_PERIOD"
+
+
 
 #scenarios
 if [ "$5" = "line" ]
 then
 #left line 96-??
 #middle line 207-287
-	FIRSTNODE=207		#m3-96 is the first node of the list
+	FIRSTNODE=240		#m3-96 is the first node of the list
 	NODESINCR=$7		#select ids with a difference of X		
 else 
 	echo "unknown scenario ($5)"
 	exit 3
 fi
 
-FORBIDDEN_NODES="243"
+FORBIDDEN_NODES="243 256 239"
+
+
+#stop any other running experiment (silent since we have probably no running experiment here)
+echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
+experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
+
 
 
 #resync the sink and node firmwares
@@ -46,16 +65,15 @@ cd $HOMEEXP
 
 #build for dag root
 echo "entering $HOMEEXP"
+echo "Buiding OpenWSN"
 cd $HOMEEXP
-#make build-openwsn-sink-m3
+make build-openwsn-sink-m3 > /dev/null 2> /dev/null
 if [ $? -ne 0 ]
 then
 	exit 4
 fi
+make build-openwsn-m3 > /dev/null 2> /dev/null
 #build for nodes
-#make build-openwsn-m3
-
-
 
 
 
@@ -81,9 +99,6 @@ echo "Push results in directory $LOGDIR"
 
 
 
-#stop any other running experiment (silent since we have probably no running experiment here)
-echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
-experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
 
 
 
@@ -115,7 +130,8 @@ echo "Experiment id $expid"
 #bug in the reservation
 if [ -z "$expid" ]
 then
-	echo "the reservation failed"
+	echo "the reservation failed, removes $LOGDIR"
+	rm -Rf $LOGDIR
 	exit
 fi
 
@@ -135,11 +151,12 @@ done
 #flash them
 cd $HOMEEXP/tools
 echo "entering $HOMEEXP/tools"
-echo "python ExpOpenWSN.py" #  --nbnodes $NBNODES --name $LOGSUFFIX --site $SITE --duration $DURATION_MIN"
-python ExpOpenWSN.py #--nb-nodes $NBNODES --name $LOGSUFFIX --site $SITE --duration $DURATION_MIN
+echo "python ExpOpenWSN.py" 
+python ExpOpenWSN.py 
 if [ $? -ne 0 ]
 then
-	echo "Error: cannot upload the firmware to iotlab"
+	echo "Error: cannot upload the firmware to iotlab, removes $LOGDIR"
+	rm -Rf $LOGDIR
 	exit 3
 fi
 
@@ -153,26 +170,54 @@ sleep 1
 echo "PID $! $$"
 
 
+#waits the port forwarding actually works
+sleep 3
+
+
 #openvizualizer
 cd $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer
 echo "$HOMEEXP/openwsn/openwsn-sw/software/openvisualizer"
 sudo scons runweb &
 CHILD_OPENVIZ=$!
 echo "openvizualizer running with pid $CHILD_OPENVIZ"
-sleep $DURATION_S
+
+
+#restart (sometimes, the network doesnt boot)
+sleep 10
+cd $HOMEEXP/tools
+echo "entering $HOMEEXP/tools"
+echo "reflash the nodes (some experiments stucked in the previous step for an unknwon reason)" 
+python ExpOpenWSN.py 
+
+
+
+#wait the experiments has been terminated
+res=""
+while [ -z "$res" ]
+do
+	res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
+	echo $res
+	sleep 60
+	res=`echo "$res" | grep "Terminated\|Error"`
+done
+
+
+
+#end of the experiment
+#sleep $DURATION_S
 echo "I am now killing openvizualizer, that's the end of the experiment ($DURATION_S seconds)"
 sudo kill $CHILD_OPENVIZ
 
 
 
 #flush everything
-sudo killall python
+sudo killall /usr/bin/python
 sudo killall socat
 sudo killall ssh
 sudo killall sleep
 	
-echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
-experiment-cli -u theoleyr -p x9HBHvm8 stop
+#echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
+#experiment-cli -u theoleyr -p x9HBHvm8 stop
 
 
 
@@ -180,7 +225,8 @@ experiment-cli -u theoleyr -p x9HBHvm8 stop
 echo "pushing results to $LOGDIR"
 if [ ! -e "$HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log" ]
 then
-	echo "unexisting logfile - experiment error - $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log"
+	echo "unexisting logfile - experiment error - $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log - statdir $LOGDIR"
+	rm -Rf $LOGDIR
 	exit 2
 fi
 sudo mv $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log $LOGDIR
