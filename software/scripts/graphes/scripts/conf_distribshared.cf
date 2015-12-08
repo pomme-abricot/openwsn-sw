@@ -4,7 +4,7 @@
 BASENAME|distribshared
 
 #go to the correct directory
-SUBDIRS_LIST|03122015 04122015 04122015B
+SUBDIRS_LIST|08122015B
 
 #the algos
 SCHEDALGO_LIST|2
