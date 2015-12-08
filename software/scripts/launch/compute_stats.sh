@@ -53,11 +53,11 @@ rm -rf $RCVDDISTRIBFILE
 
 
 #get the parameters (the nodes MUST have the same parameters (I consider only the last one)
-DISTRIBCELLS=`grep DISTCELLS $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
-TRACKSACTIVE=`grep TRACK $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
-RPLMETRIC=`grep RPLMETRIC $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
-SCHEDALGO=`grep SCHEDALGO $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
-CEX_PERIOD=`grep CEX_PERIOD $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1`
+DISTRIBCELLS=`grep DISTCELLS $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
+TRACKSACTIVE=`grep TRACK $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
+RPLMETRIC=`grep RPLMETRIC $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
+SCHEDALGO=`grep SCHEDALGO $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
+CEX_PERIOD=`grep CEX_PERIOD $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
 
 if [ -z "$DISTRIBCELLS" ] || [ -z "$TRACKSACTIVE" ]  || [ -z "$RPLMETRIC" ]  || [ -z "$SCHEDALGO" ]  || [ -z "$CEX_PERIOD" ] 
 then
@@ -69,6 +69,7 @@ then
 	echo "CEX_PERIOD=$CEX_PERIOD"
 	exit
 fi
+
 
 
 grep STAT_DATARX $LOGFILE | cut -d "|" -f 9 | cut -d "=" -f 2 > $TMPFILE
@@ -115,30 +116,6 @@ do
         ASN_TX=`cat $TMPGEN | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
         ASN_RX=`cat $TMPRX | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
        
-        
-        #to aggregate values (for histograms)
-        index_agg_cur=`echo "$ASN_TX / $ASN_AGGREGATE_INTERVAL" | bc`
-	#echo "$index_agg_cur -ne $index_agg ($seqnum $addr_s)"
-        if [ "$index_agg_cur" -ne "$index_agg" ]
-        then
-        	index_agg=$index_agg_cur
-        	#echo $index_agg_cur
-        	
-        	if [ $index_agg_min -eq -1 ] || [ $index_agg_min -gt $index_agg_cur ]
-        	then
-        		index_agg_min=$index_agg_cur
-        	fi
-        	
-        	
-        	if [ $index_agg -gt $index_agg_max ]
-        	then
-        		#echo "new asn interval $index_agg"
-        		index_agg_max=$index_agg
-        		pk_rcvd[$index_agg]=0
-				pk_losses[$index_agg]=0
-        	fi
-        fi
-
        
         #discard this packet when this sequence number was txed several times
         eval ASN_TX_ARRAY=($ASN_TX)
@@ -146,10 +123,40 @@ do
         then
            ASN_TX=0
         fi
+     
 
         #I only consider the packets after the bootstrap period
         if [ "$ASN_TX" -gt "$ASN_MIN" ]
         then
+        	
+        	#to aggregate values (for histograms)
+			#echo "echo \"$ASN_TX / $ASN_AGGREGATE_INTERVAL\" | bc"
+        	index_agg_cur=`echo "$ASN_TX / $ASN_AGGREGATE_INTERVAL" | bc`
+
+        	if [ "$index_agg_cur" -ne "$index_agg" ]
+        	then
+        		index_agg=$index_agg_cur
+        		#echo "cur: $index_agg_cur" 		
+        	
+        		if [ $index_agg_min -eq -1 ] || [ $index_agg_min -gt $index_agg_cur ]
+        		then
+        			index_agg_min=$index_agg_cur
+					#echo "new $index_agg_cur"					
+					pk_rcvd[$index_agg]=0
+					pk_losses[$index_agg]=0
+        		fi
+        	
+        	
+        		if [ $index_agg -gt $index_agg_max ]
+        		then
+        			#echo "new asn interval $index_agg"
+        			index_agg_max=$index_agg
+        			pk_rcvd[$index_agg]=0
+					pk_losses[$index_agg]=0
+        		fi
+      		fi
+      	  	
+        	
 
             #nb of packets generated
             (( array_pktx[index]++ ))
@@ -175,7 +182,7 @@ do
                 array_delay[$index]=`echo "${array_delay[$index]} + $hop_delay" | bc -l` 
            
                 #nb of received packets
-                (( array_pkrx[index]++ ))
+                (( array_pkrx[$index]++ ))
 
                 #bug
                 if [ "$hop_delay" -lt "0" ]
@@ -294,6 +301,8 @@ echo "-------------------"
 for (( index=$index_agg_min ; index<=$index_agg_max; index++ ))
 do
 	ASN_AGG=`echo "$index * $ASN_AGGREGATE_INTERVAL" | bc`  
+	
+	
 	echo "$ASN_AGG	${pk_losses[$index]}" >> $LOSSDISTRIBFILE
 	echo "$ASN_AGG	${pk_rcvd[$index]}" >> $RCVDDISTRIBFILE
 done
@@ -329,7 +338,7 @@ mv loss_distrib.pdf $RESFILE2
 
 
 
-rm $TMPGEN
-rm $TMPRX
-rm $TMPFILE
-rm $NODESLIST
+rm -f $TMPGEN
+rm -f $TMPRX
+rm -f $TMPFILE
+rm -f $NODESLIST
