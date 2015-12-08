@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+DEBUG=0
 
 
 if [ $# -ne 8 ]
@@ -51,9 +51,11 @@ FORBIDDEN_NODES="243 256 239"
 
 
 #stop any other running experiment (silent since we have probably no running experiment here)
-echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
-experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
-
+if [ "$DEBUG" -ne "1" ]
+then 
+	echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
+	experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
+fi
 
 
 #resync the sink and node firmwares
@@ -67,13 +69,19 @@ cd $HOMEEXP
 echo "entering $HOMEEXP"
 echo "Buiding OpenWSN"
 cd $HOMEEXP
-make build-openwsn-sink-m3 > /dev/null 2> /dev/null
+if [ "$DEBUG" -ne "1" ]
+then 
+	make build-openwsn-sink-m3 > /dev/null 2> /dev/null
+else
+	make build-openwsn-sink-m3
+fi
 if [ $? -ne 0 ]
 then
 	exit 4
 fi
-make build-openwsn-m3 > /dev/null 2> /dev/null
 #build for nodes
+make build-openwsn-m3 > /dev/null 2> /dev/null
+
 
 
 
@@ -120,31 +128,39 @@ do
 done
 
 
-TMPFILE=`mktemp`
-echo "experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX  -d $DURATION_MIN -l $SITE,m3,$NODELIST"
-experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX  -d $DURATION_MIN -l $SITE,m3,$NODELIST > $TMPFILE
-expid=`cat $TMPFILE | grep id | cut -d ":" -f 2`
-echo "Experiment id $expid"
+
+#START an experiment
+if [ "$DEBUG" -ne "1" ]
+then 
+	TMPFILE=`mktemp`
+	echo "experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX  -d $DURATION_MIN -l $SITE,m3,$NODELIST"
+	experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX  -d $DURATION_MIN -l $SITE,m3,$NODELIST > $TMPFILE
+	expid=`cat $TMPFILE | grep id | cut -d ":" -f 2`
+	echo "Experiment id $expid"
 
 
-#bug in the reservation
-if [ -z "$expid" ]
-then
-	echo "the reservation failed, removes $LOGDIR"
-	rm -Rf $LOGDIR
-	exit
+	#bug in the reservation
+	if [ -z "$expid" ]
+	then
+		echo "the reservation failed, removes $LOGDIR"
+		rm -Rf $LOGDIR
+		exit
+	fi
+	
+	#wait the experiments has been launched
+	res=""
+	while [ -z "$res" ]
+	do
+		res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
+		echo $res
+		sleep 1
+		res=`echo "$res" | grep "Running"`
+	done
 fi
+	
+	
 
 
-#wait the experiments has been laucnhed
-res=""
-while [ -z "$res" ]
-do
-	res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
-	echo $res
-	sleep 1
-	res=`echo "$res" | grep "Running"`
-done
 
 
 
@@ -171,7 +187,7 @@ echo "PID $! $$"
 
 
 #waits the port forwarding actually works
-sleep 3
+sleep 1
 
 
 #openvizualizer
@@ -183,19 +199,27 @@ echo "openvizualizer running with pid $CHILD_OPENVIZ"
 
 
 #restart (sometimes, the network doesnt boot)
-sleep 10
-cd $HOMEEXP/tools
-echo "entering $HOMEEXP/tools"
-echo "reflash the nodes (some experiments stucked in the previous step for an unknwon reason)" 
-python ExpOpenWSN.py 
-
+if [ "$DEBUG" -ne "1" ]
+then
+	sleep 3
+	cd $HOMEEXP/tools
+	echo "entering $HOMEEXP/tools"
+	echo "reflash the nodes (some experiments stucked in the previous step for an unknwon reason)" 
+	python ExpOpenWSN.py 
+fi
 
 
 #wait the experiments has been terminated
 res=""
 while [ -z "$res" ]
 do
-	res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
+	if [ "$DEBUG" -ne "1" ]
+	then
+		res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
+	else
+		res="nothing"
+	fi
+	
 	echo $res
 	sleep 60
 	res=`echo "$res" | grep "Terminated\|Error"`
@@ -241,6 +265,6 @@ echo "$CURDIR/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log"
 $CURDIR/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log
 
 #garbage
-rm TMPFILE
+rm -f TMPFILE
 
 

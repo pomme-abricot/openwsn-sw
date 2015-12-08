@@ -8,7 +8,7 @@ TRACK=1
 NODESEP=2
 
 
-#./launch_exp.sh 1 1 2 2 line 5 2 distribshared
+#./launch_exp.sh 1 1 2 2 line 10 2 distribshared
 #exit
 
 for nbnodes in {8..25..2}
