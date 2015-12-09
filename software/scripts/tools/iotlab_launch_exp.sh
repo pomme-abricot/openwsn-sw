@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEBUG=0
+#DEBUG=1
 
 
 if [ $# -ne 8 ]
@@ -15,12 +15,12 @@ sudo killall /usr/bin/python > /dev/null 2> /dev/null
 sudo killall socat > /dev/null 2> /dev/null
 sudo killall ssh > /dev/null 2> /dev/null
 sudo killall sleep > /dev/null 2> /dev/null
-
+ 
 
 
 #VARIABLES
 SITE="grenoble"
-DURATION_MIN="30"
+DURATION_MIN="90"
 DURATION_S=`echo "$DURATION_MIN * 60" | bc`
 NBNODES=$6
 CURDIR=`pwd`
@@ -34,13 +34,17 @@ HOMEEXP="$HOME/exp-iotlab"
 export OPTIONS="distribshared=$1 tracks=$2 rplmetric=$3 schedalgo=$4 cex_period=$CEXAMPLE_PERIOD"
 
 
+#removes the previous logfile
+echo "removes the previous logfile $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log"
+sudo rm -f $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log
+
 
 #scenarios
 if [ "$5" = "line" ]
 then
 #left line 96-??
 #middle line 207-287
-	FIRSTNODE=240		#m3-96 is the first node of the list
+	FIRSTNODE=207		#m3-96 is the first node of the list
 	NODESINCR=$7		#select ids with a difference of X		
 else 
 	echo "unknown scenario ($5)"
@@ -51,7 +55,7 @@ FORBIDDEN_NODES="243 256 239"
 
 
 #stop any other running experiment (silent since we have probably no running experiment here)
-if [ "$DEBUG" -ne "1" ]
+if [ -z "$DEBUG" ]
 then 
 	echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
 	experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
@@ -69,7 +73,7 @@ cd $HOMEEXP
 echo "entering $HOMEEXP"
 echo "Buiding OpenWSN"
 cd $HOMEEXP
-if [ "$DEBUG" -ne "1" ]
+if [ -z "$DEBUG" ]
 then 
 	make build-openwsn-sink-m3 > /dev/null 2> /dev/null
 else
@@ -130,7 +134,7 @@ done
 
 
 #START an experiment
-if [ "$DEBUG" -ne "1" ]
+if [ -z "$DEBUG" ]
 then 
 	TMPFILE=`mktemp`
 	echo "experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX  -d $DURATION_MIN -l $SITE,m3,$NODELIST"
@@ -199,7 +203,7 @@ echo "openvizualizer running with pid $CHILD_OPENVIZ"
 
 
 #restart (sometimes, the network doesnt boot)
-if [ "$DEBUG" -ne "1" ]
+if [ -z "$DEBUG" ]
 then
 	sleep 3
 	cd $HOMEEXP/tools
@@ -213,7 +217,7 @@ fi
 res=""
 while [ -z "$res" ]
 do
-	if [ "$DEBUG" -ne "1" ]
+	if [ -z "$DEBUG" ]
 	then
 		res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
 	else
@@ -261,8 +265,8 @@ sudo chown -R $USER $LOGDIR
 #compute the graphs
 cd $LOGDIR
 echo "entering $LOGDIR"
-echo "$CURDIR/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log"
-$CURDIR/compute_stats.sh $ASN_START $ASN_AGG openVisualizer.log
+echo "owsn_extract_stats.sh $ASN_START $ASN_AGG openVisualizer.log"
+owsn_extract_stats.sh $ASN_START $ASN_AGG openVisualizer.log
 
 #garbage
 rm -f TMPFILE

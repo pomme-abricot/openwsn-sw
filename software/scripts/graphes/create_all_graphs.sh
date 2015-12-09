@@ -14,10 +14,13 @@ cd $CUR_DIR
 #for each directory
 for DIR in *
 do
-	if [ -d $DIR ] && [ -e $DIR/create_graph.sh ]
+	if [ -d "$DIR" ]
 	then
 		echo "Generating the graphs for $DIR"
-	   	 cd $DIR
-	    	./create_graph.sh
+	   	cd $DIR
+		create_graph.sh
+		cd $CUR_DIR
+	else
+		echo "does not handle $DIR (non existing)"
 	fi
 done
