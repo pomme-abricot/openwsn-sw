@@ -265,7 +265,7 @@ sudo chown -R $USER $LOGDIR
 #compute the graphs
 cd $LOGDIR
 echo "entering $LOGDIR"
-echo "owsn_extract_stats.sh $ASN_START $ASN_AGG openVisualizer.log"
+echo "owsn_extract_stats_from_logs.sh $ASN_START $ASN_AGG openVisualizer.log"
 owsn_extract_stats.sh $ASN_START $ASN_AGG openVisualizer.log
 
 #garbage

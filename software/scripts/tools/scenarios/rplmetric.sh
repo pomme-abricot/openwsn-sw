@@ -10,11 +10,11 @@ DCELLS=1
 
 
 #one experiment for debug
-export DEBUG=1
-nbnodes=15
-RPLMETRIC=1
-iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO line $nbnodes $NODESEP distribshared
-exit
+#export DEBUG=1
+#nbnodes=15
+#RPLMETRIC=4
+#iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO line $nbnodes $NODESEP distribshared
+#exit
 
 
 
