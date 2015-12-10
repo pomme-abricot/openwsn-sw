@@ -1,11 +1,12 @@
 #!/bin/bash
 
 #DEBUG=1
+FORBIDDEN_NODES="243 256 239"		#DEAD nodes in iotlab
 
 
-if [ $# -ne 8 ]
+if [ $# -ne 11 ]
 then
-	echo "usage $0 celldistrib trackactive rplmetric schedalgo scenario nbnodes nodesep dirresult"
+	echo "usage $0 celldistrib trackactive rplmetric schedalgo nbnodes site nodestart nodesep traffic_sec duration dirresult"
 	exit 3
 fi
 
@@ -19,14 +20,32 @@ sudo killall sleep > /dev/null 2> /dev/null
 
 
 #VARIABLES
-SITE="grenoble"
-DURATION_MIN="90"
-DURATION_S=`echo "$DURATION_MIN * 60" | bc`
-NBNODES=$6
 CURDIR=`pwd`
 ASN_AGG=2000
 ASN_START=4000
-CEXAMPLE_PERIOD=`echo "1000 * $NBNODES" | bc`		#one packet every nb_nodes seconds 
+
+
+#topology
+#line grenoble : 96-178
+NBNODES=$5
+SITE=$6
+NODE_START=$7
+NODE_STEP=$8
+
+
+#Traffic
+TRAFFIC=$9
+CEXAMPLE_PERIOD=`echo "$TRAFFIC * $NBNODES" | bc`		#one packet every nb_nodes seconds 
+
+
+#PARAMETERS
+DURATION_MIN=$10
+DURATION_S=`echo "$DURATION_MIN * 60" | bc`
+
+
+#DIRS
+DIRRES=$11
+
 
 
 #arguments to compile the firmware
@@ -39,19 +58,7 @@ echo "removes the previous logfile $HOMEEXP/openwsn/openwsn-sw/software/openvisu
 sudo rm -f $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log
 
 
-#scenarios
-if [ "$5" = "line" ]
-then
-#left line 96-??
-#middle line 207-287
-	FIRSTNODE=207		#m3-96 is the first node of the list
-	NODESINCR=$7		#select ids with a difference of X		
-else 
-	echo "unknown scenario ($5)"
-	exit 3
-fi
 
-FORBIDDEN_NODES="243 256 239"
 
 
 #stop any other running experiment (silent since we have probably no running experiment here)
@@ -95,17 +102,17 @@ if [ ! -d "$HOME/stats" ]
 then
 	mkdir "$HOME/stats/"
 fi
-if [ ! -d "$HOME/stats/$8" ]
+if [ ! -d "$HOME/stats/$DIRRES" ]
 then
-	mkdir "$HOME/stats/$8"
+	mkdir "$HOME/stats/$DIRRES"
 fi
-if [ ! -d "$HOME/stats/$8/$OPTIONS,nbnodes=$NBNODES" ]
+if [ ! -d "$HOME/stats/$DIRRES/$OPTIONS,nbnodes=$NBNODES" ]
 then
-	mkdir "$HOME/stats/$8/$OPTIONS,nbnodes=$NBNODES"
+	mkdir "$HOME/stats/$DIRRES/$OPTIONS,nbnodes=$NBNODES"
 
 fi
-echo "mktemp -d \"$HOME/stats/$8/$OPTIONS,nbnodes=$NBNODES/XXXXXX\""
-LOGDIR=`mktemp -d "$HOME/stats/$8/$OPTIONS,nbnodes=$NBNODES/XXXXXX"`
+echo "mktemp -d \"$HOME/stats/$DIRRES/$OPTIONS,nbnodes=$NBNODES/XXXXXX\""
+LOGDIR=`mktemp -d "$HOME/stats/$DIRRES/$OPTIONS,nbnodes=$NBNODES/XXXXXX"`
 LOGSUFFIX=`echo $LOGDIR | rev | cut -d "/" -f 1 | rev` 
 echo "Push results in directory $LOGDIR"
 
@@ -117,16 +124,15 @@ echo "Push results in directory $LOGDIR"
 
 #reserve the nodes and : compute the exact list of nodes to reserve
 #avoids the blacklisted nodes
-#line grenoble : 96-178
-NODELIST="$FIRSTNODE"
+NODELIST="$NODE_START"
 offset=0
 for (( i=1; i<=$NBNODES; i+=1 ))
 do
-	NODE=`echo "$offset + $i * $NODESINCR + $FIRSTNODE" | bc`
+	NODE=`echo "$offset + $i * $NODE_STEP + $NODE_START" | bc`
 	while [[ $FORBIDDEN_NODES == *"$NODE"* ]] 
 	do
 		offset=`echo "$offset + 1" | bc`
-		NODE=`echo "$offset + $i * $NODESINCR + $FIRSTNODE" | bc`
+		NODE=`echo "$offset + $i * $NODE_STEP + $NODE_START" | bc`
 	done	
 	NODELIST="$NODELIST+$NODE"
 done
@@ -169,12 +175,12 @@ fi
 #flash them (if DEBUG activated, get a currently existing experiment)
 cd $HOMEEXP/tools
 echo "entering $HOMEEXP/tools"
-if [ -z "$DEBUG" ]
-then
-	CMD="python ExpOpenWSN.py experiment id=$exp_id"
-else
+#if [ -z "$DEBUG" ]
+#then
+#	CMD="python ExpOpenWSN.py experiment id=$exp_id"
+#else
 	CMD="python ExpOpenWSN.py"
-fi	
+#fi	
 echo "$CMD"
 $CMD
 
@@ -187,7 +193,7 @@ fi
 
 
 
-#retrieves the experiment-id
+#retrieves the experiment-id (from pyhton ExpOpenWSN - debug mode)
 if [ ! -z "$DEBUG" ]
 then
 	tmp=`ls -l Experiment-Last` 	
@@ -244,13 +250,7 @@ fi
 res=""
 while [ -z "$res" ]
 do
-	if [ -z "$DEBUG" ]
-	then
-		res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
-	else
-		res="nothing"
-	fi
-	
+	res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`	
 	echo $res
 	sleep 60
 	res=`echo "$res" | grep "Terminated\|Error"`
