@@ -55,11 +55,11 @@ FORBIDDEN_NODES="243 256 239"
 
 
 #stop any other running experiment (silent since we have probably no running experiment here)
-if [ -z "$DEBUG" ]
-then 
-	echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
-	experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
-fi
+#if [ -z "$DEBUG" ]
+#then 
+#	echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
+#	experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
+#fi
 
 
 #resync the sink and node firmwares
@@ -133,6 +133,7 @@ done
 
 
 
+
 #START an experiment
 if [ -z "$DEBUG" ]
 then 
@@ -162,17 +163,21 @@ then
 	done
 fi
 	
-	
 
 
 
-
-
-#flash them
+#flash them (if DEBUG activated, get a currently existing experiment)
 cd $HOMEEXP/tools
 echo "entering $HOMEEXP/tools"
-echo "python ExpOpenWSN.py" 
-python ExpOpenWSN.py 
+if [ -z "$DEBUG" ]
+then
+	CMD="python ExpOpenWSN.py experiment id=$exp_id"
+else
+	CMD="python ExpOpenWSN.py"
+fi	
+echo "$CMD"
+$CMD
+
 if [ $? -ne 0 ]
 then
 	echo "Error: cannot upload the firmware to iotlab, removes $LOGDIR"
@@ -181,7 +186,18 @@ then
 fi
 
 
-#launch port forwarding
+
+#retrieves the experiment-id
+if [ ! -z "$DEBUG" ]
+then
+	tmp=`ls -l Experiment-Last` 	
+	exp_id= `echo $tmp | rev | cut -d ">" -f 1 | rev | cut -d "-" -f 2`	
+fi
+
+
+
+
+#launch port forwarding (by default, uses the last experiment-id)
 cd $HOMEEXP/tools
 echo "entering $HOMEEXP/tools"
 ./expctl ssh-forward
@@ -194,12 +210,19 @@ echo "PID $! $$"
 sleep 1
 
 
+
+
+
+
 #openvizualizer
 cd $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer
 echo "$HOMEEXP/openwsn/openwsn-sw/software/openvisualizer"
 sudo scons runweb &
 CHILD_OPENVIZ=$!
 echo "openvizualizer running with pid $CHILD_OPENVIZ"
+
+
+
 
 
 #restart (sometimes, the network doesnt boot)
@@ -209,8 +232,12 @@ then
 	cd $HOMEEXP/tools
 	echo "entering $HOMEEXP/tools"
 	echo "reflash the nodes (some experiments stucked in the previous step for an unknwon reason)" 
-	python ExpOpenWSN.py 
+	python ExpOpenWSN.py experiment id=$exp_id 
 fi
+
+
+
+
 
 
 #wait the experiments has been terminated
@@ -231,10 +258,14 @@ done
 
 
 
+
+
 #end of the experiment
 #sleep $DURATION_S
 echo "I am now killing openvizualizer, that's the end of the experiment ($DURATION_S seconds)"
 sudo kill $CHILD_OPENVIZ
+
+
 
 
 
@@ -244,8 +275,12 @@ sudo killall socat
 sudo killall ssh
 sudo killall sleep
 	
+	
+	
 #echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
 #experiment-cli -u theoleyr -p x9HBHvm8 stop
+
+
 
 
 
