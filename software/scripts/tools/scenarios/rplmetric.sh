@@ -10,7 +10,7 @@ DCELLS=1
 
 #topology
 NODE_START=210
-NODE_STEP=2
+NODE_STEP=4
 SITE=grenoble
 
 #traffic
@@ -18,20 +18,20 @@ TRAFFIC_MSEC=1000		#ms between two packets (from ANY node)
 
 
 #experiment
-DURATION=30					#in minutes
+DURATION=90					#in minutes
 
 
 #one experiment for debug
-export DEBUG=1
-nbnodes=15
-RPLMETRIC=4
-iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC test
-exit
+#export DEBUG=1
+#nbnodes=15
+#RPLMETRIC=4
+#iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC test
+#exit
 
 
 
 #a list of experiments
-for nbnodes in {8..25..2}
+for nbnodes in {12..25..3}
 do
 	for RPLMETRIC in $RPLMETRIC_LIST
 	do

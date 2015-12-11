@@ -18,7 +18,7 @@ TRAFFIC_MSEC=1000		#ms between two packets (from ANY node)
 
 
 #experiment
-DURATION=30					#in minutes
+DURATION=90				#in minutes
 
 
 #one experiment for debug

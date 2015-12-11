@@ -6,7 +6,7 @@ FORBIDDEN_NODES="243 256 239"		#DEAD nodes in iotlab
 
 if [ $# -ne 11 ]
 then
-	echo "usage $0 celldistrib trackactive rplmetric schedalgo nbnodes site nodestart nodesep traffic_sec duration dirresult"
+	echo "usage $0 celldistrib trackactive rplmetric schedalgo nbnodes site nodestart nodestep duration traffic_sec dirresult"
 	exit 3
 fi
 
@@ -18,11 +18,17 @@ sudo killall ssh > /dev/null 2> /dev/null
 sudo killall sleep > /dev/null 2> /dev/null
  
 
-
 #VARIABLES
 CURDIR=`pwd`
 ASN_AGG=2000
 ASN_START=4000
+
+
+#PARAMS
+DCELL=$1
+TRACK=$2
+RPLMETRIC=$3
+SCHEDALGO=$4
 
 
 #topology
@@ -31,26 +37,21 @@ NBNODES=$5
 SITE=$6
 NODE_START=$7
 NODE_STEP=$8
+DURATION_MIN=$9
 
 
 #Traffic
-TRAFFIC=$9
-CEXAMPLE_PERIOD=`echo "$TRAFFIC * $NBNODES" | bc`		#one packet every nb_nodes seconds 
-
-
-#PARAMETERS
-DURATION_MIN=$10
-DURATION_S=`echo "$DURATION_MIN * 60" | bc`
+CEXAMPLE_PERIOD=`echo "${10} * $NBNODES" | bc`		#one packet every nb_nodes seconds 
 
 
 #DIRS
-DIRRES=$11
+DIRRES=${11}
 
 
 
 #arguments to compile the firmware
 HOMEEXP="$HOME/exp-iotlab"
-export OPTIONS="distribshared=$1 tracks=$2 rplmetric=$3 schedalgo=$4 cex_period=$CEXAMPLE_PERIOD"
+export OPTIONS="distribshared=$DCELL tracks=$TRACK rplmetric=$RPLMETRIC schedalgo=$SCHEDALGO cex_period=$CEXAMPLE_PERIOD"
 
 
 #removes the previous logfile
@@ -62,11 +63,11 @@ sudo rm -f $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openV
 
 
 #stop any other running experiment (silent since we have probably no running experiment here)
-#if [ -z "$DEBUG" ]
-#then 
-#	echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
-#	experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
-#fi
+if [ -z "$DEBUG" ]
+then 
+	echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
+	experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
+fi
 
 
 #resync the sink and node firmwares
@@ -144,8 +145,8 @@ done
 if [ -z "$DEBUG" ]
 then 
 	TMPFILE=`mktemp`
-	echo "experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX  -d $DURATION_MIN -l $SITE,m3,$NODELIST"
-	experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX  -d $DURATION_MIN -l $SITE,m3,$NODELIST > $TMPFILE
+	echo "experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST"
+	experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST > $TMPFILE
 	expid=`cat $TMPFILE | grep id | cut -d ":" -f 2`
 	echo "Experiment id $expid"
 
@@ -175,12 +176,7 @@ fi
 #flash them (if DEBUG activated, get a currently existing experiment)
 cd $HOMEEXP/tools
 echo "entering $HOMEEXP/tools"
-#if [ -z "$DEBUG" ]
-#then
-#	CMD="python ExpOpenWSN.py experiment id=$exp_id"
-#else
-	CMD="python ExpOpenWSN.py"
-#fi	
+CMD="python ExpOpenWSN.py"
 echo "$CMD"
 $CMD
 
@@ -197,7 +193,8 @@ fi
 if [ ! -z "$DEBUG" ]
 then
 	tmp=`ls -l Experiment-Last` 	
-	exp_id= `echo $tmp | rev | cut -d ">" -f 1 | rev | cut -d "-" -f 2`	
+	expid=`echo $tmp | rev | cut -d ">" -f 1 | rev | cut -d "-" -f 2`	
+	echo "expid $exp_id"
 fi
 
 
@@ -238,7 +235,7 @@ then
 	cd $HOMEEXP/tools
 	echo "entering $HOMEEXP/tools"
 	echo "reflash the nodes (some experiments stucked in the previous step for an unknwon reason)" 
-	python ExpOpenWSN.py experiment id=$exp_id 
+	python ExpOpenWSN.py
 fi
 
 
@@ -261,8 +258,7 @@ done
 
 
 #end of the experiment
-#sleep $DURATION_S
-echo "I am now killing openvizualizer, that's the end of the experiment ($DURATION_S seconds)"
+echo "I am now killing openvizualizer
 sudo kill $CHILD_OPENVIZ
 
 
