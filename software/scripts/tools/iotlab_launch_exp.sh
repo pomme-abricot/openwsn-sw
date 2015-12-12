@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #DEBUG=1
-FORBIDDEN_NODES="243 256 239"		#DEAD nodes in iotlab
-
+#FORBIDDEN_NODES="243 256 239"		#DEAD nodes in iotlab
+FORBIDDEN_NODES="243 256 239 319 335 351 356"
 
 if [ $# -ne 11 ]
 then
@@ -63,11 +63,11 @@ sudo rm -f $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openV
 
 
 #stop any other running experiment (silent since we have probably no running experiment here)
-if [ -z "$DEBUG" ]
-then 
-	echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
-	experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
-fi
+#if [ -z "$DEBUG" ]
+#then 
+#echo "experiment-cli stop"
+#	experiment-cli stop 2> /dev/null
+#fi
 
 
 #resync the sink and node firmwares
@@ -145,8 +145,9 @@ done
 if [ -z "$DEBUG" ]
 then 
 	TMPFILE=`mktemp`
-	echo "experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST"
-	experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST > $TMPFILE
+	echo "experiment-cli submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST"
+	experiment-cli submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST > $TMPFILE
+	cat $TMPFILE
 	expid=`cat $TMPFILE | grep id | cut -d ":" -f 2`
 	echo "Experiment id $expid"
 
@@ -163,7 +164,7 @@ then
 	res=""
 	while [ -z "$res" ]
 	do
-		res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
+		res=`experiment-cli get -s -i $expid`
 		echo $res
 		sleep 1
 		res=`echo "$res" | grep "Running"`
@@ -228,14 +229,12 @@ echo "openvizualizer running with pid $CHILD_OPENVIZ"
 
 
 
-#restart (sometimes, the network doesnt boot)
+#reset (sometimes, the network doesnt boot)
 if [ -z "$DEBUG" ]
 then
 	sleep 3
-	cd $HOMEEXP/tools
-	echo "entering $HOMEEXP/tools"
-	echo "reflash the nodes (some experiments stucked in the previous step for an unknwon reason)" 
-	python ExpOpenWSN.py
+	echo "Reseting the nodes: node-cli -i $expid -r"
+    node-cli -i $expid -r
 fi
 
 
@@ -247,7 +246,7 @@ fi
 res=""
 while [ -z "$res" ]
 do
-	res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`	
+	res=`experiment-cli get -s -i $expid`
 	echo $res
 	sleep 60
 	res=`echo "$res" | grep "Terminated\|Error"`
@@ -258,7 +257,7 @@ done
 
 
 #end of the experiment
-echo "I am now killing openvizualizer
+echo "I am now killing openvizualizer"
 sudo kill $CHILD_OPENVIZ
 
 
@@ -273,8 +272,8 @@ sudo killall sleep
 	
 	
 	
-#echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
-#experiment-cli -u theoleyr -p x9HBHvm8 stop
+#echo "xperiment-cli stop"
+#experiment-cli stop
 
 
 
@@ -296,8 +295,8 @@ sudo chown -R $USER $LOGDIR
 #compute the graphs
 cd $LOGDIR
 echo "entering $LOGDIR"
-echo "owsn_extract_stats_from_logs.sh $ASN_START $ASN_AGG openVisualizer.log"
-owsn_extract_stats.sh $ASN_START $ASN_AGG openVisualizer.log
+echo "owsn_extract_stats_from_log.sh $ASN_START $ASN_AGG openVisualizer.log"
+owsn_extract_stats_from_log.sh $ASN_START $ASN_AGG openVisualizer.log
 
 #garbage
 rm -f TMPFILE

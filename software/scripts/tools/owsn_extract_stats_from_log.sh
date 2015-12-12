@@ -13,6 +13,8 @@ then
     exit 2
 fi 
 
+SCRIPTDIR="$HOME/scripts"
+
 
 #constants
 TABFILE="results.csv"
@@ -29,7 +31,7 @@ MAX_NB_PK_TX=0 			# initialization
 ASN_AGGREGATE_INTERVAL=$2	#average pk lossses every ASN_AGGREGATE_INTERVAL ASN
 if [ $# -eq 2 ]
 then
-	LOGFILE="/home/theoleyre/exp-iotlab/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log";
+	LOGFILE="$HOME/exp-iotlab/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log";
 else
 	LOGFILE=$3;
 fi
@@ -321,23 +323,16 @@ echo "$DISTRIBCELLS	$TRACKSACTIVE	$RPLMETRIC	$SCHEDALGO	$global_nbnodes	$CEX_PER
 
 
 #plot some distributions
-gnuplot < /home/theoleyre/scripts/stats/delay_distrib.graph  > delay_distrib.pdf
-gnuplot < /home/theoleyre/scripts/stats/loss_distrib.graph  > loss_distrib.pdf
-
-#move graphs
 if [ ! -d "figs" ]
 then
-	mkdir figs
+mkdir figs
 fi
-RESFILE=`mktemp "figs/delay_distrib.XXXXXX.pdf"`
-mv delay_distrib.pdf $RESFILE
-RESFILE2="${RESFILE/delay_distrib/loss_distrib}"
-echo $RESFILE2
-mv loss_distrib.pdf $RESFILE2
+gnuplot < $SCRIPTDIR/stats/delay_distrib.graph  > figs/delay_distrib.pdf
+
+gnuplot < $SCRIPTDIR/stats/loss_distrib.graph  > figs/loss_distrib.pdf
 
 
-
-
+#garbage collector
 rm -f $TMPGEN
 rm -f $TMPRX
 rm -f $TMPFILE
