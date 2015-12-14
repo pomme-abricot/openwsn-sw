@@ -321,23 +321,15 @@ echo "$DISTRIBCELLS	$TRACKSACTIVE	$RPLMETRIC	$SCHEDALGO	$global_nbnodes	$CEX_PER
 
 
 #plot some distributions
-gnuplot < /home/theoleyre/scripts/stats/delay_distrib.graph  > delay_distrib.pdf
-gnuplot < /home/theoleyre/scripts/stats/loss_distrib.graph  > loss_distrib.pdf
-
-#move graphs
 if [ ! -d "figs" ]
 then
-	mkdir figs
+mkdir figs
 fi
-RESFILE=`mktemp "figs/delay_distrib.XXXXXX.pdf"`
-mv delay_distrib.pdf $RESFILE
-RESFILE2="${RESFILE/delay_distrib/loss_distrib}"
-echo $RESFILE2
-mv loss_distrib.pdf $RESFILE2
+gnuplot < /home/theoleyre/scripts/stats/delay_distrib.graph  > figs/delay_distrib.pdf
+gnuplot < /home/theoleyre/scripts/stats/loss_distrib.graph  > figs/loss_distrib.pdf
 
 
-
-
+#garbage collector
 rm -f $TMPGEN
 rm -f $TMPRX
 rm -f $TMPFILE

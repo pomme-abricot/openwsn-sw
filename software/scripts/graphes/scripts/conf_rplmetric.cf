@@ -4,7 +4,7 @@
 BASENAME|rplmetric
 
 #go to the correct directory
-SUBDIRS_LIST|09122015 10122015
+SUBDIRS_LIST|16122015
 
 #the algos
 SCHEDALGO_LIST|2
