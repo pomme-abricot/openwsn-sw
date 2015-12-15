@@ -258,7 +258,7 @@ done
 
 
 #end of the experiment
-echo "I am now killing openvizualizer
+echo "I am now killing openvizualizer"
 sudo kill $CHILD_OPENVIZ
 
 
