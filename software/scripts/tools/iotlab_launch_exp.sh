@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #DEBUG=1
-FORBIDDEN_NODES="243 256 239"		#DEAD nodes in iotlab
-
+#FORBIDDEN_NODES="243 256 239"		#DEAD nodes in iotlab
+FORBIDDEN_NODES="243 256 239 319 335 351 356"
 
 if [ $# -ne 11 ]
 then
@@ -63,11 +63,11 @@ sudo rm -f $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openV
 
 
 #stop any other running experiment (silent since we have probably no running experiment here)
-if [ -z "$DEBUG" ]
-then 
+#if [ -z "$DEBUG" ]
+#then 
 #echo "experiment-cli stop"
 #	experiment-cli stop 2> /dev/null
-fi
+#fi
 
 
 #resync the sink and node firmwares
@@ -147,6 +147,7 @@ then
 	TMPFILE=`mktemp`
 	echo "experiment-cli submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST"
 	experiment-cli submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST > $TMPFILE
+	cat $TMPFILE
 	expid=`cat $TMPFILE | grep id | cut -d ":" -f 2`
 	echo "Experiment id $expid"
 
@@ -245,7 +246,7 @@ fi
 res=""
 while [ -z "$res" ]
 do
-	res=`experiment-cli $CREDENTIAL get -s -i $expid`
+	res=`experiment-cli get -s -i $expid`
 	echo $res
 	sleep 60
 	res=`echo "$res" | grep "Terminated\|Error"`
@@ -271,7 +272,7 @@ sudo killall sleep
 	
 	
 	
-#echo "experiment-cli stop"
+#echo "xperiment-cli stop"
 #experiment-cli stop
 
 
