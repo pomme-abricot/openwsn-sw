@@ -12,9 +12,9 @@ TRACK=1
 TRACK_LIST="0 1"
 DCELLS=1
 
-#topology
-NODE_START=210
-NODE_STEP=4
+#topology (bottom)
+NODE_START=295
+NODE_STEP=2
 SITE=grenoble
 
 #traffic
