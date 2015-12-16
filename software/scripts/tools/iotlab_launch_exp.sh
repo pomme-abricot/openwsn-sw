@@ -111,10 +111,11 @@ echo "Push results in directory $LOGDIR, logfile $LOGFILE"
 
 
 #symbolic link to place the logfile directory in the correct directory
-LOGFILE="LOGDIR/openVisualizer.log"
-echo " -s $LOGFILE $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log"
-ln -s $LOGFILE $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log
-
+LOGFILE="$LOGDIR/openVisualizer.log"
+echo "touch $LOGFILE"
+touch $LOGFILE
+echo "sudo ln -s $LOGFILE $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log"
+sudo ln -s $LOGFILE $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log
 
 
 
