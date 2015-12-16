@@ -61,16 +61,7 @@ sudo rm -f $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openV
 
 
 
-
-#stop any other running experiment (silent since we have probably no running experiment here)
-#if [ -z "$DEBUG" ]
-#then 
-#echo "experiment-cli stop"
-#	experiment-cli stop 2> /dev/null
-#fi
-
-
-#resync the sink and node firmwares
+#resync the sink and node git repositories
 echo "entering directory $HOMEEXP"
 cd $HOMEEXP
 ./git_mirroring.sh
@@ -114,11 +105,15 @@ then
 fi
 echo "mktemp -d \"$HOME/stats/$DIRRES/$OPTIONS,nbnodes=$NBNODES/XXXXXX\""
 LOGDIR=`mktemp -d "$HOME/stats/$DIRRES/$OPTIONS,nbnodes=$NBNODES/XXXXXX"`
-LOGSUFFIX=`echo $LOGDIR | rev | cut -d "/" -f 1 | rev` 
-echo "Push results in directory $LOGDIR"
+LOGSUFFIX=`echo $LOGDIR | rev | cut -d "/" -f 1 | rev`
+echo "Push results in directory $LOGDIR, logfile $LOGFILE"
 
 
 
+#symbolic link to place the logfile directory in the correct directory
+LOGFILE="LOGDIR/openVisualizer.log"
+echo " -s $LOGFILE $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log"
+ln -s $LOGFILE $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log
 
 
 
@@ -271,23 +266,18 @@ sudo killall ssh
 sudo killall sleep
 	
 	
-	
-#echo "xperiment-cli stop"
-#experiment-cli stop
 
 
 
 
-
-#move the stats (log file)
-echo "pushing results to $LOGDIR"
-if [ ! -e "$HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log" ]
+#verification the logfile exists
+echo "logfile verification $LOGFILE"
+if [ ! -e "$LOGFILE" ]
 then
 	echo "unexisting logfile - experiment error - $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log - statdir $LOGDIR"
 	rm -Rf $LOGDIR
 	exit 2
 fi
-sudo mv $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log $LOGDIR
 sudo chown -R $USER $LOGDIR
 
 
