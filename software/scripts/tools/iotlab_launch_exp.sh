@@ -61,6 +61,7 @@ sudo rm -f $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openV
 
 
 
+
 #stop any other running experiment (silent since we have probably no running experiment here)
 if [ -z "$DEBUG" ]
 then 
