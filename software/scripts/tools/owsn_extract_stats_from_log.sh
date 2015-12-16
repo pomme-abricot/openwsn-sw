@@ -13,6 +13,8 @@ then
     exit 2
 fi 
 
+SCRIPTDIR="$HOME/scripts"
+
 
 #constants
 TABFILE="results.csv"
@@ -29,7 +31,7 @@ MAX_NB_PK_TX=0 			# initialization
 ASN_AGGREGATE_INTERVAL=$2	#average pk lossses every ASN_AGGREGATE_INTERVAL ASN
 if [ $# -eq 2 ]
 then
-	LOGFILE="/home/theoleyre/exp-iotlab/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log";
+	LOGFILE="$HOME/exp-iotlab/openwsn/openwsn-sw/software/openvisualizer/build/runui/openVisualizer.log";
 else
 	LOGFILE=$3;
 fi
@@ -325,8 +327,9 @@ if [ ! -d "figs" ]
 then
 mkdir figs
 fi
-gnuplot < /home/theoleyre/scripts/stats/delay_distrib.graph  > figs/delay_distrib.pdf
-gnuplot < /home/theoleyre/scripts/stats/loss_distrib.graph  > figs/loss_distrib.pdf
+gnuplot < $SCRIPTDIR/stats/delay_distrib.graph  > figs/delay_distrib.pdf
+
+gnuplot < $SCRIPTDIR/stats/loss_distrib.graph  > figs/loss_distrib.pdf
 
 
 #garbage collector
