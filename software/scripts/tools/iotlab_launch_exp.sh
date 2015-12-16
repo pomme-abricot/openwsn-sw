@@ -61,12 +61,11 @@ sudo rm -f $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/runui/openV
 
 
 
-
 #stop any other running experiment (silent since we have probably no running experiment here)
 if [ -z "$DEBUG" ]
 then 
-	echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
-	experiment-cli -u theoleyr -p x9HBHvm8 stop 2> /dev/null
+#echo "experiment-cli stop"
+#	experiment-cli stop 2> /dev/null
 fi
 
 
@@ -145,8 +144,8 @@ done
 if [ -z "$DEBUG" ]
 then 
 	TMPFILE=`mktemp`
-	echo "experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST"
-	experiment-cli -u theoleyr -p x9HBHvm8 submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST > $TMPFILE
+	echo "experiment-cli submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST"
+	experiment-cli submit -n $LOGSUFFIX -d $DURATION_MIN -l $SITE,m3,$NODELIST > $TMPFILE
 	expid=`cat $TMPFILE | grep id | cut -d ":" -f 2`
 	echo "Experiment id $expid"
 
@@ -163,7 +162,7 @@ then
 	res=""
 	while [ -z "$res" ]
 	do
-		res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`
+		res=`experiment-cli get -s -i $expid`
 		echo $res
 		sleep 1
 		res=`echo "$res" | grep "Running"`
@@ -228,14 +227,12 @@ echo "openvizualizer running with pid $CHILD_OPENVIZ"
 
 
 
-#restart (sometimes, the network doesnt boot)
+#reset (sometimes, the network doesnt boot)
 if [ -z "$DEBUG" ]
 then
 	sleep 3
-	cd $HOMEEXP/tools
-	echo "entering $HOMEEXP/tools"
-	echo "reflash the nodes (some experiments stucked in the previous step for an unknwon reason)" 
-	python ExpOpenWSN.py
+	echo "Reseting the nodes: node-cli -i $expid -r"
+    node-cli -i $expid -r
 fi
 
 
@@ -247,7 +244,7 @@ fi
 res=""
 while [ -z "$res" ]
 do
-	res=`experiment-cli -u theoleyr -p x9HBHvm8 get -s -i $expid`	
+	res=`experiment-cli $CREDENTIAL get -s -i $expid`
 	echo $res
 	sleep 60
 	res=`echo "$res" | grep "Terminated\|Error"`
@@ -273,8 +270,8 @@ sudo killall sleep
 	
 	
 	
-#echo "experiment-cli -u theoleyr -p x9HBHvm8 stop"
-#experiment-cli -u theoleyr -p x9HBHvm8 stop
+#echo "experiment-cli stop"
+#experiment-cli stop
 
 
 
