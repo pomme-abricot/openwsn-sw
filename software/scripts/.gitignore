@@ -3,3 +3,4 @@ tmp.*
 *.csv
 *.txt
 *.pdf
+*.AppleDouble*
