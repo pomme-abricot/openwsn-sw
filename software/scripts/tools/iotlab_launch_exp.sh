@@ -226,12 +226,12 @@ echo "openvizualizer running with pid $CHILD_OPENVIZ"
 
 
 #reset (sometimes, the network doesnt boot)
-if [ -z "$DEBUG" ]
-then
-	sleep 3
-	echo "Reseting the nodes: node-cli -i $expid -r"
-    node-cli -i $expid -r
-fi
+#if [ -z "$DEBUG" ]
+#then
+#	sleep 3
+#	echo "Reseting the nodes: node-cli -i $expid -r"
+#    node-cli -i $expid -r
+#fi
 
 
 
