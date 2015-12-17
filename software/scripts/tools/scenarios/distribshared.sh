@@ -22,17 +22,17 @@ TRAFFIC_MSEC=1000               #ms between two packets (from ANY node)
 
 
 #experiment
-DURATION=60                                     #in minutes
+DURATION=120                                     #in minutes
 DIRNAME="distribshared"
 
 
 
 #one experiment for debug
 #export DEBUG=1
-nbnodes=15
-RPLMETRIC=4
-iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC test
-exit
+#nbnodes=15
+#RPLMETRIC=4
+#iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC test
+#exit
 
 
 
