@@ -151,7 +151,7 @@ do
         	
         		if [ $index_agg -gt $index_agg_max ]
         		then
-        			#echo "new asn interval $index_agg"
+                    #echo "new asn interval $index_agg / $ASN_TX / $index_agg_cur"
         			index_agg_max=$index_agg
         			pk_rcvd[$index_agg]=0
 					pk_losses[$index_agg]=0
@@ -304,9 +304,24 @@ for (( index=$index_agg_min ; index<=$index_agg_max; index++ ))
 do
 	ASN_AGG=`echo "$index * $ASN_AGGREGATE_INTERVAL" | bc`  
 	
-	
-	echo "$ASN_AGG	${pk_losses[$index]}" >> $LOSSDISTRIBFILE
-	echo "$ASN_AGG	${pk_rcvd[$index]}" >> $RCVDDISTRIBFILE
+    #PACKET LOSSES
+    if [ -z "${pk_losses[$index]}" ]
+    then
+        echo "$ASN_AGG	0" >> $LOSSDISTRIBFILE
+    else
+        echo "$ASN_AGG	${pk_losses[$index]}" >> $LOSSDISTRIBFILE
+	fi
+
+
+    #PACKET RCVD
+    if [ -z "${pk_rcvd[$index]}" ]
+    then
+        echo "$ASN_AGG	0" >> $RCVDDISTRIBFILE
+    else
+        echo "$ASN_AGG	${pk_rcvd[$index]}" >> $RCVDDISTRIBFILE
+    fi
+
+#echo "$index / $index_agg_max"
 done
 
 
@@ -325,7 +340,7 @@ echo "$DISTRIBCELLS	$TRACKSACTIVE	$RPLMETRIC	$SCHEDALGO	$global_nbnodes	$CEX_PER
 #plot some distributions
 if [ ! -d "figs" ]
 then
-mkdir figs
+    mkdir figs
 fi
 gnuplot < $SCRIPTDIR/stats/delay_distrib.graph  > figs/delay_distrib.pdf
 
