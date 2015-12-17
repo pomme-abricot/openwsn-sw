@@ -190,7 +190,7 @@ do
                 if [ "$hop_delay" -lt "0" ]
                 then
                     echo "ERROR  - negative delay for one hop: $hop_delay (asn_tx $ASN_TX, asn_rx $ASN_RX, src $addr_s, seqnum $seqnum) "
-                    exit
+                    hop_delay=0
                 fi
                 
            		#distribution of delays (delay = -1 if the packet is dropped)
