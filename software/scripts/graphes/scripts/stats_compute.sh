@@ -71,7 +71,7 @@ do
 						
 							
 							#extracts the last line from each file (the stats without the field names)
-							LINE=`cat $FILERES | tail -n 1`
+							LINE=`cat $FILERES | tail -n 1 | sed "s/;/  /g"`
 							echo "$LINE" >> $FILE_OUT_AGGREGATED 
 							echo "->$LINE"
 						done

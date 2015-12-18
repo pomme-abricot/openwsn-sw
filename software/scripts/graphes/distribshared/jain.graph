@@ -6,10 +6,10 @@ set xlabel "Number of nodes"
 set ylabel "Jain index"
 #set xtics 100
 set ytics 0.2
-set yrange [0.6:1]
+#set yrange [0.6:1]
 #set key below
 
 #the data
-plot "distribshared=0,tracks=1,rplmetric=2,schedalgo=2.txt" using 1:12 title 'Contiguous cells' ls 1,\
-"distribshared=1,tracks=1,rplmetric=2,schedalgo=2.txt" using 1:12 title 'Uniformly distributed cells' ls 2
+plot "distribshared=0,tracks=1,rplmetric=1,schedalgo=2.txt" using 1:13 title 'Contiguous cells' ls 1,\
+"distribshared=1,tracks=1,rplmetric=1,schedalgo=2.txt" using 1:13 title 'Uniformly distributed cells' ls 2
 

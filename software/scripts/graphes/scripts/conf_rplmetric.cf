@@ -21,4 +21,4 @@ X_COORD_POS|5
 NB_FIXED_COLS|5
 
 #Nb of columns (discard lines with less or more values)
-NB_OF_COLS|16
+NB_OF_COLS|18
