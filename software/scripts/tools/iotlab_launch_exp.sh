@@ -230,9 +230,21 @@ echo "openvizualizer running with pid $CHILD_OPENVIZ"
 #then
 #	sleep 3
 #	echo "Reseting the nodes: node-cli -i $expid -r"
-#    node-cli -i $expid -r
+#	    node-cli -i $expid -r
 #fi
 
+cd $HOMEEXP/tools
+echo "entering $HOMEEXP/tools"
+CMD="python ExpOpenWSN.py"
+echo "$CMD"
+$CMD
+
+if [ $? -ne 0 ]
+then
+        echo "Error: cannot upload the firmware to iotlab, removes $LOGDIR"
+        rm -Rf $LOGDIR
+        exit 3
+fi
 
 
 

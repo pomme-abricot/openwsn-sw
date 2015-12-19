@@ -6,14 +6,14 @@
 #options
 #RPLMETRIC_LIST="1 3 4"
 RPLMETRIC_LIST="1 3 4"
-RPLMETRIC="1"
+RPLMETRIC="3"
 SCHEDALGO=2
 TRACK=1
 TRACK_LIST="0 1"
 DCELLS=1
 
 #topology (bottom)
-NODE_START=295
+NODE_START=220
 NODE_STEP=2
 SITE=grenoble
 
@@ -22,7 +22,7 @@ TRAFFIC_MSEC=1000               #ms between two packets (from ANY node)
 
 
 #experiment
-DURATION=120                                     #in minutes
+DURATION=30                                    #in minutes
 DIRNAME="distribshared"
 
 
