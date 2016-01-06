@@ -37,6 +37,9 @@ DIRNAME="distribshared"
 
 
 #a list of experiments
+
+for EXP in {0..9}
+do
 for nbnodes in {8..25..2}
 do
 	for DCELLS in {0..1}
@@ -45,6 +48,7 @@ do
 		iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC $DIRNAME
 	done
 done 
+done
 
 
 

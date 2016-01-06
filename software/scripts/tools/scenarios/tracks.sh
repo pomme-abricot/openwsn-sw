@@ -21,7 +21,7 @@ TRAFFIC_MSEC=1000		#ms between two packets (from ANY node)
 
 
 #experiment
-DURATION=120					#in minutes
+DURATION=90					#in minutes
 DIRNAME="tracks"
 
 #one experiment for debug
@@ -34,7 +34,9 @@ DIRNAME="tracks"
 
 
 #a list of experiments
-for nbnodes in {5..30..5}
+for i in {0..1}
+do
+for nbnodes in {10..20..10}
 do
 	for TRACK in $TRACK_LIST
 	do
@@ -42,5 +44,5 @@ do
 		iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC $DIRNAME
 	done
 done 
-
+done
 
