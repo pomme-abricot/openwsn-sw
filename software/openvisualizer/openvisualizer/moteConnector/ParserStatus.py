@@ -112,13 +112,14 @@ class ParserStatus(Parser.Parser):
                                     3,
                                     5,
                                     'MacStats',
-                                    '<BBhhBII',
+                                    '<BBhhBBII',
                                     [
                                         'numSyncPkt' ,               # B
                                         'numSyncAck',                # B
                                         'minCorrection',             # h
                                         'maxCorrection',             # h
-                                        'numDeSync',                 # B
+                                        'numDeSync',                 # B                                        
+                                        'isSync',                    # B
                                         'numTicsOn',                 # I
                                         'numTicsTotal',              # I
                                     ],
@@ -127,7 +128,7 @@ class ParserStatus(Parser.Parser):
                                     3,
                                     6,
                                     'ScheduleRow',
-                                    '<BHBBBBQQBBBBHH',
+                                    '<BHBBBBQQBBBHBQQBHH',
                                     [
                                         'row',                       # B
                                         'slotOffset',                # H 
@@ -140,6 +141,10 @@ class ParserStatus(Parser.Parser):
                                         'numRx',                     # B
                                         'numTx',                     # B
                                         'numTxACK',                  # B
+                                        'trackInstance',             # H
+                                        'trackOwner_type',           # B
+                                        'trackOwner_bodyH',          # Q
+                                        'trackOwner_bodyL',          # Q
                                         'lastUsedAsn_4',             # B
                                         'lastUsedAsn_2_3',           # H
                                         'lastUsedAsn_0_1',           # H
@@ -159,28 +164,19 @@ class ParserStatus(Parser.Parser):
                                     3,
                                     8,
                                     'QueueRow',
-                                    '<BBBBBBBBBBBBBBBBBBBB',
+                                    '<BBBBHHHBQQB', #BQQ',
                                     [
-                                        'creator_0',                 # B
-                                        'owner_0',                   # B
-                                        'creator_1',                 # B
-                                        'owner_1',                   # B
-                                        'creator_2',                 # B
-                                        'owner_2',                   # B
-                                        'creator_3',                 # B
-                                        'owner_3',                   # B
-                                        'creator_4',                 # B
-                                        'owner_4',                   # B
-                                        'creator_5',                 # B
-                                        'owner_5',                   # B
-                                        'creator_6',                 # B
-                                        'owner_6',                   # B
-                                        'creator_7',                 # B
-                                        'owner_7',                   # B
-                                        'creator_8',                 # B
-                                        'owner_8',                   # B
-                                        'creator_9',                 # B
-                                        'owner_9',                   # B
+                                        'row',                       # B
+                                        'creator',                 # B
+                                        'owner',                   # B
+                                        'timeoutAsn_4',            # B
+                                        'timeoutAsn_2_3',          # H
+                                        'timeoutAsn_0_1',          # H
+                                        'trackInstance',           # H
+                                        'trackOwner_type',         # B
+                                        'trackOwner_bodyH',        # Q
+                                        'trackOwner_bodyL',        # Q
+                                        'garbage',                 # B (alignment to an even nb. of bytes)
                                     ],
                                 )
         self._addFieldsParser   (

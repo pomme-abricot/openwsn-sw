@@ -151,6 +151,7 @@ class StateMacStats(StateElem):
         self.data[0]['minCorrection']       = notif.minCorrection
         self.data[0]['maxCorrection']       = notif.maxCorrection
         self.data[0]['numDeSync']           = notif.numDeSync
+        self.data[0]['isSync'] = notif.isSync
         if notif.numTicsTotal!=0:
             dutyCycle                       = (float(notif.numTicsOn)/float(notif.numTicsTotal))*100
             self.data[0]['dutyCycle']       = '{0:.02f}%'.format(dutyCycle)
@@ -177,6 +178,12 @@ class StateScheduleRow(StateElem):
         self.data[0]['numRx']               = notif.numRx
         self.data[0]['numTx']               = notif.numTx
         self.data[0]['numTxACK']            = notif.numTxACK
+        self.data[0]['trackInstance'] = notif.trackInstance
+        if 'trackOwner' not in self.data[0]:
+            self.data[0]['trackOwner'] = typeAddr.typeAddr()
+        self.data[0]['trackOwner'].update(notif.trackOwner_type,
+                                        notif.trackOwner_bodyH,
+                                        notif.trackOwner_bodyL)
         if 'lastUsedAsn' not in self.data[0]:
             self.data[0]['lastUsedAsn']     = typeAsn.typeAsn()
         self.data[0]['lastUsedAsn'].update(notif.lastUsedAsn_0_1,
@@ -194,38 +201,37 @@ class StateBackoff(StateElem):
 
 class StateQueueRow(StateElem):
     
-    def update(self,creator,owner):
+  def update(self, notif):
         StateElem.update(self)
-        if len(self.data)==0:
+        if len(self.data) == 0:
             self.data.append({})
         
-        if 'creator' not in self.data[0]:
-            self.data[0]['creator']         = typeComponent.typeComponent()
-        self.data[0]['creator'].update(creator)
-        if 'owner' not in self.data[0]:
-            self.data[0]['owner']           = typeComponent.typeComponent()
-        self.data[0]['owner'].update(owner)
 
-class StateQueue(StateElem):
-    
-    def __init__(self):
-        StateElem.__init__(self)
-        
-        for i in range(10):
-            self.data.append(StateQueueRow())
-    
-    def update(self,notif):
-        StateElem.update(self)
-        self.data[0].update(notif.creator_0,notif.owner_0)
-        self.data[1].update(notif.creator_1,notif.owner_1)
-        self.data[2].update(notif.creator_2,notif.owner_2)
-        self.data[3].update(notif.creator_3,notif.owner_3)
-        self.data[4].update(notif.creator_4,notif.owner_4)
-        self.data[5].update(notif.creator_5,notif.owner_5)
-        self.data[6].update(notif.creator_6,notif.owner_6)
-        self.data[7].update(notif.creator_7,notif.owner_7)
-        self.data[8].update(notif.creator_8,notif.owner_8)
-        self.data[9].update(notif.creator_9,notif.owner_9)
+        self.data[0]['creator'] = notif.creator
+        self.data[0]['owner'] = notif.owner
+
+        if 'notif.creator' not in self.data[0]:
+            self.data[0]['creator'] = typeComponent.typeComponent()
+        self.data[0]['creator'].update(notif.creator)
+        if 'notif.owner' not in self.data[0]:
+            self.data[0]['owner'] = typeComponent.typeComponent()
+        self.data[0]['owner'].update(notif.owner)
+
+
+
+        if 'timeoutAsn' not in self.data[0]:
+            self.data[0]['timeoutAsn'] = typeAsn.typeAsn()
+        self.data[0]['timeoutAsn'].update(notif.timeoutAsn_0_1,
+                                           notif.timeoutAsn_2_3,
+                                           notif.timeoutAsn_4)
+        self.data[0]['trackInstance'] = notif.trackInstance
+        if 'trackOwner' not in self.data[0]:
+            self.data[0]['trackOwner'] = typeAddr.typeAddr()
+        self.data[0]['trackOwner'].update(notif.trackOwner_type,
+                                        notif.trackOwner_bodyH,
+                                        notif.trackOwner_bodyL)
+  
+
 
 class StateNeighborsRow(StateElem):
     
@@ -469,12 +475,24 @@ class moteState(eventBusClient.eventBusClient):
                                                         'numRx',
                                                         'numTx',
                                                         'numTxACK',
+                                                        'trackInstance',
+                                                        'trackOwner',
                                                         'lastUsedAsn',
                                                     ]
                                                 )
                                               )
         self.state[self.ST_BACKOFF]         = StateBackoff()
-        self.state[self.ST_QUEUE]           = StateQueue()
+        self.state[self.ST_QUEUE]           = StateTable(
+                                                StateQueueRow,
+                                                columnOrder='.'.join(
+                                                    [
+                                                        'creator',
+                                                        'owner',
+                                                        'timeoutAsn',
+                                                        'trackInstance',
+                                                        'trackOwner', ]
+                                                )
+                                              )
         self.state[self.ST_NEIGHBORS]       = StateTable(
                                                 StateNeighborsRow,
                                                 columnOrder = '.'.join(
