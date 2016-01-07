@@ -43,6 +43,7 @@ components = {
   36: "UINJECT",
   37: "RRT",
   38: "SECURITY",
+  39: "OTF",
 }
 
 errorDescriptions = {
@@ -104,5 +105,23 @@ errorDescriptions = {
   56: "busy receiving when stop of serial activity, buffer input length {1} (code location {0})",
   57: "wrong CRC in input Buffer (input length {0})",
   58: "frame received at asn {0} with timeCorrection of {1}",
-  59: "security error on frameType {0}, code location {1}"
+  59: "security error on frameType {0}, code location {1}",
+  60: "otf does not have enough cells (trackInstance {0}, nbCells to add {1})",
+  61: "Unknown neighbor {0}{1} (4 last bytes)",
+  62: "sixtop expects another parameter in its request (bw {0}, nbcells {1})",
+  63: "sixtop current state {0}, location {1}",
+  64: "a timeout has been fired. We have to flush 6top packets (we have the state {0})",
+  65: "a packet has been removed from the queue (owner {0], creator {1})",
+  66: "the best effort track cannot have an owner (here type {0} and addr {1})",
+  67: "not enough space in openqueue for non prioritar packets",
+  68: "received frame with invalid CRC",
+  69: "invalid IEEE 802.15.4e headers",
+  70: "buffer overflow for output in openserial (indexWrite {0}, location {1})",
+  71: "buffer overflow: too many packets (space left {0}, reserved for management {1})",
+  72: "too many cells to reserve in the sixtop request (asked {0}, max {1})",
+  73: "a packet cannot be allocated for component {0} when the node is not synchronized",
+  74: "The component {0} cannot trigger this command (location {1})",
+  75: "Sixtop cannot remove any cell to the parent {0}{1} (none existing)",
+  76: "generic error {0} {1}",
+  77: "unknown error, location {0}, arg {1}"
 }
