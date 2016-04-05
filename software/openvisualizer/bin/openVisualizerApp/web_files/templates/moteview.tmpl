@@ -171,6 +171,16 @@
 	                                                        <span class="pull-right text-muted small" id="outwrite_fld"><em></em>
 	                                                        </span>
 	                                                    </a>
+	                                                    <a class="list-group-item">
+	                                                        <i class="fa fa-tasks fa-fw"></i> Read Buffer id
+	                                                        <span class="pull-right text-muted small" id="outbufferread_fld"><em></em>
+	                                                        </span>
+	                                                    </a>
+	                                                    <a class="list-group-item">
+	                                                        <i class="fa fa-upload fa-fw"></i> Write Buffer id
+	                                                        <span class="pull-right text-muted small" id="outbufferwrite_fld"><em></em>
+	                                                        </span>
+	                                                    </a>
 	                                                </div>
 	                                                <h5>Backoff</h5>
 	                                                <div class="list-group">
@@ -305,6 +315,8 @@
 									        $("#dagrank_fld").text(      hasJson ? dagrankJson.myDAGrank           : '');
 									        $("#outread_fld").text(      hasJson ? outbufJson.index_read           : '');
 									        $("#outwrite_fld").text(     hasJson ? outbufJson.index_write          : '');
+									        $("#outbufferread_fld").text(hasJson ? outbufJson.buffer_read          : '');
+									        $("#outbufferwrite_fld").text(hasJson? outbufJson.buffer_write         : '');
 									        $("#backexp_fld").text(      hasJson ? backoffJson.backoffExponent     : '');
 									        $("#backoff_fld").text(      hasJson ? backoffJson.backoff             : '');
 									        $("#mincorrection_fld").text(hasJson ? macstatsJson.minCorrection      : '');

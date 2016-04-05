@@ -91,10 +91,12 @@ class ParserStatus(Parser.Parser):
                                     3,
                                     3,
                                     'OutputBuffer',
-                                    '<HH',
+                                    '<HHHH',
                                     [
                                         'index_write',               # H
                                         'index_read',                # H
+                                        'buffer_write',              # H
+                                        'buffer_read',               # H
                                     ],
                                 )
         self._addFieldsParser   (
