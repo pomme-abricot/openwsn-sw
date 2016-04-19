@@ -111,7 +111,7 @@ errorDescriptions = {
   62: "sixtop expects another parameter in its request (bw {0}, nbcells {1})",
   63: "sixtop current state {0}, location {1}",
   64: "a timeout has been fired. We have to flush 6top packets (we have the state {0})",
-  65: "a packet has been removed from the queue (owner {0], creator {1})",
+  65: "a packet has been removed from the queue (owner {0}, creator {1})",
   66: "the best effort track cannot have an owner (here type {0} and addr {1})",
   67: "not enough space in openqueue for non prioritar packets",
   68: "received frame with invalid CRC",
