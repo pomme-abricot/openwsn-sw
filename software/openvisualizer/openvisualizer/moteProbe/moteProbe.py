@@ -164,7 +164,7 @@ class moteProbe(threading.Thread):
                 log.info("open port {0}".format(self.portname))
                 
                 if   self.mode==self.MODE_SERIAL:
-                    self.serial = serial.Serial(self.serialport,self.baudrate)
+                    self.serial = serial.Serial(self.serialport,self.baudrate,rtscts=True,dsrdtr=True)
                     #self.serial.setDTR(0)
                     #self.serial.setRTS(0)
                 elif self.mode==self.MODE_EMULATED:
