@@ -13,8 +13,9 @@ DCELLS=1
 
 #topology
 NODE_START=210
-NODE_STEP=4
-SITE=grenoble
+NODE_START=2
+NODE_STEP=2
+SITE=strasbourg
 
 #traffic
 TRAFFIC_MSEC=1000		#ms between two packets (from ANY node) 

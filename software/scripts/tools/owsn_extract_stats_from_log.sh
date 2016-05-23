@@ -57,20 +57,20 @@ rm -rf $RCVDDISTRIBFILE
 
 
 #get the parameters (the nodes MUST have the same parameters (I consider only the last one)
-DISTRIBCELLS=`grep DISTCELLS $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
+DCELLS=`grep DCELLS $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
 TRACKSACTIVE=`grep TRACK $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
-RPLMETRIC=`grep RPLMETRIC $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
+RPLMET=`grep RPLMET $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
 SCHEDALGO=`grep SCHEDALGO $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
-CEX_PERIOD=`grep CEX_PERIOD $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
+CEXPER=`grep CEXPER $LOGFILE | tail -n 1 | rev | cut -d "=" -f 1 | rev`
 
-if [ -z "$DISTRIBCELLS" ] || [ -z "$TRACKSACTIVE" ]  || [ -z "$RPLMETRIC" ]  || [ -z "$SCHEDALGO" ]  || [ -z "$CEX_PERIOD" ] 
+if [ -z "$DCELLS" ] || [ -z "$TRACKSACTIVE" ]  || [ -z "$RPLMET" ]  || [ -z "$SCHEDALGO" ]  || [ -z "$CEXPER" ] 
 then
 	echo "errror: we don't know the parameters used for this experiment"
-	echo "DISTRIBCELLS=$DISTRIBCELLS"
+	echo "DCELLS=$DCELLS"
 	echo "TRACKSACTIVE=$TRACKSACTIVE"
-	echo "RPLMETRIC=$RPLMETRIC"
+	echo "RPLMET=$RPLMET"
 	echo "SCHEDALGO=$SCHEDALGO"
-	echo "CEX_PERIOD=$CEX_PERIOD"
+	echo "CEXPER=$CEXPER"
 	exit
 fi
 
@@ -216,7 +216,7 @@ do
                     hop_delay=0
                 fi
                 
-           		#distribution of delays (delay = -1 if the packet is dropped)
+           	#distribution of delays (delay = -1 if the packet is dropped)
             	echo "$ASN_TX	$hop_delay" >> $DELAYDISTRIBFILE
 				
 				(( pk_rcvd[$index_agg] ++ ))
@@ -428,7 +428,7 @@ then
 fi
 
 
-echo "$DISTRIBCELLS; $TRACKSACTIVE; $RPLMETRIC; $SCHEDALGO; $global_nbnodes; $CEX_PERIOD; $NB_PKGEN_MIN; $NB_NODES_DISCARDED; `echo "$global_pktx / $global_nbnodes"| bc -l`; `echo "$global_pkrx / $global_nbnodes"| bc -l`; $global_dupratio; $global_pdr_avg; $global_jain_pdr; $global_delay_avg; `echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`; $global_jain_delay;  $global_pdr_avg_conv; $global_pdr_avg_delay" >> $TABFILE
+echo "$DCELLS; $TRACKSACTIVE; $RPLMET; $SCHEDALGO; $global_nbnodes; $CEXPER; $NB_PKGEN_MIN; $NB_NODES_DISCARDED; `echo "$global_pktx / $global_nbnodes"| bc -l`; `echo "$global_pkrx / $global_nbnodes"| bc -l`; $global_dupratio; $global_pdr_avg; $global_jain_pdr; $global_delay_avg; `echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`; $global_jain_delay;  $global_pdr_avg_conv; $global_pdr_avg_delay" >> $TABFILE
 
 
 
