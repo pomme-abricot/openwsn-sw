@@ -1,0 +1,17 @@
+load "../common.plt"
+
+
+# legend, labels & axis
+set xlabel "Number of nodes"
+set ylabel "Jain index"
+#set xtics 100
+set ytics 0.2
+set yrange [0.6:1]
+#set key below
+
+#the data
+plot "distribshared=1,tracks=1,rplmetric=1,schedalgo=2.txt" using 1:13 title 'ETX' ls 1,\
+"distribshared=1,tracks=1,rplmetric=2,schedalgo=2.txt" using 1:13 title 'ETX2' ls 2,\
+"distribshared=1,tracks=1,rplmetric=3,schedalgo=2.txt" using 1:13 title 'MinHop' ls 3,\
+"distribshared=1,tracks=1,rplmetric=4,schedalgo=2.txt" using 1:13 title 'RSSI' ls 4
+

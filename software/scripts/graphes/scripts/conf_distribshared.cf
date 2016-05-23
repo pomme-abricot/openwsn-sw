@@ -1,0 +1,24 @@
+#CONFIGURATION FILE TO COMPUTE STATS
+
+#basename to construct filenames, directories, etc.
+BASENAME|distribshared
+
+#go to the correct directory
+SUBDIRS_LIST|17122015
+
+#the algos
+SCHEDALGO_LIST|2
+RPLMETRIC_LIST|1
+DISTRCELLS_LIST|0 1
+TRACK_LIST|1
+
+
+#The column id for the x-coordinate of the graph (i.e. the parameter)
+#the load
+X_COORD_POS|5
+
+#Number of columns that are fixed
+NB_FIXED_COLS|5
+
+#Nb of columns (discard lines with less or more values)
+NB_OF_COLS|18
