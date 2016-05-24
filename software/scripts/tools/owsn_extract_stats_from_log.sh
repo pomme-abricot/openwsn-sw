@@ -267,22 +267,22 @@ fi
 
 
 #######################################################
-#    SPECIAL CASE : NO PKT RCVF DURING A TIMEPERIOD
+#    SPECIAL CASE : NO PKT RCVD DURING A TIMEPERIOD
 #######################################################
 
 for (( index=$index_agg_min ; index<=$index_agg_max; index++ ))
 do
     if [ -z "${pk_rcvd[$index]}" ]
     then
-        ${pk_rcvd[$index]}=0
+       pk_rcvd[$index]=0
     fi
     if [ -z "${pk_loss[$index]}" ]
     then
-        ${pk_loss[$index]}=0
+       pk_loss[$index]=0
     fi
     if [ -z "${pk_delay[$index]}" ]
     then
-        ${pk_delay[$index]}=0
+        pk_delay[$index]=0
     fi
 done
 
@@ -315,7 +315,7 @@ sum2_pdr=0
 sum2_delay=0
 
 
-echo "$sum_delay"
+#echo "$sum_delay"
 
 #for each node, computes the aggregated statistics
 for i in ${!array_pktx[*]} 
