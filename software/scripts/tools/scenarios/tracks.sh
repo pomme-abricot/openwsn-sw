@@ -8,14 +8,14 @@ RPLMETRIC_LIST="1 3 4"
 RPLMETRIC="1"
 SCHEDALGO=2
 TRACK=1
-TRACK_LIST="0 1"
+TRACK_LIST="0 1 2"
 DCELLS=1
 
 #topology
-NODE_START=210
 NODE_START=2
-NODE_STEP=2
-SITE=strasbourg
+NODE_START=17
+NODE_STEP=5
+SITE=lille
 
 #traffic
 TRAFFIC_MSEC=1000		#ms between two packets (from ANY node) 
