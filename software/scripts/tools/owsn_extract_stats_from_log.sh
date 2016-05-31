@@ -84,7 +84,6 @@ NBNODES=`wc -l $NODESLIST | cut -d " " -f 1`
 #echo "$NBNODES nodes (+dagroot)"
 
 index=0
-index_agg=0
 index_agg_max=0
 index_agg_min=-1
 
@@ -125,6 +124,8 @@ do
     SEQNUMS=`cat $TMPGEN | cut -d "|" -f 8 | cut -d "=" -f 2` 
     for seqnum in $SEQNUMS
     do
+
+
         #ASNs picked in the logs
         ASN_TX=`cat $TMPGEN | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
         ASN_RX=`cat $TMPRX | grep "seqnum=$seqnum" | cut -d "|" -f 4 | cut -d "=" -f 2`
@@ -137,6 +138,9 @@ do
            ASN_TX=0
         fi
 
+
+
+
         #######################################
         #      AFTER BOOTSTRAP
         #######################################
@@ -145,87 +149,100 @@ do
         #I only consider the packets after the bootstrap period
         if [ "$ASN_TX" -gt "$ASN_MIN" ]
         then
+		
         	
         	#to aggregate values (for histograms)
-			#echo "echo \"$ASN_TX / $ASN_AGGREGATE_INTERVAL\" | bc"
-        	index_agg_cur=`echo "$ASN_TX / $ASN_AGGREGATE_INTERVAL" | bc`
-
-        	if [ "$index_agg_cur" -ne "$index_agg" ]
+		#echo "echo \"$ASN_TX / $ASN_AGGREGATE_INTERVAL\" | bc"
+        	index_agg_cur=`echo "$ASN_TX / $ASN_AGGREGATE_INTERVAL" | bc`	
+        	
+		#this is the minimum seqnum in the list
+        	if [ $index_agg_min -eq "-1" ] || [ $index_agg_min -gt $index_agg_cur ]
         	then
-        		index_agg=$index_agg_cur
-        		#echo "cur: $index_agg_cur" 		
-        	
-        		if [ $index_agg_min -eq -1 ] || [ $index_agg_min -gt $index_agg_cur ]
-        		then
-        			index_agg_min=$index_agg_cur
-					#echo "new $index_agg_cur"					
-					pk_rcvd[$index_agg]=0
-                    pk_loss[$index_agg]=0
-                    pk_ldelay[$index_agg]=0
-        		fi
-        	
-        	
-        		if [ $index_agg -gt $index_agg_max ]
-        		then
-                    #echo "new asn interval $index_agg / $ASN_TX / $index_agg_cur"
-        			index_agg_max=$index_agg
-        			pk_rcvd[$index_agg]=0
-                    pk_loss[$index_agg]=0
-					pk_delay[$index_agg]=0
-        		fi
-      		fi
-      	  	
-        	
-
-            #nb of packets generated
-            (( array_pktx[index]++ ))
-
-            #######################################
-            #      RCVD PACKETS
-            #######################################
-
-
-            #the packet was received: lets' increase the delay
-            if [ -n "$ASN_RX" ] 
-            then
-
-                #search for duplicates, and keep only the first reception
-                eval ASN_RX_ARRAY=($ASN_RX)
-                if [ ${#ASN_RX_ARRAY[@]} -gt 1 ]
-                then
-                    #echo "duplicate"
-                    ASN_RX=${ASN_RX_ARRAY[0]}
-                    (( array_pkdup[index]++ ))
-                fi
-                
-           
-                #echo "|$ASN_RX| - |$ASN_TX|"
-
-                #compute the delay (in ASN)
-                hop_delay=`echo "$ASN_RX - $ASN_TX" | bc -l` 
-                array_delay[$index]=`echo "${array_delay[$index]} + $hop_delay" | bc -l`
-                pk_delay[$index_agg]=`echo "${pk_delay[$index_agg]} + $hop_delay" | bc -l`
-           
-                #nb of received packets
-                (( array_pkrx[$index]++ ))
-
-                #bug
-                if [ "$hop_delay" -lt "0" ]
-                then
-                    echo "ERROR  - negative delay for one hop: $hop_delay (asn_tx $ASN_TX, asn_rx $ASN_RX, src $addr_s, seqnum $seqnum) "
-                    hop_delay=0
-                fi
-                
-           	#distribution of delays (delay = -1 if the packet is dropped)
-            	echo "$ASN_TX	$hop_delay" >> $DELAYDISTRIBFILE
-				
-				(( pk_rcvd[$index_agg] ++ ))
+			#very first seqnum to handle
+			if  [ $index_agg_min -eq "-1" ]
+			then	
+				pk_rcvd[$index_agg_cur]=0
+                		pk_loss[$index_agg_cur]=0
+                		pk_delay[$index_agg_cur]=0
+				index_agg_max=$index_agg_cur
 			else
-				#echo "loss: $addr_s $seqnum $ASN_TX"
-				(( pk_loss[$index_agg] ++ ))
+				#initalization for all the variables between the old and the new MIN
+				for (( ii=index_agg_cur; ii<index_agg_min; ii++ ))
+				do
+					#echo "--- $ii"					
+					pk_rcvd[$ii]=0
+                			pk_loss[$ii]=0
+                			pk_delay[$ii]=0
+				done
+			fi
+        		index_agg_min=$index_agg_cur		
+	     	fi
+        	
+        	
+		#this is the maximum seqnum in the list
+        	if [ $index_agg_cur -gt $index_agg_max ]
+        	then
+			#initalization for all the variables between the old and the new MAX
+			for (( ii=index_agg_max+1; ii<=index_agg_cur ; ii++ ))
+			do
+				#echo "+++ $ii"					
+				pk_rcvd[$ii]=0
+                		pk_loss[$ii]=0
+                		pk_delay[$ii]=0
+			done
+        		index_agg_max=$index_agg_cur
+        			
+        	fi		
+        
+           	#nb of packets generated
+            	(( array_pktx[index]++ ))
 
-            fi  
-            
+           	#######################################
+            	#      RCVD PACKETS
+           	#######################################
+
+           	#the packet was received: lets' increase the delay
+            	if [ -n "$ASN_RX" ] 
+            	then
+
+                	#search for duplicates, and keep only the first reception
+                	eval ASN_RX_ARRAY=($ASN_RX)
+                	if [ ${#ASN_RX_ARRAY[@]} -gt 1 ]
+                	then
+                	    #echo "duplicate"
+                	    ASN_RX=${ASN_RX_ARRAY[0]}
+                	    (( array_pkdup[index]++ ))
+                	fi
+                           
+                	#echo "|$ASN_RX| - |$ASN_TX|"
+
+                	#compute the delay (in ASN)
+                	hop_delay=`echo "$ASN_RX - $ASN_TX" | bc -l` 
+                	array_delay[$index]=`echo "${array_delay[$index]} + $hop_delay" | bc -l`
+                	pk_delay[$index_agg_cur]=`echo "${pk_delay[$index_agg_cur]} + $hop_delay" | bc -l`
+           
+              		#nb of received packets
+                	(( array_pkrx[$index]++ ))
+
+                	#bug
+                	if [ "$hop_delay" -lt "0" ]
+                	then
+                    		echo "ERROR  - negative delay for one hop: $hop_delay (asn_tx $ASN_TX, asn_rx $ASN_RX, src $addr_s, seqnum $seqnum) "
+                    		hop_delay=0
+                	fi                
+
+           		#distribution of delays (delay = -1 if the packet is dropped)
+            		echo "$ASN_TX	$hop_delay" >> $DELAYDISTRIBFILE
+			
+			(( pk_rcvd[$index_agg_cur] ++ ))
+
+		#######################################
+            	#      DROPPED PACKETS
+           	#######################################
+		else
+			#echo "loss: $addr_s $seqnum $ASN_TX"
+			(( pk_loss[$index_agg_cur] ++ ))
+        	fi              
         fi
 
     done
