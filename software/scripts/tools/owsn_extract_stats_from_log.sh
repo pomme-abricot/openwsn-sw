@@ -241,10 +241,21 @@ do
     #prints the stats
     echo "nb_pk_tx[$addr_s]=${array_pktx[$index]}"
     echo "nb_pk_rx[$addr_s]=${array_pkrx[$index]}"
-    echo "dupratio_data[$addr_s]=`echo "${array_pkdup[$index]} / ${array_pkrx[$index]}" | bc -l`"
+    if (( ${array_pkrx[$index]} == 0 ))
+    then
+        echo "dupratio_data[$addr_s]=n/a"	
+    else
+        echo "dupratio_data[$addr_s]=`echo "${array_pkdup[$index]} / ${array_pkrx[$index]}" | bc -l`"
+    fi
     echo "pdr_data[$addr_s]=`echo "${array_pkrx[$index]} / ${array_pktx[$index]}" | bc -l`"
-    echo "avg_delay(ASN)[$addr_s]=`echo "${array_delay[$index]} / ${array_pkrx[$index]}" | bc -l`"
-    echo "avg_delay(ms)[$addr_s]=`echo "${array_delay[$index]} / ${array_pkrx[$index]} * 15" | bc -l`"
+    if (( ${array_pkrx[$index]} == 0 ))
+    then
+        echo "avg_delay(ASN)[$addr_s]=n/a"
+        echo "avg_delay(ms)[$addr_s]=n/a"
+    else
+        echo "avg_delay(ASN)[$addr_s]=`echo "${array_delay[$index]} / ${array_pkrx[$index]}" | bc -l`"
+        echo "avg_delay(ms)[$addr_s]=`echo "${array_delay[$index]} / ${array_pkrx[$index]} * 15" | bc -l`"
+    fi
     echo "----------"
 
 	#remember the max nb. of pkts txed
@@ -317,6 +328,9 @@ sum2_delay=0
 
 #echo "$sum_delay"
 
+
+
+
 #for each node, computes the aggregated statistics
 for i in ${!array_pktx[*]} 
 do
@@ -327,7 +341,7 @@ do
         global_pkdup=`echo "$global_pkdup +  ${array_pkdup[$i]}" | bc`
         global_delay=`echo "$global_delay +  ${array_delay[$i]}" | bc`
 
-       #jain indexes
+        #jain indexes
         sum_pdr=`echo "$sum_pdr + ${array_pkrx[$i]} / ${array_pktx[$i]}" | bc -l`
         sum2_pdr=`echo "$sum2_pdr + (${array_pkrx[$i]} / ${array_pktx[$i]})^2" | bc -l`
         if [ ${array_pkrx[$i]} -ne 0  ]
@@ -335,20 +349,25 @@ do
             sum_delay=`echo "$sum_delay + ${array_delay[$i]} / ${array_pkrx[$i]}" | bc -l`
             sum2_delay=`echo "$sum2_delay + (${array_delay[$i]} / ${array_pkrx[$i]})^2" | bc -l`
         fi
-
     else
     	((NB_NODES_DISCARDED=NB_NODES_DISCARDED+1))
     fi
 done
 
-
-
 #avg values for all the flows
 global_pdr_avg=`echo "$global_pkrx / $global_pktx"| bc -l`
-global_delay_avg=`echo "$global_delay / $global_pkrx"| bc -l`
-global_jain_pdr=`echo "($sum_pdr)^2 / ($sum2_pdr * $global_nbnodes)"| bc -l`
-global_jain_delay=`echo "($sum_delay)^2 / ($sum2_delay * $global_nbnodes)"| bc -l`
-global_dupratio=`echo "$global_pkdup / ($global_pkrx * $global_nbnodes)"| bc -l`
+if (( $global_pkrx == 0 ))
+then
+    global_delay_avg=0
+    global_jain_pdr=0
+    global_jain_delay=0
+    global_dupratio=0
+else
+    global_delay_avg=`echo "$global_delay / $global_pkrx"| bc -l`
+    global_jain_pdr=`echo "($sum_pdr)^2 / ($sum2_pdr * $global_nbnodes)"| bc -l`
+    global_jain_delay=`echo "($sum_delay)^2 / ($sum2_delay * $global_nbnodes)"| bc -l`
+    global_dupratio=`echo "$global_pkdup / ($global_pkrx * $global_nbnodes)"| bc -l`
+fi
 
 
 
@@ -369,10 +388,14 @@ do
     pk_loss_conv=`echo "$pk_loss_conv + ${pk_loss[$index]}" | bc -l`
     pk_delay_conv=`echo "$pk_delay_conv + ${pk_delay[$index]}" | bc -l`
 done
-global_pdr_avg_conv=`echo "1 - $pk_loss_conv / ($pk_rcvd_conv + $pk_loss_conv)" | bc -l`
-global_pdr_avg_delay=`echo "$pk_delay_conv / $pk_rcvd_conv"| bc -l`
-
-
+if (( $pk_rcvd_conv == 0))
+then
+    global_pdr_avg_conv=0
+    global_pdr_avg_delay=0
+else
+    global_pdr_avg_conv=`echo "1 - $pk_loss_conv / ($pk_rcvd_conv + $pk_loss_conv)" | bc -l`
+    global_pdr_avg_delay=`echo "$pk_delay_conv / $pk_rcvd_conv"| bc -l`
+fi
 
 
 
@@ -390,7 +413,12 @@ echo "dupuratio_data[avg]=$global_dupratio"
 echo "pdr_data[avg]=$global_pdr_avg"
 echo "jain_pdr=$global_jain_pdr"
 echo "avg_delay(ASN)[avg]=$global_delay_avg"
-echo "avg_delay(ms)[avg]=`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`"
+if (( $global_pkrx == 0 ))
+then
+    echo "avg_delay(ms)[avg]=0"
+else
+    echo "avg_delay(ms)[avg]=`echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`"
+fi
 echo "jain_delay=$global_jain_delay"
 echo "--------------------"
 echo "---AVG AFTER CONV--"
@@ -417,6 +445,7 @@ done
 
 
 
+
 #######################################
 #               CSV
 #######################################
@@ -427,8 +456,12 @@ then
 	echo "dist_cells; tracks; rplmetric; schedalgo; nb_nodes; cex_period; nb_pk_tx_significant; nb_nodes_discarded; nb_pk_tx; nb_pk_rx; dupuratio_data; pdr_data; jain_pdr; avg_delay(ASN); avg_delay(ms); jain_delay; pdr_conv; avg_delay_conv(ASN)" > $TABFILE
 fi
 
-
+if (( $global_pkrx > 0 ))
+then
 echo "$DCELLS; $TRACKSACTIVE; $RPLMET; $SCHEDALGO; $global_nbnodes; $CEXPER; $NB_PKGEN_MIN; $NB_NODES_DISCARDED; `echo "$global_pktx / $global_nbnodes"| bc -l`; `echo "$global_pkrx / $global_nbnodes"| bc -l`; $global_dupratio; $global_pdr_avg; $global_jain_pdr; $global_delay_avg; `echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`; $global_jain_delay;  $global_pdr_avg_conv; $global_pdr_avg_delay" >> $TABFILE
+else	
+echo "$DCELLS; $TRACKSACTIVE; $RPLMET; $SCHEDALGO; $global_nbnodes; $CEXPER; $NB_PKGEN_MIN; $NB_NODES_DISCARDED; `echo "$global_pktx / $global_nbnodes"| bc -l`; `echo "$global_pkrx / $global_nbnodes"| bc -l`; $global_dupratio; $global_pdr_avg; $global_jain_pdr; $global_delay_avg; `echo "0"| bc -l`; $global_jain_delay;  $global_pdr_avg_conv; $global_pdr_avg_delay" >> $TABFILE
+fi
 
 
 
@@ -441,9 +474,15 @@ if [ ! -d "figs" ]
 then
     mkdir figs
 fi
-gnuplot < $SCRIPTDIR/stats/delay_distrib.graph  > figs/delay_distrib.pdf
+if [ -f $DELAYDISTRIBFILE ]
+then
+    gnuplot < $SCRIPTDIR/stats/delay_distrib.graph  > figs/delay_distrib.pdf
+fi
+if [ -f $LOSSDISTRIBFILE ]
+then
+    gnuplot < $SCRIPTDIR/stats/loss_distrib.graph  > figs/loss_distrib.pdf
+fi
 
-gnuplot < $SCRIPTDIR/stats/loss_distrib.graph  > figs/loss_distrib.pdf
 
 
 #garbage collector
