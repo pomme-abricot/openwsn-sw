@@ -33,9 +33,9 @@ DIRNAME="tracks"
 
 
 #a list of experiments
-for i in {0..1}
+for i in {0..8}
 do
-for nbnodes in {5..20..5}
+for nbnodes in {5..50..10}
 do
 	for TRACK in $TRACK_LIST
 	do
