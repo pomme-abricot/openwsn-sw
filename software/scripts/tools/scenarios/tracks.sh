@@ -3,8 +3,6 @@
 
 
 #options
-#RPLMETRIC_LIST="1 3 4"
-RPLMETRIC_LIST="1 3 4"
 RPLMETRIC="1"
 SCHEDALGO=2
 TRACK=1
@@ -22,7 +20,7 @@ TRAFFIC_MSEC=1000		#ms between two packets (from ANY node)
 
 
 #experiment
-DURATION=90					#in minutes
+DURATION=60					#in minutes
 DIRNAME="tracks"
 
 #one experiment for debug
@@ -37,7 +35,7 @@ DIRNAME="tracks"
 #a list of experiments
 for i in {0..1}
 do
-for nbnodes in {10..20..10}
+for nbnodes in {5..20..5}
 do
 	for TRACK in $TRACK_LIST
 	do
