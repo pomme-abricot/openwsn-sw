@@ -22,7 +22,7 @@ sudo killall sleep > /dev/null 2> /dev/null
 CURDIR=`pwd`
 ASN_AGG=2000
 ASN_START=4000
-
+PRINTF=0
 
 #PARAMS
 DCELL=$1
@@ -51,7 +51,7 @@ DIRRES=${11}
 
 #arguments to compile the firmware
 HOMEEXP="$HOME/exp-iotlab"
-export OPTIONS="distribshared=$DCELL tracks=$TRACK rplmetric=$RPLMETRIC schedalgo=$SCHEDALGO cex_period=$CEXAMPLE_PERIOD"
+export OPTIONS="distribshared=$DCELL tracks=$TRACK rplmetric=$RPLMETRIC schedalgo=$SCHEDALGO cex_period=$CEXAMPLE_PERIOD printf=$PRINTF"
 
 
 #removes the previous logfile
