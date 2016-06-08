@@ -10,7 +10,7 @@ StateElem class.
 '''
 import logging
 log = logging.getLogger('moteState')
-log.setLevel(logging.ERROR)
+log.setLevel(logging.INFO)
 log.addHandler(logging.NullHandler())
 
 import copy
@@ -372,6 +372,39 @@ class StatekaPeriod(StateElem):
             self.data.append({})
         self.data[0]['kaPeriod']            = notif.kaPeriod
 
+class StateParams(StateElem):
+    
+    def update(self,notif):
+        StateElem.update(self)
+        if len(self.data)==0:
+            self.data.append({})
+        self.data[0]['trackMgmt']           = notif.trackMgmt
+        self.data[0]['distrCells']          = notif.distrCells
+        self.data[0]['rplMetric']           = notif.rplMetric
+        self.data[0]['schedulingAlgo']      = notif.schedulingAlgo
+        self.data[0]['cexamplePeriod']      = notif.cexamplePeriod
+        
+        #prints the parameters values for each mote (every 100 updates)
+        if (self.meta[0]['numUpdates'] % 100) <=1:
+            #print self, self.data[0]['trackMgmt']
+            log.info('Node={5}:PARAMS:TRACKS={0}:DCELLS={1}:RPLMET={2}:SCHEDALGO={3}:CEXPER={4}'.format(
+                notif.trackMgmt, 
+                notif.distrCells, 
+                notif.rplMetric, 
+                notif.schedulingAlgo, 
+                notif.cexamplePeriod,
+                0
+                ));
+            print('Node={5}:PARAMS:TRACKS={0}:DCELLS={1}:RPLMET={2}:SCHEDALGO={3}:CEXPER={4}'.format(
+                notif.trackMgmt, 
+                notif.distrCells, 
+                notif.rplMetric, 
+                notif.schedulingAlgo, 
+                notif.cexamplePeriod,
+                0
+                ));
+      
+      
 class StateTable(StateElem):
 
     def __init__(self,rowClass,columnOrder=None):
@@ -403,6 +436,7 @@ class moteState(eventBusClient.eventBusClient):
     ST_IDMANAGER        = 'IdManager'
     ST_MYDAGRANK        = 'MyDagRank'
     ST_KAPERIOD         = 'kaPeriod'
+    ST_PARAMS           = "params"
     ST_ALL              = [
         ST_OUPUTBUFFER,
         ST_ASN,
@@ -415,6 +449,7 @@ class moteState(eventBusClient.eventBusClient):
         ST_IDMANAGER, 
         ST_MYDAGRANK,
         ST_KAPERIOD,
+        ST_PARAMS,
     ]
     
     TRIGGER_DAGROOT     = 'DAGroot'
@@ -521,7 +556,8 @@ class moteState(eventBusClient.eventBusClient):
                                               )
         self.state[self.ST_MYDAGRANK]       = StateMyDagRank()
         self.state[self.ST_KAPERIOD]        = StatekaPeriod()
-        
+        self.state[self.ST_PARAMS]          = StateParams()
+       
         self.notifHandlers = {
             self.parserStatus.named_tuple[self.ST_OUPUTBUFFER]:
                 self.state[self.ST_OUPUTBUFFER].update,
@@ -545,6 +581,8 @@ class moteState(eventBusClient.eventBusClient):
                 self.state[self.ST_MYDAGRANK].update,
             self.parserStatus.named_tuple[self.ST_KAPERIOD]:
                 self.state[self.ST_KAPERIOD].update,
+            self.parserStatus.named_tuple[self.ST_PARAMS]:
+                self.state[self.ST_PARAMS].update,
         }
         
         # initialize parent class

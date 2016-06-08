@@ -168,7 +168,7 @@ class ParserStatus(Parser.Parser):
                                     'QueueRow',
                                     '<BBBBHHHBQQB', #BQQ',
                                     [
-                                        'row',                       # B
+                                        'row',                     # B
                                         'creator',                 # B
                                         'owner',                   # B
                                         'timeoutAsn_4',            # B
@@ -216,6 +216,19 @@ class ParserStatus(Parser.Parser):
                                         'kaPeriod',                  # H
                                     ],
                                 )
+        self._addFieldsParser   (   
+                                    3,
+                                    11,
+                                    'params',
+                                    '<BBBBI',
+                                    [
+                                        'trackMgmt',                  # B
+                                        'distrCells',                 # B
+                                        'rplMetric',                  # B
+                                        'schedulingAlgo',             # B
+                                        'cexamplePeriod',             # I
+                                    ],
+                                )
     
     #======================== public ==========================================
     
@@ -248,8 +261,8 @@ class ParserStatus(Parser.Parser):
             if statusElem==key.val:
             
                 # log
-                if log.isEnabledFor(logging.DEBUG):
-                    log.debug("parsing {0}, ({1} bytes) as {2}".format(input,len(input),key.name))
+                #if log.isEnabledFor(logging.DEBUG):
+                log.debug("parsing {0}, ({1} bytes) as {2}".format(input,len(input),key.name))
                 
                 # parse byte array
                 try:
