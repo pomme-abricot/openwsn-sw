@@ -385,7 +385,7 @@ class StateParams(StateElem):
         self.data[0]['cexamplePeriod']      = notif.cexamplePeriod
         
         #prints the parameters values for each mote (every 100 updates)
-        if (self.meta[0]['numUpdates'] % 100) <=1:
+        if (self.meta[0]['numUpdates'] % 10000) <=1:
             #print self, self.data[0]['trackMgmt']
             log.info('Node={5}:PARAMS:TRACKS={0}:DCELLS={1}:RPLMET={2}:SCHEDALGO={3}:CEXPER={4}'.format(
                 notif.trackMgmt, 
@@ -393,7 +393,7 @@ class StateParams(StateElem):
                 notif.rplMetric, 
                 notif.schedulingAlgo, 
                 notif.cexamplePeriod,
-                0
+                "?"
                 ));
             print('Node={5}:PARAMS:TRACKS={0}:DCELLS={1}:RPLMET={2}:SCHEDALGO={3}:CEXPER={4}'.format(
                 notif.trackMgmt, 
@@ -401,7 +401,7 @@ class StateParams(StateElem):
                 notif.rplMetric, 
                 notif.schedulingAlgo, 
                 notif.cexamplePeriod,
-                0
+                "?"
                 ));
       
       
