@@ -74,6 +74,7 @@ echo "Buiding OpenWSN"
 cd $HOMEEXP
 if [ -z "$DEBUG" ]
 then 
+#	make build-openwsn-sink-m3
 	make build-openwsn-sink-m3 > /dev/null 2> /dev/null
 else
 	make build-openwsn-sink-m3
@@ -123,7 +124,7 @@ sudo ln -s $LOGFILE $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer/build/ru
 #avoids the blacklisted nodes
 NODELIST="$NODE_START"
 offset=0
-for (( i=1; i<=$NBNODES; i+=1 ))
+for (( i=1; i<$NBNODES; i+=1 ))
 do
 	NODE=`echo "$offset + $i * $NODE_STEP + $NODE_START" | bc`
 	while [[ $FORBIDDEN_NODES == *"$NODE"* ]] 
