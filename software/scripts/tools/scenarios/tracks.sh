@@ -13,6 +13,8 @@ DCELLS="1"
 NODE_START=188
 NODE_STEP=3
 SITE=grenoble
+NODE_START=2
+SITE=lille
 
 #traffic
 TRAFFIC_MSEC=1000		#ms between two packets (from ANY node) 
