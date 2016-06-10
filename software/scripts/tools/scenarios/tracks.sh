@@ -10,11 +10,11 @@ TRACK_LIST="0 1 2"
 DCELLS="1"
 
 #topology
-NODE_START=188
 NODE_STEP=3
-SITE=grenoble
-NODE_START=2
+#SITE=grenoble
+#NODE_START=188
 SITE=lille
+NODE_START=2
 
 #traffic
 TRAFFIC_MSEC=1000		#ms between two packets (from ANY node) 
