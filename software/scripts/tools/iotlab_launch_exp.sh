@@ -1,10 +1,5 @@
 #!/bin/bash
 
-#DEBUG=1
-#FORBIDDEN_NODES="243 256 239"		#DEAD nodes in iotlab
-FORBIDDEN_NODES="8 55 101 128 129 150 178 206 1 68 80 160 216 251"
-FORBIDDEN_NODES="1 8 41 55 68 79 80 101 128 129 150 160 178 206 216 250"
-
 if [ $# -ne 11 ]
 then
 	echo "usage $0 celldistrib trackactive rplmetric schedalgo nbnodes site nodestart nodestep duration traffic_sec dirresult"
@@ -23,7 +18,7 @@ sudo killall sleep > /dev/null 2> /dev/null
 CURDIR=`pwd`
 ASN_AGG=2000
 ASN_START=4000
-PRINTF=0
+PRINTF=1
 
 #PARAMS
 DCELL=$1
@@ -39,6 +34,16 @@ SITE=$6
 NODE_START=$7
 NODE_STEP=$8
 DURATION_MIN=$9
+
+#dead nodes in iotlab
+if [ "$SITE" == "lille" ]
+then
+	FORBIDDEN_NODES="8 55 101 128 129 150 178 206 1 68 80 160 216 251"
+fi
+if [ "$SITE" == "grenoble" ]
+then
+	FORBIDDEN_NODES="2 7 9 13 17 44 59 81 82 111 124 134 138 165 183 185 187 243 255 284 300 318 319 351 352 356 378 379 381 382"
+fi
 
 
 #Traffic
