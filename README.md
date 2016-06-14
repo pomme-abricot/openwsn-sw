@@ -2,6 +2,7 @@ OpenWSN software: stuff that runs on a computer.
 
 Part of UC Berkeley's OpenWSN project, http://www.openwsn.org/.
 
+
 Build status
 ------------
 
@@ -18,3 +19,4 @@ Documentation
 
 - overview: https://openwsn.atlassian.net/wiki/
 - source code: http://openwsn-berkeley.github.io/openvisualizer/
+- scripts: https://github.com/ftheoleyre/openwsn-sw/tree/track/software/scripts 
