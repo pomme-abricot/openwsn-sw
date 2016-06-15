@@ -68,6 +68,19 @@ NB_OF_COLS|18             # the log file MUST report exactely 18 columns (else, 
 
 ```
 
+You just have now to:
+```bash
+$ cd scripts/graphes/
+$ mkdir schedalgo
+$ cd schedalgo
+$ mkdir data
+$ cp -Rf YOURSTATS data/raw
+* cd ../scripts
+$ ./compute_stats.sh
+```
+
+You can now verify the directory *schedalgo* contains valid XX.txt files (one file per scheduling algorithm). If someone went wrong, you should be able to notice errors in the stdout.
+
 
 
 
