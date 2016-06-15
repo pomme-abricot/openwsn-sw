@@ -82,7 +82,7 @@ You can now verify the directory *schedalgo* contains valid XX.txt files (one fi
 
 # new graphs & metrics 
 
-You want to define new graphs to plot. Let's imagine you want to plot the average duplicate ratio (y-coordinator) and the number of nodes (x-coordinate), and you want to compare different scheduling algorithms. You just have to create a new file named *dupratio.graph*:
+You want to define new graphs to plot. Let's imagine you want to plot the average duplicate ratio (y-coordinates) and the number of nodes (x-coordinates), and you want to compare different scheduling algorithms. You just have to create a new file named *dupratio.graph*:
 ```bash
 load "../common.plt"          #common gnuplot parameters
 
