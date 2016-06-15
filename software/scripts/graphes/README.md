@@ -71,10 +71,8 @@ NB_OF_COLS|18             # the log file MUST report exactely 18 columns (else, 
 You just have now to:
 ```bash
 $ cd scripts/graphes/
-$ mkdir schedalgo
-$ cd schedalgo
-$ mkdir data
-$ cp -Rf YOURSTATS data/raw
+$ mkdir -p schedalgo/data
+$ cp -Rf YOURSTATS schedalgo/data/raw
 * cd ../scripts
 $ ./compute_stats.sh
 ```
@@ -82,7 +80,24 @@ $ ./compute_stats.sh
 You can now verify the directory *schedalgo* contains valid XX.txt files (one file per scheduling algorithm). If someone went wrong, you should be able to notice errors in the stdout.
 
 
-
-
 # new graphs & metrics 
+
+You want to define new graphs to plot. Let's imagine you want to plot the average duplicate ratio (y-coordinator) and the number of nodes (x-coordinate), and you want to compare different scheduling algorithms. You just have to create a new file named *dupratio.graph*:
+```bash
+load "../common.plt"          #common gnuplot parameters
+
+# legend, labels & axis
+set xlabel "Number of nodes"
+set ylabel "Duplicate ratio"
+
+#the data
+#only the scheduling algorithm changes, the other parameters are fixed
+plot "distribshared=1,tracks=2,rplmetric=1,schedalgo=1.txt" using 1:13 title 'Algo 1' ls 1,\
+"distribshared=1,tracks=2,rplmetric=1,schedalgo=2.txt" using 1:13 title 'Algo 2' ls 2
+```
+
+and the graphs will be automatically plotted when calling:
+```bash
+$ ./create_all_graphs.sh
+```
 
