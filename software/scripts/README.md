@@ -62,6 +62,6 @@ If your configuration files are correct, you should now have some new graphs pla
 
 # Detailed description
 
-You may perhaps to modify the scripts of the configuration files. You can find detailed explanations:
+You may perhaps have to modify the scripts or the configuration files. You can find detailed explanations here:
 * measure new metrics, define a new set of experiments: https://github.com/ftheoleyre/openwsn-sw/tree/track/software/scripts/tools
 * define new graphs to plot: https://github.com/ftheoleyre/openwsn-sw/tree/track/software/scripts/graphes
