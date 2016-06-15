@@ -129,10 +129,9 @@ And fill with a correct content. For instance, to measure the impact of differen
 
 
 #options
-RPLMETRIC="1"
-SCHEDALGO=2
-TRACK=1
-TRACK_LIST="0 1 2"
+RPLMETRIC="1"			# ETX
+SCHEDALGO_LIST="1 2 3"		# Different algorithms
+TRACK=1				# one common track with dedicated cells
 DCELLS="1"
 
 #topology
@@ -155,7 +154,7 @@ for exp in {0..8}
 do
 for TRAFFIC_MSEC in $TRAFFIC_MSEC_LIST
 do
-	for TRACK in $TRACK_LIST
+	for SCHEDALGO in SCHEDALGO_LIST
 	do
 		echo "iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC $DIRNAME"
 		iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC $DIRNAME
@@ -164,10 +163,32 @@ done
 done
 
 ```
+And, that's all!
+
 
 
 ## To define and extract a new metric
 
+You have to have a sufficient number of information in the log file (so, the firmware has to use a function like *openserial_statCelladd* in [openserial.c](https://github.com/ftheoleyre/openwsn-fw/blob/track/drivers/common/openserial.c).
+
+To collect then the number of cells aded in the experiments:
+* openVisualizer must print the event in the logfile (e.g. [ParserStat.py]( https://github.com/ftheoleyre/openwsn-sw/blob/track/software/openvisualizer/openvisualizer/moteConnector/ParserStat.py)
+```bash
+elif (statType == self.SERTYPE_CELL_ADD):
+        log.info('STAT_CELL_ADD|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
+                self.BytesToAddr(addr),
+                mycomponent,
+                self.BytesToString(asnbytes),
+                statType,
+                self.BytesToString(input[9:11]),
+                self.BytesToAddr(input[11:19]),
+                input[19],
+                input[20],
+                input[21],
+                input[22],
+                self.BytesToAddr(input[23:31])
+)); 
+```
 
 
 ## To define and extract a new parameter
