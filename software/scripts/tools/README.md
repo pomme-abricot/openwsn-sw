@@ -99,6 +99,7 @@ $ python ExpOpenWSN.py
 	* aggregates the packets in time intervals (the ASN for the generation is comprised between a min and max value)
 		* saves in a vector (with the ASN interval) all the metrics (reception/generation time, etc.)
 		* saves in a matric all these values for 
+		* a cell in the vector is common to *all* the nodes (e.g. array_pktx[] and array_pkrx[])
 	* for each node, saves the metrics for the whole experiments (nb. of packets generated, delay, etc.)
 	* it also prints the statistics for each node to have a comprehensive view of the behavior and to track possible bugs / bad behaviors
 * computes the average values for all the nodes
@@ -172,7 +173,7 @@ And, that's all!
 You have to have a sufficient number of information in the log file (so, the firmware has to use a function like *openserial_statCelladd* in [openserial.c](https://github.com/ftheoleyre/openwsn-fw/blob/track/drivers/common/openserial.c).
 
 To collect then the number of cells aded in the experiments:
-* openVisualizer must print the event in the logfile (e.g. [ParserStat.py]( https://github.com/ftheoleyre/openwsn-sw/blob/track/software/openvisualizer/openvisualizer/moteConnector/ParserStat.py)
+* openVisualizer must print the event in the logfile (e.g. [ParserStat.py]( https://github.com/ftheoleyre/openwsn-sw/blob/track/software/openvisualizer/openvisualizer/moteConnector/ParserStat.py))
 ```bash
 elif (statType == self.SERTYPE_CELL_ADD):
         log.info('STAT_CELL_ADD|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|slotOffset={6}|type={7}|shared={8}|channelOffset={9}|neighbor={10}'.format(
@@ -189,6 +190,26 @@ elif (statType == self.SERTYPE_CELL_ADD):
                 self.BytesToAddr(input[23:31])
 )); 
 ```
+* you have to modify [owsn_extract_stats_from_log.sh](https://github.com/ftheoleyre/openwsn-sw/blob/track/software/scripts/tools/owsn_extract_stats_from_log.sh)
+* Initialization
+```bash
+get the list of seqnums for each source
+for addr_l in `cat $NODESLIST` 
+do
+	array_addcells[$addr_s]=`cat $LOGFILE | grep STAT_CELL_ADD | grep "addr=$addr_l" | wc -l`
+done
+[...]
+echo "--------AVG--------"
+addCells_avg=0
+for i in ${!array_addcells[*]} 
+do
+	addCells_avg=addCells_avg + array_addcells[i]
+done
+echo "addCells_avg=$addCells_avg"
+```
+
+:heavy_exclamation_mark: I did not test this modification. It contains (probably) some bugs
+
 
 
 ## To define and extract a new parameter
