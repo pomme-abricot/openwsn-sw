@@ -26,6 +26,7 @@ mkdir $HOME/stats
 ```
 
 
+
 # Workflow
 
 Let's start a collection of experiments. For instance, we can study the impact of the track management method with a variable number of nodes:
@@ -56,3 +57,11 @@ cd  $HOME/scripts/graphes/
 ```
 
 If your configuration files are correct, you should now have some new graphs placed in $HOME/scripts/graphes/tracks/
+
+
+
+# Detailed description
+
+You may perhaps to modify the scripts of the configuration files. You can find detailed explanations:
+* measure new metrics, define a new set of experiments: https://github.com/ftheoleyre/openwsn-sw/tree/track/software/scripts/tools
+* define new graphs to plot: https://github.com/ftheoleyre/openwsn-sw/tree/track/software/scripts/graphes
