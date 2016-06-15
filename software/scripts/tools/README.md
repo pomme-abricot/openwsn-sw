@@ -115,9 +115,55 @@ Then it:
 # Modifications
 
 
-## To define a new set of Experiments
+## To define a new scenario
+
+You have to create a new scenario:
+```bash
+$ touch scripts/tools/scenarios/new.sh
+```
+
+And fill with a correct content. For instance, to measure the impact of different traffic load with different scheduling algorigthms:
+```bash
+#!/bin/bash
 
 
+
+#options
+RPLMETRIC="1"
+SCHEDALGO=2
+TRACK=1
+TRACK_LIST="0 1 2"
+DCELLS="1"
+
+#topology
+NODE_STEP=3			# I will reserve the nodes 2, 5, 8, 11, [..]
+SITE=lille			# I reserve the Lille's platform
+NODE_START=2			# first mote with id 2
+nbnodes=20			# 20 nodes
+
+#traffic
+TRAFFIC_MSEC_LIST="1000	2000 3000 5000 10000 20000"		#ms between two packets (from ANY node) 
+
+
+#experiment
+DURATION=60					#in minutes
+DIRNAME="traffic"
+
+
+#a list of experiments
+for exp in {0..8}
+do
+for TRAFFIC_MSEC in $TRAFFIC_MSEC_LIST
+do
+	for TRACK in $TRACK_LIST
+	do
+		echo "iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC $DIRNAME"
+		iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC $DIRNAME
+	done
+done 
+done
+
+```
 
 
 ## To define and extract a new metric
