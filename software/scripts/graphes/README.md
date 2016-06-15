@@ -34,12 +34,12 @@ $ ./stats_compute.sh
 
 # new set of Experiments
 
-You may want to define a new set of experiments. Let's imagine you want to chaneg the scheduling algo. First create a configuration file :
+You may want to define a new set of experiments. Let's imagine you want to chaneg the scheduling algo. You should first create a configuration file:
 ```bash
 $ touch scripts/schedalgo.cnf
 ```
 
-And defines the following content:
+And you should fill the file with the typical following content:
 ```bash
 #CONFIGURATION FILE TO COMPUTE STATS
 
