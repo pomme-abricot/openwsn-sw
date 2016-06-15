@@ -191,7 +191,6 @@ elif (statType == self.SERTYPE_CELL_ADD):
 )); 
 ```
 * you have to modify [owsn_extract_stats_from_log.sh](https://github.com/ftheoleyre/openwsn-sw/blob/track/software/scripts/tools/owsn_extract_stats_from_log.sh)
-* Initialization
 ```bash
 get the list of seqnums for each source
 for addr_l in `cat $NODESLIST` 
@@ -206,6 +205,13 @@ do
 	addCells_avg=addCells_avg + array_addcells[i]
 done
 echo "addCells_avg=$addCells_avg"
+[...]
+if (( $global_pkrx > 0 ))
+then
+echo "$DCELLS; $TRACKSACTIVE; $RPLMET; $SCHEDALGO; $global_nbnodes; $CEXPER; $NB_PKGEN_MIN; $NB_NODES_DISCARDED; `echo "$global_pktx / $global_nbnodes"| bc -l`; `echo "$global_pkrx / $global_nbnodes"| bc -l`; $global_dupratio; $global_pdr_avg; $global_jain_pdr; $global_delay_avg; `echo "$global_delay * $TIMESLOT_DURATION / $global_pkrx"| bc -l`; $global_jain_delay;  $global_pdr_avg_conv; $global_pdr_avg_delay; $addCells_avg" >> $TABFILE
+else	
+echo "$DCELLS; $TRACKSACTIVE; $RPLMET; $SCHEDALGO; $global_nbnodes; $CEXPER; $NB_PKGEN_MIN; $NB_NODES_DISCARDED; `echo "$global_pktx / $global_nbnodes"| bc -l`; `echo "$global_pkrx / $global_nbnodes"| bc -l`; $global_dupratio; $global_pdr_avg; $global_jain_pdr; $global_delay_avg; `echo "0"| bc -l`; $global_jain_delay;  $global_pdr_avg_conv; $global_pdr_avg_delay; $addCells_avg" >> $TABFILE
+fi
 ```
 
 :heavy_exclamation_mark: I did not test this modification. It contains (probably) some bugs
