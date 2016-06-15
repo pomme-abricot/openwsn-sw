@@ -220,4 +220,57 @@ fi
 
 ## To define and extract a new parameter
 
+* let's use PARAMETER in your openwsn-fw code
+* you must modify [SConscript](https://github.com/ftheoleyre/openwsn-fw/blob/track/SConscript]
+```bash
+ printf         Prints the string message for debug (0=inactive, 1=active)
+ parameter	MY PARAMETER description
+ [...]
+ 'printf':           ['0','1'],        # 0=inactive (default), 1=active
+ 'parameter':	     ['12'], 	       # the default value
+ [...]
+ (
+        'parameter',                                      # key
+        '',                                               # help
+        command_line_options['parameter'][0],             # default
+        None,                                             # validator (we don't have here a min/max value)
+        int,                                              # converter (this is an integer)
+),
+```
+* and [SConstruct](https://github.com/ftheoleyre/openwsn-fw/blob/track/SConstruct)
+```bash
+#equivalent to #define PARAMETER 12  (if parameter=12)
+if env['parameter']>=1:
+	env.Append(CPPDEFINES = {'PARAMETER':env['parameter']})
+```
+* you must mofidy also the [Makefile](https://github.com/ftheoleyre/exp-iotlab/blob/master/Makefile) if you don't want to use the default value in the default ExPIot behavior (for both the dagroot and the motes):
+```bash
+build-openwsn-m3-test: ensure-openwsn-build-deps
+	${USE_OPENWSN_DEFS} && cd openwsn/openwsn-fw \
+        && scons board=iot-lab_M3 toolchain=armgcc ${OPENWSN} dagroot=0 apps=cexample parameter=55 oos_openwsn
+
+build-openwsn-sink-m3-test: ensure-openwsn-build-deps
+	echo ${TOTO}
+	${USE_OPENWSN_DEFS} && cd openwsn/openwsn-fw-sink \
+        && scons board=iot-lab_M3 toolchain=armgcc ${OPENWSN} dagroot=1 apps=cexample parameter=55 oos_openwsn
+
+```
+* alternatively, you can modify [iotlab_launch_exp.sh](https://github.com/ftheoleyre/openwsn-sw/blob/track/software/scripts/tools/iotlab_launch_exp.sh)
+```bash
+if [ $# -ne 11 ]
+then
+	echo "usage $0 celldistrib trackactive rplmetric schedalgo nbnodes site nodestart nodestep duration traffic_sec dirresult parameter"
+	exit 3
+fi
+PARAMETER=$12
+[...]
+export OPTIONS="distribshared=$DCELL tracks=$TRACK rplmetric=$RPLMETRIC schedalgo=$SCHEDALGO cex_period=$CEXAMPLE_PERIOD printf=$PRINTF" parameter="$PARAMETER"
+```
+* after having modified obviously your scenario (e.g. [scenarios/tracks.sh](https://github.com/ftheoleyre/openwsn-sw/blob/track/software/scripts/tools/scenarios/tracks.sh)):
+```bash
+PARAMETER=22
+[...]
+echo "iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC $DIRNAME $PARAMETER"
+iotlab_launch_exp.sh $DCELLS $TRACK $RPLMETRIC $SCHEDALGO $nbnodes $SITE $NODE_START $NODE_STEP $DURATION $TRAFFIC_MSEC $DIRNAME $PARAMETER
+```
 
