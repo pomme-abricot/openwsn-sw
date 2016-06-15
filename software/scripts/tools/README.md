@@ -89,11 +89,26 @@ $ python ExpOpenWSN.py
 
 
 
-
-
-
 ## To extract the statistics
 
+[owsn_extract_stats_from_log.sh](https://github.com/ftheoleyre/openwsn-sw/blob/track/software/scripts/tools/owsn_extract_stats_from_log.sh} parses a logfile to extract the statistics:
+* it retrieves the parameters (should be printed in the logfile)
+* extracts the list of nodes with at least one entry (short and long addresses)
+* It extracts the stats for each node, considering each packet (sequence number individually)
+	* remembers the smallest and largest sequence number
+	* aggregates the packets in time intervals (the ASN for the generation is comprised between a min and max value)
+		* saves in a vector (with the ASN interval) all the metrics (reception/generation time, etc.)
+		* saves in a matric all these values for 
+	* for each node, saves the metrics for the whole experiments (nb. of packets generated, delay, etc.)
+	* it also prints the statistics for each node to have a comprehensive view of the behavior and to track possible bugs / bad behaviors
+* computes the average values for all the nodes
+* separate the statistics with the metrics between 70% and 80% of the experiments (a time interval during which the experiment has probably converged, and to discard the bootstrap period)
+
+Then it:
+* prints the average statistics 
+* pushes the list of lost packets + delays in a file to plot a distribution of the packet losses
+* stores all the average metrics in *result.csv* in the correct directory
+* plots the distributions (for **this** experiment) with the corresponding [templates](https://github.com/ftheoleyre/openwsn-sw/tree/track/software/scripts/stats) 
 
 
 
