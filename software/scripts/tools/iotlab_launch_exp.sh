@@ -221,12 +221,12 @@ sleep 1
 
 
 
-#openvizualizer
+#openvisualizer
 cd $HOMEEXP/openwsn/openwsn-sw/software/openvisualizer
 echo "$HOMEEXP/openwsn/openwsn-sw/software/openvisualizer"
 sudo scons runweb &
 CHILD_OPENVIZ=$!
-echo "openvizualizer running with pid $CHILD_OPENVIZ"
+echo "openvisualizer running with pid $CHILD_OPENVIZ"
 
 
 
@@ -272,7 +272,7 @@ done
 
 
 #end of the experiment
-echo "I am now killing openvizualizer"
+echo "I am now killing openvisualizer"
 sudo kill $CHILD_OPENVIZ
 
 

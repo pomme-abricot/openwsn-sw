@@ -1,6 +1,6 @@
 # DO NOT EDIT DIRECTLY!
 # This file was generated automatically by GenStackDefines.py
-# on Thu, 18 Jun 2015 23:18:40
+# on Wed, 22 Jun 2016 16:20:10
 #
 
 components = {
@@ -43,7 +43,6 @@ components = {
   36: "UINJECT",
   37: "RRT",
   38: "SECURITY",
-  39: "OTF",
 }
 
 errorDescriptions = {
@@ -51,7 +50,7 @@ errorDescriptions = {
    2: "received an echo reply",
    3: "getData asks for too few bytes, maxNumBytes={0}, fill level={1}",
    4: "the input buffer has overflown",
-   5: "the command is not allowed, command = {0}",
+   5: "the command is not allowerd, command = {0}",
    6: "unknown transport protocol {0} (code location {1})",
    7: "wrong TCP state {0} (code location {1})",
    8: "TCP reset while in state {0} (code location {1})",
@@ -101,10 +100,10 @@ errorDescriptions = {
   52: "input length problem, length={0}",
   53: "booted",
   54: "invalid serial frame",
-  55: "invalid packet frome radio, length {1} (code location {0})",
+  55: "invalid packet from radio, length {1} (code location {0})",
   56: "busy receiving when stop of serial activity, buffer input length {1} (code location {0})",
   57: "wrong CRC in input Buffer (input length {0})",
-  58: "frame received at asn {0} with timeCorrection of {1}",
+  58: "synchronized when received a packet",
   59: "security error on frameType {0}, code location {1}",
   60: "otf does not have enough cells (trackInstance {0}, nbCells to add {1})",
   61: "Unknown neighbor {0}{1} (4 last bytes)",
@@ -125,5 +124,5 @@ errorDescriptions = {
   76: "The component {0} cannot trigger this command (location {1})",
   77: "Sixtop cannot remove any cell to the parent {0}{1} (none existing)",
   78: "generic error {0} {1}",
-  79: "unknown error, location {0}, arg {1}"
+  79: "unknown error, location {0}, arg {1}",
 }
