@@ -166,7 +166,7 @@ class ParserStatus(Parser.Parser):
                                     3,
                                     8,
                                     'QueueRow',
-                                    '<BBBBHHHBQQB', #BQQ',
+                                    '<BBBBHHHBQQBQQ', 
                                     [
                                         'row',                     # B
                                         'creator',                 # B
@@ -178,7 +178,10 @@ class ParserStatus(Parser.Parser):
                                         'trackOwner_type',         # B
                                         'trackOwner_bodyH',        # Q
                                         'trackOwner_bodyL',        # Q
-                                        'garbage',                 # B (alignment to an even nb. of bytes)
+                                        #'garbage',                 # B (alignment to an even nb. of bytes)
+                                        'nextHop_type',            # B
+                                        'nextHop_bodyH',           # Q
+                                        'nextHop_bodyL',           # Q
                                     ],
                                 )
         self._addFieldsParser   (
