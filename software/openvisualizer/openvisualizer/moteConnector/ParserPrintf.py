@@ -79,7 +79,7 @@ class ParserPrintf(Parser.Parser):
         
         # log
         if log.isEnabledFor(logging.DEBUG):
-            log.debug('received data {0}'.format(input))
+            log.debug('received printf {0}'.format(input))
          
          
         #headers

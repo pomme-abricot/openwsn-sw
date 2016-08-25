@@ -202,18 +202,15 @@ class ParserStat(Parser.Parser):
         
         # log
         if log.isEnabledFor(logging.DEBUG):
-            log.debug('received data {0}'.format(input))
-        log.debug('received data {0}'.format(input))
-        
-        
+            log.debug('received stat {0}'.format(input))
+       
         
         #headers
-        addr = input[:2]  
-        mycomponent = input[2]   
-        asnbytes = input[3:8]
+        addr = input[0:2]  
+        mycomponent = input[2] 
+        asnbytes = input[3:8]  
         (self._asn) = struct.unpack('<BHH',''.join([chr(c) for c in asnbytes]))
-        statType = input[8]   
-        
+        statType = input[8] 
 
         #depends on the stat-type
         if (statType == self.SERTYPE_DATA_GENERATION):
@@ -337,7 +334,7 @@ class ParserStat(Parser.Parser):
    
 
         else:
-            print('received data {0}, type {1}'.format(input, statType))
+            print('Unknown stat type - component {0}, addr {1} type {2} asn {3}'.format(mycomponent, self.BytesToAddr(addr), statType, self.BytesToString(asnbytes)))
  
        
         return ('error', input)

@@ -41,9 +41,10 @@ class ParserData(Parser.Parser):
     #======================== public ==========================================
     
     def parseInput(self,input):
+        
         # log
         if log.isEnabledFor(logging.DEBUG):
-            log.debug("received data {0}".format(input))
+            log.debug("received Pdata {0}".format(input))
         
         # ensure input not short longer than header
         self._checkLength(input)
@@ -59,6 +60,7 @@ class ParserData(Parser.Parser):
         
         #source is elided!!! so it is not there.. check that.
         source = input[15:23]
+        log.info("-- {0} {1}".format(source, dest))
         
         if log.isEnabledFor(logging.DEBUG):
             a="".join(hex(c) for c in dest)
