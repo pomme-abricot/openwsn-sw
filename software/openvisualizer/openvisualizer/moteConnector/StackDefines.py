@@ -1,6 +1,6 @@
 # DO NOT EDIT DIRECTLY!
 # This file was generated automatically by GenStackDefines.py
-# on Tue, 19 Jul 2016 14:44:07
+# on Thu, 25 Aug 2016 11:24:42
 #
 
 components = {
@@ -43,7 +43,8 @@ components = {
   36: "UINJECT",
   37: "RRT",
   38: "SECURITY",
-  39: "OTF",
+  39: "USERIALBRIDGE",
+  40: "OTF",
 }
 
 errorDescriptions = {
@@ -56,7 +57,7 @@ errorDescriptions = {
    7: "wrong TCP state {0} (code location {1})",
    8: "TCP reset while in state {0} (code location {1})",
    9: "unsupported port number {0} (code location {1})",
-  10: "unexpected DAO (code location {0})",
+  10: "unexpected DAO (code location {0}). A change maybe happened on dagroot node.",
   11: "unsupported ICMPv6 type {0} (code location {1})",
   12: "unsupported 6LoWPAN parameter {1} at location {0}",
   13: "no next hop",
@@ -106,24 +107,28 @@ errorDescriptions = {
   57: "wrong CRC in input Buffer (input length {0})",
   58: "synchronized when received a packet",
   59: "security error on frameType {0}, code location {1}",
-  60: "otf does not have enough cells (trackInstance {0}, nbCells to add {1})",
-  61: "Unknown neighbor {0}{1} (4 last bytes)",
-  62: "sixtop expects another parameter in its request (bw {0}, nbcells {1})",
-  63: "sixtop current state {0}, location {1}",
-  64: "sixtop requires a non null handler",
-  65: "a timeout has been fired. We have to flush 6top packets (we have the state {0}, timeout {1})",
-  66: "a packet has been removed from the queue (owner {0], creator {1})",
-  67: "the best effort track cannot have an owner (here type {0} and addr {1})",
-  68: "not enough space in openqueue for non prioritar packets",
-  69: "received frame with invalid CRC",
-  70: "invalid IEEE 802.15.4e headers",
-  71: "output buffer overflow in openserial (available space {0}, towrite {1})",
-  72: "openqueue overflow: too many packets (space left {0}, reserved for management {1})",
-  73: "too many cells to reserve in the sixtop request (asked {0}, max {1})",
-  74: "the cells from the same LinkRem are associated with different tracks",
-  75: "a packet cannot be allocated for component {0} when the node is not synchronized",
-  76: "The component {0} cannot trigger this command (location {1})",
-  77: "Sixtop cannot remove any cell to the parent {0}{1} (none existing)",
-  78: "generic error {0} {1}",
-  79: "unknown error, location {0}, arg {1}",
+  60: "sixtop return code {0} at sixtop state {1}",
+  61: "there are {0} cells to request mote",
+  62: "the cells reserved to request mote contains slot {0} and slot {1}",
+  63: "the slot {0} to be added is already in schedule",
+  64: "otf does not have enough cells (trackInstance {0}, nbCells to add {1})",
+  65: "Unknown neighbor {0}{1} (4 last bytes)",
+  66: "sixtop expects another parameter in its request (bw {0}, nbcells {1})",
+  67: "sixtop current state {0}, location {1}",
+  68: "sixtop requires a non null handler",
+  69: "a timeout has been fired. We have to flush 6top packets (we have the state {0}, timeout {1})",
+  70: "a packet has been removed from the queue (owner {0], creator {1})",
+  71: "the best effort track cannot have an owner (here type {0} and addr {1})",
+  72: "not enough space in openqueue for non prioritar packets",
+  73: "received frame with invalid CRC",
+  74: "invalid IEEE 802.15.4e headers",
+  75: "output buffer overflow in openserial (available space {0}, towrite {1})",
+  76: "openqueue overflow: too many packets (space left {0}, reserved for management {1})",
+  77: "too many cells to reserve in the sixtop request (asked {0}, max {1})",
+  78: "the cells from the same LinkRem are associated with different tracks",
+  79: "a packet cannot be allocated for component {0} when the node is not synchronized",
+  80: "The component {0} cannot trigger this command (location {1})",
+  81: "Sixtop cannot remove any cell to the parent {0}{1} (none existing)",
+  82: "generic error {0} {1}",
+  83: "unknown error, location {0}, arg {1}",
 }
