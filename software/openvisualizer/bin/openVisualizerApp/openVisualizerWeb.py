@@ -42,7 +42,7 @@ from openvisualizer.eventBus      import eventBusClient
 from openvisualizer.SimEngine     import SimEngine
 from openvisualizer.BspEmulator   import VcdLogger
 from openvisualizer import ovVersion
-from coap import coap
+#from coap import coap
 import time
 
 # add default parameters to all bottle templates
