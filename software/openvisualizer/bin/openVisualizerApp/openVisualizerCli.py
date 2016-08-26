@@ -90,7 +90,7 @@ class OpenVisualizerCli(Cmd):
         else:
             for ms in self.app.moteStates:
                 try:
-                    if (ms.moteConnector.serialport==arg):
+                    if ms.moteConnector.serialport==arg:
                         ms.triggerAction(moteState.moteState.TRIGGER_DAGROOT)
                 except ValueError as err:
                     self.stdout.write(err)
@@ -110,11 +110,11 @@ class OpenVisualizerCli(Cmd):
             self.stdout.write('\n')
         else:
             try:
-                [port,image,command,parameter] = arg.split(' ')
+                [port,command,parameter] = arg.split(' ')
                 for ms in self.app.moteStates:
                     try:
-                        if (ms.moteConnector.serialport==port):
-                            ms.triggerAction([moteState.moteState.SET_COMMAND,image,command,parameter])
+                        if ms.moteConnector.serialport==port:
+                            ms.triggerAction([moteState.moteState.SET_COMMAND,command,parameter])
                     except ValueError as err:
                         self.stdout.write(err)
             except ValueError as err:
@@ -147,6 +147,9 @@ class OpenVisualizerCli(Cmd):
     def do_quit(self, arg):
         self.app.close()
         return True
+
+    def emptyline(self):
+        return
 
 
 #============================ main ============================================
