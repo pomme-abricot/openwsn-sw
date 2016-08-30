@@ -223,13 +223,22 @@ class ParserStatus(Parser.Parser):
                                     3,
                                     11,
                                     'params',
-                                    '<BBBBI',
+                                    '<BBBBBBBBBBBBIB',
                                     [
+                                        'my64bID_0',                  # B
+                                        'my64bID_1',                  # B
+                                        'my64bID_2',                  # B
+                                        'my64bID_3',                  # B
+                                        'my64bID_4',                  # B
+                                        'my64bID_5',                  # B
+                                        'my64bID_6',                  # B
+                                        'my64bID_7',                  # B
                                         'trackMgmt',                  # B
                                         'distrCells',                 # B
                                         'rplMetric',                  # B
                                         'schedulingAlgo',             # B
                                         'cexamplePeriod',             # I
+                                        'sfMethod',                   # B
                                     ],
                                 )
     

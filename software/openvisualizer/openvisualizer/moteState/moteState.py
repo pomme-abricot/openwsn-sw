@@ -381,36 +381,63 @@ class StatekaPeriod(StateElem):
         self.data[0]['kaPeriod']            = notif.kaPeriod
 
 class StateParams(StateElem):
-    
+    def BytesToAddr(self, bytes):
+        str = ''
+        i = 0
+
+        for byte in bytes:
+            str = str + '{:02x}'.format(byte) 
+            #if (i < len(bytes)-1):
+            #    str = str + '-'
+            i += 1
+
+        return(str)
+
     def update(self,notif):
         StateElem.update(self)
         if len(self.data)==0:
             self.data.append({})
+        if 'my64bID' not  in self.data[0]:
+            self.data[0]['my64bID']         = typeAddr.typeAddr()
+            self.data[0]['my64bID'].desc    = '64b'
+        self.data[0]['my64bID'].addr       = [
+            notif.my64bID_0,
+            notif.my64bID_1,
+            notif.my64bID_2,
+            notif.my64bID_3,
+            notif.my64bID_4,
+            notif.my64bID_5,
+            notif.my64bID_6,
+            notif.my64bID_7,
+        ]
         self.data[0]['trackMgmt']           = notif.trackMgmt
         self.data[0]['distrCells']          = notif.distrCells
         self.data[0]['rplMetric']           = notif.rplMetric
         self.data[0]['schedulingAlgo']      = notif.schedulingAlgo
         self.data[0]['cexamplePeriod']      = notif.cexamplePeriod
+        self.data[0]['sfMethod']            = notif.sfMethod
         
         #prints the parameters values for each mote (every 100 updates)
         if (self.meta[0]['numUpdates'] % 10000) <=1:
-            #print self, self.data[0]['trackMgmt']
-            log.info('Node={5}:PARAMS:TRACKS={0}:DCELLS={1}:RPLMET={2}:SCHEDALGO={3}:CEXPER={4}'.format(
+            print('Node={0}:PARAMS:TRACKS={1}:DCELLS={2}:RPLMET={3}:SCHEDALGO={4}:CEXPER={5}:SFMETHOD={6}'.format(
+                self.BytesToAddr(self.data[0]['my64bID'].addr),
                 notif.trackMgmt, 
                 notif.distrCells, 
                 notif.rplMetric, 
                 notif.schedulingAlgo, 
                 notif.cexamplePeriod,
-                "?"
+                notif.sfMethod
                 ));
-            print('Node={5}:PARAMS:TRACKS={0}:DCELLS={1}:RPLMET={2}:SCHEDALGO={3}:CEXPER={4}'.format(
+            log.info('Node={0}:PARAMS:TRACKS={1}:DCELLS={2}:RPLMET={3}:SCHEDALGO={4}:CEXPER={5}:SFMETHOD={6}'.format(
+                self.BytesToAddr(self.data[0]['my64bID'].addr),
                 notif.trackMgmt, 
                 notif.distrCells, 
                 notif.rplMetric, 
                 notif.schedulingAlgo, 
                 notif.cexamplePeriod,
-                "?"
+                notif.sfMethod
                 ));
+
       
       
 class StateTable(StateElem):
