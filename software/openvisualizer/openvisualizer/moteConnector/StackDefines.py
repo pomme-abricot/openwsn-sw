@@ -1,6 +1,6 @@
 # DO NOT EDIT DIRECTLY!
 # This file was generated automatically by GenStackDefines.py
-# on Thu, 25 Aug 2016 11:24:42
+# on Mon, 12 Sep 2016 17:37:24
 #
 
 components = {
@@ -44,7 +44,7 @@ components = {
   37: "RRT",
   38: "SECURITY",
   39: "USERIALBRIDGE",
-  40: "OTF",
+  40: "SFLOC",
 }
 
 errorDescriptions = {
@@ -107,11 +107,11 @@ errorDescriptions = {
   57: "wrong CRC in input Buffer (input length {0})",
   58: "frame received at asn {0} with timeCorrection of {1}",
   59: "security error on frameType {0}, code location {1}",
-  60: "sixtop return code {0} at sixtop state {1} ",
+  60: "sixtop return code {0} at sixtop state {1}",
   61: "6P count command returns Number of scheduled cells: {0}",
   62: "6P List returns cells [({0},{1})]",
   63: "the slot {0} to be added is already in schedule",
-  64: "otf does not have enough cells (trackInstance {0}, nbCells to add {1})",
+  64: "sfloc does not have enough cells (trackInstance {0}, nbCells to add {1})",
   65: "Unknown neighbor {0}{1} (4 last bytes)",
   66: "sixtop expects another parameter in its request (bw {0}, nbcells {1})",
   67: "sixtop current state {0}, location {1}",
@@ -129,6 +129,7 @@ errorDescriptions = {
   79: "a packet cannot be allocated for component {0} when the node is not synchronized",
   80: "The component {0} cannot trigger this command (location {1})",
   81: "Sixtop cannot remove any cell to the parent {0}{1} (none existing)",
-  82: "generic error {0} {1}",
-  83: "unknown error, location {0}, arg {1}",
+  82: "sixtop cannot handle here this argument {0} location {1}",
+  83: "generic error {0} {1}",
+  84: "unknown error, location {0}, arg {1}",
 }

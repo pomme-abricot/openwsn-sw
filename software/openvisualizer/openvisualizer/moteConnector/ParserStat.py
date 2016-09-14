@@ -152,7 +152,8 @@ class ParserStat(Parser.Parser):
  
        #info to write when a packet is transmitted
     def LogPktTx(self, addr, mycomponent, asnbytes, statType, input, code):
-        log.info('{18}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Dest={10}|txpower={11}|numTxAttempts={12}|l4protocol={13}|l4srcport={14}|l4destport={15}|l3src={16}|l3dest={17}'.format(
+        log.info('{13}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Dest={10}|txpower={11}|numTxAttempts={12}'.format(
+#        log.info('{18}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Dest={10}|txpower={11}|numTxAttempts={12}|l4protocol={13}|l4srcport={14}|l4destport={15}|l3src={16}|l3dest={17}'.format(
             self.BytesToAddr(addr),
             mycomponent,
             self.BytesToString(asnbytes),
@@ -166,11 +167,6 @@ class ParserStat(Parser.Parser):
             self.BytesToAddr(input[24:32]),
             input[32],
             input[33],
-            self.ByteToL4protocol(input[34]),
-            self.ByteToUDPPort(input[35:37]),
-            self.ByteToUDPPort(input[37:39]),
-            self.BytesToAddr(input[39:55]),
-            self.BytesToAddr(input[55:71]),
             code
             ));
 
