@@ -152,27 +152,7 @@ class ParserStat(Parser.Parser):
  
        #info to write when a packet is transmitted
     def LogPktTx(self, addr, mycomponent, asnbytes, statType, input, code):
-        log.info('{13}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Dest={10}|txpower={11}|numTxAttempts={12}'.format(
-#        log.info('{18}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Dest={10}|txpower={11}|numTxAttempts={12}|l4protocol={13}|l4srcport={14}|l4destport={15}|l3src={16}|l3dest={17}'.format(
-            self.BytesToAddr(addr),
-            mycomponent,
-            self.BytesToString(asnbytes),
-            statType,
-            self.BytesToString(input[9:11]),
-            self.BytesToAddr(input[11:19]),
-            input[19],
-            self.ByteToFrameType(input[20]),
-            self.BytesToString(input[21:23]),
-            input[23],
-            self.BytesToAddr(input[24:32]),
-            input[32],
-            input[33],
-            code
-            ));
-
-    #info to write when a packet is received
-    def LogPktRx(self, addr, mycomponent, asnbytes, statType, input, code):
-      log.info('{14}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Src={10}|rssi={11}|lqi={12}|crc={13}'.format(
+        log.info('{14}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Dest={10}|txpower={11}|numTxAttempts={12}|queuePos={13}'.format(
             self.BytesToAddr(addr),
             mycomponent,
             self.BytesToString(asnbytes),
@@ -190,6 +170,27 @@ class ParserStat(Parser.Parser):
             code
             ));
 
+    #info to write when a packet is received
+    def LogPktRx(self, addr, mycomponent, asnbytes, statType, input, code):
+      log.info('{15}|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|length={6}|frameType={7}|slotOffset={8}|frequency={9}|l2Src={10}|rssi={11}|lqi={12}|crc={13}|queuePos={14}'.format(
+            self.BytesToAddr(addr),
+            mycomponent,
+            self.BytesToString(asnbytes),
+            statType,
+            self.BytesToString(input[9:11]),
+            self.BytesToAddr(input[11:19]),
+            input[19],
+            self.ByteToFrameType(input[20]),
+            self.BytesToString(input[21:23]),
+            input[23],
+            self.BytesToAddr(input[24:32]),
+            input[32],
+            input[33],
+            input[34],
+            input[35],
+            code
+            ));
+
 
 
    #======================== parses and writes the logs  ==========================================
@@ -200,7 +201,8 @@ class ParserStat(Parser.Parser):
         if log.isEnabledFor(logging.DEBUG):
             log.debug('received stat {0}'.format(input))
        
-        
+            
+                   
         #headers
         addr = input[0:2]  
         mycomponent = input[2] 
@@ -210,7 +212,7 @@ class ParserStat(Parser.Parser):
 
         #depends on the stat-type
         if (statType == self.SERTYPE_DATA_GENERATION):
-            log.info('STAT_DATAGEN|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|seqnum={6}|l2Src={7}|l2Dest={8}'.format(
+            log.info('STAT_DATAGEN|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|seqnum={6}|l2Src={7}|l2Dest={8}|queuePos={9}'.format(
                 self.BytesToAddr(addr),
                 mycomponent,
                 self.BytesToString(asnbytes),
@@ -219,7 +221,8 @@ class ParserStat(Parser.Parser):
                 self.BytesToAddr(input[11:19]),
                 self.BytesToString(input[19:23]),
                 self.BytesToAddr(input[23:31]),
-                self.BytesToAddr(input[31:39])
+                self.BytesToAddr(input[31:39]),
+                input[39]
                 ));
         elif (statType == self.SERTYPE_DATA_RX):
             log.info('STAT_DATARX|addr={0}|comp={1}|asn={2}|statType={3}|trackinstance={4}|trackowner={5}|seqnum={6}|l2Src={7}|l2Dest={8}'.format(
