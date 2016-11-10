@@ -419,16 +419,16 @@ class StateParams(StateElem):
         
         #prints the parameters values for each mote (every 100 updates)
         if (self.meta[0]['numUpdates'] % 10000) <=1:
-            print('Node={0}:PARAMS:TRACKS={1}:DCELLS={2}:RPLMET={3}:SCHEDALGO={4}:CEXPER={5}:SFMETHOD={6}'.format(
-                self.BytesToAddr(self.data[0]['my64bID'].addr),
-                notif.trackMgmt, 
-                notif.distrCells, 
-                notif.rplMetric, 
-                notif.schedulingAlgo, 
-                notif.cexamplePeriod,
-                notif.sfMethod
-                ));
-            log.info('Node={0}:PARAMS:TRACKS={1}:DCELLS={2}:RPLMET={3}:SCHEDALGO={4}:CEXPER={5}:SFMETHOD={6}'.format(
+            #print('STAT_PARAMS|Node={0}:PARAMS:TRACKS={1}:DCELLS={2}:RPLMET={3}:SCHEDALGO={4}:CEXPER={5}:SFMETHOD={6}'.format(
+            #    self.BytesToAddr(self.data[0]['my64bID'].addr),
+            #    notif.trackMgmt, 
+            #    notif.distrCells, 
+            #    notif.rplMetric, 
+            #    notif.schedulingAlgo, 
+            #    notif.cexamplePeriod,
+            #    notif.sfMethod
+            #    ));
+            log.info('STAT_PARAMS|Node={0}:PARAMS:TRACKS={1}:DCELLS={2}:RPLMET={3}:SCHEDALGO={4}:CEXPER={5}:SFMETHOD={6}'.format(
                 self.BytesToAddr(self.data[0]['my64bID'].addr),
                 notif.trackMgmt, 
                 notif.distrCells, 

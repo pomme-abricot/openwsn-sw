@@ -47,6 +47,8 @@ fi
 
 
 #Temporary files
+LOGFILE2=$LOGFILE
+LOGFILE=`mktemp` || exit 1
 TMPFILE=`mktemp` || exit 1
 NODESLIST=`mktemp` || exit 1
 TMPGEN=`mktemp` || exit 1
@@ -54,6 +56,9 @@ TMPRX=`mktemp` || exit 1
 rm -rf $DELAYDISTRIBFILE
 rm -rf $LOSSDISTRIBFILE
 rm -rf $RCVDDISTRIBFILE
+
+#filter out useless lines
+grep "STAT" $LOGFILE2 > $LOGFILE
 
 
 #get the parameters (the nodes MUST have the same parameters (I consider only the last one)
