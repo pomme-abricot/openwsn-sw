@@ -225,9 +225,13 @@ class moteConnector(eventBusClient.eventBusClient):
         
         (nextHop,lowpan) = data
         
-        self._sendToMoteProbe(
-            dataToSend = [OpenParser.OpenParser.SERFRAME_PC2MOTE_DATA]+nextHop+lowpan,
-        )
+        #redirect ICMPv6 or bad packets
+        if (len(lowpan) < 128):
+                
+            self._sendToMoteProbe(
+                                  dataToSend = [OpenParser.OpenParser.SERFRAME_PC2MOTE_DATA]+nextHop+lowpan,
+            )
+
     
     #======================== public ==========================================
     
@@ -238,6 +242,8 @@ class moteConnector(eventBusClient.eventBusClient):
     
     def _sendToMoteProbe(self,dataToSend):
         try:
+             #print("SEND")
+             #print(''.join([chr(c) for c in dataToSend])) 
              dispatcher.send(
                       sender        = self.name,
                       signal        = 'fromMoteConnector@'+self.serialport,
