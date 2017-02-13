@@ -87,6 +87,7 @@ for loggerName in ['moteProbe',
                    'ParserData',
                    'moteState',
                    'OpenCli',
+		   'ParserPrintf',
                    ]:
     temp = logging.getLogger(loggerName)
     temp.setLevel(logging.DEBUG)
