@@ -1,6 +1,6 @@
 # DO NOT EDIT DIRECTLY!
 # This file was generated automatically by GenStackDefines.py
-# on Mon, 12 Sep 2016 17:37:24
+# on Wed, 07 Jun 2017 11:39:28
 #
 
 components = {
@@ -130,6 +130,8 @@ errorDescriptions = {
   80: "The component {0} cannot trigger this command (location {1})",
   81: "Sixtop cannot remove any cell to the parent {0}{1} (none existing)",
   82: "sixtop cannot handle here this argument {0} location {1}",
-  83: "generic error {0} {1}",
-  84: "unknown error, location {0}, arg {1}",
+  83: "too many tasks {0}, new type {1}",
+  84: "invalid sixtop state ({0}) when receiving a request",
+  85: "generic error {0} {1}",
+  86: "unknown error, location {0}, arg {1}",
 }
