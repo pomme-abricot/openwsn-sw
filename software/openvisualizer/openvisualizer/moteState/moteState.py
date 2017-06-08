@@ -125,8 +125,10 @@ class StateOutputBuffer(StateElem):
         StateElem.update(self)
         if len(self.data)==0:
             self.data.append({})
-        self.data[0]['index_write']         = notif.index_write
-        self.data[0]['index_read']          = notif.index_read
+        self.data[0]['index_write'] = notif.index_write
+        self.data[0]['index_read'] = notif.index_read
+        self.data[0]['buffer_write'] = notif.buffer_write
+        self.data[0]['buffer_read'] = notif.buffer_read
 
 class StateAsn(StateElem):
     
