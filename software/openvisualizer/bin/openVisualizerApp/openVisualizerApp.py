@@ -1,11 +1,11 @@
-# Copyright (c) 2010-2013, Regents of the University of California. 
-# All rights reserved. 
-#  
+# Copyright (c) 2010-2013, Regents of the University of California.
+# All rights reserved.
+#
 # Released under the BSD 3-Clause license as published at the link below.
 # https://openwsn.atlassian.net/wiki/display/OW/License
 
 '''
-Contains application model for OpenVisualizer. Expects to be called by 
+Contains application model for OpenVisualizer. Expects to be called by
 top-level UI module.  See main() for startup use.
 '''
 import sys
@@ -30,15 +30,15 @@ from openvisualizer                 import appdirs
 from openvisualizer.remoteConnectorServer   import remoteConnectorServer
 
 import openvisualizer.openvisualizer_utils as u
-    
+
 class OpenVisualizerApp(object):
     '''
     Provides an application model for OpenVisualizer. Provides common,
     top-level functionality for several UI clients.
     '''
-    
-    def __init__(self,confdir,datadir,logdir,simulatorMode,numMotes,trace,debug,simTopology,iotlabmotes, pathTopo, roverMode):
-        
+
+    def __init__(self,confdir,datadir,logdir,simulatorMode,numMotes,trace,debug,simTopology,iotlabmotes, pathTopo, roverMode, expid):
+
         # store params
         self.confdir              = confdir
         self.datadir              = datadir
@@ -50,6 +50,8 @@ class OpenVisualizerApp(object):
         self.iotlabmotes          = iotlabmotes
         self.pathTopo             = pathTopo
         self.roverMode            = roverMode
+        self.expid                = expid
+        print("expid = {}".format(self.expid))
 
         # local variables
         self.eventBusMonitor      = eventBusMonitor.eventBusMonitor()
@@ -59,13 +61,13 @@ class OpenVisualizerApp(object):
         self.udpLatency           = UDPLatency.UDPLatency()
         self.DAGrootList          = []
         # create openTun call last since indicates prefix
-        self.openTun              = openTun.create() 
+        self.openTun              = openTun.create()
         if self.simulatorMode:
             from openvisualizer.SimEngine import SimEngine, MoteHandler
-            
+
             self.simengine        = SimEngine.SimEngine(simTopology)
             self.simengine.start()
-        
+
         # import the number of motes from json file given by user (if the pathTopo option is enabled)
         if self.pathTopo and self.simulatorMode:
             try:
@@ -77,13 +79,13 @@ class OpenVisualizerApp(object):
                 app.close()
                 os.kill(os.getpid(), signal.SIGTERM)
 
-        
+
         # create a moteProbe for each mote
         if self.simulatorMode:
             # in "simulator" mode, motes are emulated
             sys.path.append(os.path.join(self.datadir, 'sim_files'))
             import oos_openwsn
-            
+
             MoteHandler.readNotifIds(os.path.join(self.datadir, 'sim_files', 'openwsnmodule_obj.h'))
             self.moteProbes       = []
             for _ in range(self.numMotes):
@@ -92,23 +94,23 @@ class OpenVisualizerApp(object):
                 self.moteProbes  += [moteProbe.moteProbe(emulatedMote=moteHandler)]
         elif self.iotlabmotes:
             # in "IoT-LAB" mode, motes are connected to TCP ports
-            
+
             self.moteProbes       = [
                 moteProbe.moteProbe(iotlabmote=p) for p in self.iotlabmotes.split(',')
             ]
-            
+
         else:
             # in "hardware" mode, motes are connected to the serial port
 
             self.moteProbes       = [
                 moteProbe.moteProbe(serialport=p) for p in moteProbe.findSerialPorts()
             ]
-        
+
         # create a moteConnector for each moteProbe
         self.moteConnectors       = [
-            moteConnector.moteConnector(mp.getPortName()) for mp in self.moteProbes
+            moteConnector.moteConnector(mp.getPortName(), self.expid) for mp in self.moteProbes
         ]
-        
+
         # create a moteState for each moteConnector
         self.moteStates           = [
             moteState.moteState(mc) for mc in self.moteConnectors
@@ -132,10 +134,10 @@ class OpenVisualizerApp(object):
                 )
             self.simengine.resume()
 
-       
+
         # import the topology from the json file
         if self.pathTopo and self.simulatorMode:
-            
+
             # delete each connections automatically established during motes creation
             ConnectionsToDelete = self.simengine.propagation.retrieveConnections()
             for co in ConnectionsToDelete :
@@ -147,7 +149,7 @@ class OpenVisualizerApp(object):
             for mote in motes :
                 mh = self.simengine.getMoteHandlerById(mote['id'])
                 mh.setLocation(mote['lat'], mote['lon'])
-            
+
             # implements new connections
             connect = topo['connections']
             for co in connect:
@@ -156,20 +158,20 @@ class OpenVisualizerApp(object):
                 pdr = float(co['pdr'])
                 self.simengine.propagation.createConnection(fromMote,toMote)
                 self.simengine.propagation.updateConnection(fromMote,toMote,pdr)
-            
+
             # store DAGroot moteids in DAGrootList
             DAGrootL = topo['DAGrootList']
             for DAGroot in DAGrootL :
                 hexaDAGroot = hex(DAGroot)
                 hexaDAGroot = hexaDAGroot[2:]
                 prefixLen = 4 - len(hexaDAGroot)
-                
+
                 prefix =""
                 for i in range(prefixLen):
                     prefix += "0"
                 moteid = prefix+hexaDAGroot
                 self.DAGrootList.append(moteid)
-        
+
         # start tracing threads
         if self.trace:
             import openvisualizer.OVtracer
@@ -177,22 +179,22 @@ class OpenVisualizerApp(object):
                                 os.path.join(self.confdir,'trace.conf'),
                                 {'logDir': _forceSlashSep(self.logdir, self.debug)})
             OVtracer.OVtracer()
-        
+
     #======================== public ==========================================
-    
+
     def close(self):
         '''Closes all thread-based components'''
-        
+
         log.info('Closing OpenVisualizer')
         self.openTun.close()
         self.rpl.close()
         for probe in self.moteProbes:
             probe.close()
-                
+
     def getMoteState(self, moteid):
         '''
         Returns the moteState object for the provided connected mote.
-        
+
         :param moteid: 16-bit ID of mote
         :rtype:        moteState or None if not found
         '''
@@ -220,7 +222,7 @@ class OpenVisualizerApp(object):
                                 exist = True
                                 break
                         if not exist :
-                            moc = moteConnector.moteConnector(rm)
+                            moc = moteConnector.moteConnector(rm, self.expid)
                             self.moteConnectors       += [moc]
                             self.moteStates += [moteState.moteState(moc)]
         self.remoteConnectorServer.initRoverConn(roverMotes)
@@ -268,22 +270,22 @@ DEFAULT_MOTE_COUNT = 3
 def main(parser=None, roverMode=False):
     '''
     Entry point for application startup by UI. Parses common arguments.
-    
+
     :param parser:  Optional ArgumentParser passed in from enclosing UI module
                     to allow that module to pre-parse specific arguments
     :rtype:         openVisualizerApp object
     '''
     if parser is None:
         parser = ArgumentParser()
-        
+
     _addParserArgs(parser)
     argspace = parser.parse_args()
-    
+
     confdir, datadir, logdir = _initExternalDirs(argspace.appdir, argspace.debug)
-    
+
     # Must use a '/'-separated path for log dir, even on Windows.
     logging.config.fileConfig(
-        os.path.join(confdir,'logging.conf'), 
+        os.path.join(confdir,'logging.conf'),
         {'logDir': _forceSlashSep(logdir, argspace.debug)}
     )
 
@@ -312,7 +314,9 @@ def main(parser=None, roverMode=False):
                            'log      = {0}'.format(logdir)],
             )))
     log.info('sys.path:\n\t{0}'.format('\n\t'.join(str(p) for p in sys.path)))
-        
+
+    print("argspace.expid = {}").format(argspace.expid)
+
     return OpenVisualizerApp(
         confdir         = confdir,
         datadir         = datadir,
@@ -324,23 +328,24 @@ def main(parser=None, roverMode=False):
         simTopology     = argspace.simTopology,
         iotlabmotes     = argspace.iotlabmotes,
         pathTopo        = argspace.pathTopo,
-        roverMode       = roverMode
+        roverMode       = roverMode,
+        expid           = argspace.expid
     )
 
 def _addParserArgs(parser):
-    parser.add_argument('-a', '--appDir', 
+    parser.add_argument('-a', '--appDir',
         dest       = 'appdir',
         default    = '.',
         action     = 'store',
         help       = 'working directory'
     )
-    parser.add_argument('-s', '--sim', 
+    parser.add_argument('-s', '--sim',
         dest       = 'simulatorMode',
         default    = False,
         action     = 'store_true',
         help       = 'simulation mode, with default of {0} motes'.format(DEFAULT_MOTE_COUNT)
     )
-    parser.add_argument('-n', '--simCount', 
+    parser.add_argument('-n', '--simCount',
         dest       = 'numMotes',
         type       = int,
         default    = 0,
@@ -370,25 +375,31 @@ def _addParserArgs(parser):
         action     = 'store',
         help       = 'comma-separated list of IoT-LAB motes (e.g. "wsn430-9,wsn430-34,wsn430-3")'
     )
-    parser.add_argument('-i', '--pathTopo', 
+    parser.add_argument('-i', '--pathTopo',
         dest       = 'pathTopo',
         default    = '',
         action     = 'store',
         help       = 'a topology can be loaded from a json file'
+    )
+    parser.add_argument('-e', '--expid',
+        dest       = 'expid',
+        default    = 0,
+        action     = 'store',
+        help       = 'experience id in the database'
     )
 
 
 def _forceSlashSep(ospath, debug):
     '''
     Converts a Windows-based path to use '/' as the path element separator.
-    
+
     :param ospath: A relative or absolute path for the OS on which this process
                    is running
     :param debug:  If true, print extra logging info
     '''
     if os.sep == '/':
         return ospath
-        
+
     head     = ospath
     pathlist = []
     while True:
@@ -398,13 +409,13 @@ def _forceSlashSep(ospath, debug):
             break
         else:
             pathlist.insert(0, tail)
-            
+
     pathstr = '/'.join(pathlist)
     if debug:
         print pathstr
     return pathstr
-    
-def _initExternalDirs(appdir, debug):    
+
+def _initExternalDirs(appdir, debug):
     '''
     Find and define confdir for config files and datadir for static data. Also
     return logdir for logs. There are several possiblities, searched in the order
@@ -416,7 +427,7 @@ def _initExternalDirs(appdir, debug):
     4. In the openvisualizer package directory
 
     The directories differ only when using a native OS site-wide setup.
-    
+
     :param debug: If true, print extra logging info
     :returns: 3-Tuple with config dir, data dir, and log dir
     :raises: RuntimeError if files/directories not found as expected
@@ -427,20 +438,20 @@ def _initExternalDirs(appdir, debug):
         if debug:
             print 'App data found via appdir'
         return appdir, appdir, appdir
-    
+
     filedir = os.path.dirname(__file__)
     if _verifyConfpath(filedir):
         if debug:
             print 'App data found via openVisualizerApp.py'
         return filedir, filedir, filedir
-        
+
     confdir      = appdirs.site_config_dir('openvisualizer', 'OpenWSN')
     # Must use system log dir on Linux since running as superuser.
     linuxLogdir  = '/var/log/openvisualizer'
     if _verifyConfpath(confdir):
         if not sys.platform.startswith('linux'):
             raise RuntimeError('Native OS external directories supported only on Linux')
-            
+
         datadir = appdirs.site_data_dir('openvisualizer', 'OpenWSN')
         logdir  = linuxLogdir
         if os.path.exists(datadir):
@@ -463,14 +474,14 @@ def _initExternalDirs(appdir, debug):
             os.makedirs(logdir)
         if debug:
             print 'App data found via openvisualizer package'
-            
+
         return datadir, datadir, logdir
     else:
         raise RuntimeError('Cannot find expected data directory: {0}'.format(datadir))
-                    
+
 def _verifyConfpath(confdir):
     '''
-    Returns True if OpenVisualizer conf files exist in the provided 
+    Returns True if OpenVisualizer conf files exist in the provided
     directory.
     '''
     confpath = os.path.join(confdir, 'openvisualizer.conf')

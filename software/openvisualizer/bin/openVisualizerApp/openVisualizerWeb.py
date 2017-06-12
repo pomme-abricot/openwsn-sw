@@ -365,7 +365,7 @@ class OpenVisualizerWeb(eventBusClient.eventBusClient,Cmd):
         motesTemp = {}
         for (k,v) in bottle.request.forms.items():
             m = re.match("motes\[(\w+)\]\[(\w+)\]", k)
-           
+
             assert m
             index  = int(m.group(1))
             param  =     m.group(2)
@@ -463,7 +463,7 @@ class OpenVisualizerWeb(eventBusClient.eventBusClient,Cmd):
         return response
 
     #===== callbacks
-    
+
     def do_state(self, arg):
         """
         Prints provided state, or lists states.
@@ -483,11 +483,11 @@ class OpenVisualizerWeb(eventBusClient.eventBusClient,Cmd):
                     self.stdout.write('\n')
                 except ValueError as err:
                     self.stdout.write(err)
-    
+
     def do_list(self, arg):
         """List available states. (Obsolete; use 'state' without parameters.)"""
         self.do_state('')
-    
+
     def do_root(self, arg):
         """
         Sets dagroot to the provided mote, or lists motes
@@ -508,7 +508,7 @@ class OpenVisualizerWeb(eventBusClient.eventBusClient,Cmd):
                         ms.triggerAction(moteState.moteState.TRIGGER_DAGROOT)
                 except ValueError as err:
                     self.stdout.write(err)
-    
+
     def do_set(self,arg):
         """
         Sets mote with parameters
@@ -557,7 +557,7 @@ class OpenVisualizerWeb(eventBusClient.eventBusClient,Cmd):
                                                 name[3:80-maxlen], doc))
                 except AttributeError:
                     pass
-    
+
     def do_quit(self, arg):
         self.app.close()
         os.kill(os.getpid(), signal.SIGTERM)
@@ -591,6 +591,7 @@ def _addParserArgs(parser):
         action     = 'store_true',
         help       = 'rover mode, to access motes connected on rovers'
     )
+    
 
 webapp = None
 if __name__=="__main__":
@@ -612,7 +613,7 @@ if __name__=="__main__":
 
     #===== start the app
     app      = openVisualizerApp.main(parser, argspace.roverMode)
-    
+
     #===== add a web interface
     websrv   = bottle.Bottle()
     webapp   = OpenVisualizerWeb(app, websrv, argspace.roverMode)
@@ -628,7 +629,7 @@ if __name__=="__main__":
         }
     )
     webthread.start()
-    
+
     #===== add a cli (minimal) interface
 
     banner  = []
