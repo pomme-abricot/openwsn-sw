@@ -53,47 +53,100 @@ class DataBase(object):
             "expid" : "INT"
         }
 
-
-        print ("Initialisation de la base de données...")
-
         self.config = {
-          "user": "util", #yanis
-          "passwd": "util", #g2s$&nm9qqk
-          "host": "localhost", #130.79.48.108
+          "user": "util",
+          "passwd": "util",
+          "host": "localhost",
           "db": "openwsn"
         }
 
         try:
             self.db = MySQLdb.connect(**self.config)
-
             self.cur = self.db.cursor()
         except MySQLdb.Error as err:
-            print("Erreur : {0}".format(err))
+            print("/!\ Erreur : {0}".format(err))
             return
 
+    def reinit(self):
         self.cur.execute("SHOW TABLES")
-        self.tables = self.cur
+        self.tables = self.cur.fetchall()
 
         for table_name in self.tables:
-            table_name = str(table_name)
-            table_name = table_name.replace("(", "")
-            table_name = table_name.replace(")", "")
-            table_name = table_name.replace(",", "")
-            table_name = table_name.replace("'", "")
-            print(table_name)
-
-        for table_name in self.tables:
-            table_name = str(table_name)
-            table_name = table_name.replace("(", "")
-            table_name = table_name.replace(")", "")
-            table_name = table_name.replace(",", "")
-            table_name = table_name.replace("'", "")
-            dele = "DELETE FROM {} WHERE expid={}".format(table_name, self.expid)
-            print(dele)
+            dele = "DELETE FROM {} WHERE expid={}".format(table_name[0], self.expid)
             self.cur.execute(dele)
+            self.cur.execute("UNLOCK TABLES")
+            self.db.commit()
 
-        print("Base de données OK\n")
+    def update_pdr(self):
+        print("APPEL")
+        self.cur.execute("CREATE TABLE IF NOT EXISTS RT_STATS (pdr FLOAT, e2e FLOAT, JIndex FLOAT, expid INT)")
+        self.cur.execute("DROP TABLE IF EXISTS PDR")
+        self.cur.execute("CREATE TABLE IF NOT EXISTS PDR(pdr FLOAT, expid INT)")
+        self.cur.execute("DELETE FROM RT_STATS WHERE expid = {}".format(self.expid))
+        self.cur.execute("UNLOCK TABLES")
 
+        # PDR
+        self.cur.execute("SELECT COUNT(*) FROM DATA_GENERATION")
+        count_gen = self.cur.fetchone()[0]
+        self.cur.execute("SELECT COUNT(*) FROM DATA_RX")
+        count_rx = self.cur.fetchone()[0]
+        pdr = float(count_gen) / float(count_rx)
+        self.cur.execute("INSERT INTO PDR (pdr) VALUES ({})".format(pdr))
+
+        # E2E Delay
+        self.cur.execute("SELECT asn, trackOwner, seqNum FROM DATA_RX")
+        rx = self.cur.fetchall()
+
+        cnt = 0
+        e2e = 0
+
+        for r in rx:
+            asn = r[0]
+            trackOwner = r[1]
+            seqNum = r[2]
+
+            self.cur.execute("SELECT COUNT(*) FROM DATA_GENERATION WHERE trackOwner='{}' AND seqNum={}".format(trackOwner, seqNum))
+            count = self.cur.fetchone()[0]
+
+            if (count > 0):
+                self.cur.execute("SELECT asn FROM DATA_GENERATION WHERE trackOwner='{}' AND seqNum={}".format(trackOwner, seqNum))
+
+                asn2 = self.cur.fetchone()[0]
+
+                cnt+=1
+                e2e += (asn-asn2)
+
+        if (cnt > 0):
+            e2e /= float(cnt)
+        else:
+            e2e = -1
+
+        # Jain Index
+        self.cur.execute("SELECT pdr FROM PDR")
+        pdrl = self.cur.fetchall()
+
+        self.cur.execute("SELECT COUNT(*) FROM PDR")
+        c = self.cur.fetchone()
+
+        haut = 0
+        bas = 0
+
+        for p in pdrl:
+            haut += p[0]
+            bas += p[0]**2
+
+        haut = haut**2
+        bas *= c[0]
+
+        if (bas > 0):
+            jindex = haut / bas
+        else:
+            jindex = -1
+
+        # Stockage
+        query = "INSERT INTO RT_STATS (pdr, e2e, JIndex, expid) VALUES ({}, {}, {}, {})".format(float(pdr), float(e2e), float(jindex), self.expid)
+        print(query)
+        self.cur.execute(query)
 
     def Store(self, type, data):
         # création d'une table avec colonnes correspondantes si inexistante
@@ -122,5 +175,7 @@ class DataBase(object):
 
         print(insert)
         self.cur.execute(insert)
+
+        self.cur.execute("UNLOCK TABLES")
 
         self.db.commit()

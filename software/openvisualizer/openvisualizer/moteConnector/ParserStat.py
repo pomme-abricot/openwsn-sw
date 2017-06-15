@@ -57,7 +57,8 @@ class ParserStat(Parser.Parser):
          ]
 
         # def db
-        self.dbo = DataBase(self.expid);
+        self.dbo = DataBase(self.expid)
+        self.dbo.reinit()
 
 
     #======================== public ==========================================
@@ -327,6 +328,8 @@ class ParserStat(Parser.Parser):
                 self.BytesToAddr(input[23:31]),
                 self.BytesToAddr(input[31:39])
             ])
+
+            self.dbo.update_pdr()
 
         elif (statType == self.SERTYPE_PKT_TX):
             self.LogPktTx(addr, self.ByteToCompType(mycomponent), asnbytes, statType, input, "STAT_PK_TX");
