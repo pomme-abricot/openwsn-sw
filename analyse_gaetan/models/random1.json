@@ -1,0 +1,13 @@
+{
+    "hmm": 
+            {
+                "A": {
+                   "State 1" : {"State 1": 1}
+               },
+                "B": {
+                       "State 1" : {"STAT_PK_TX":0.1, "STAT_DIOTX":0.05, "STAT_PK_RX":0.1, "STAT_CELL_ADD":0.1, "STAT_CELL_REMOVE":0.1, "STAT_ACK_RX":0.1, "STAT_ACK_TX":0.1, "STAT_DAOTX":0.05, "STAT_DATAGEN":0.05, "STAT_DATARX":0.05, "STAT_PK_TIMEOUT":0.05, "STAT_PK_ERROR":0.05, "STAT_PK_BUFFEROVERFLOW":0.05, "STAT_NODESTATE" :0.05
+                },
+                "pi": {"State 1": 1}
+            }
+        
+}

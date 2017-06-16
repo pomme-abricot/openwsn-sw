@@ -1,0 +1,8 @@
+data/parsed/
+*.pyc
+myhmm*.*
+.ipynb_checkpoints/
+pyhmm-master/
+ghmm/
+GuyZ hmm/
+data_csv/
