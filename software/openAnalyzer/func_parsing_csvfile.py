@@ -2,6 +2,7 @@
 
 import re
 import pandas as pd
+from func_parsing_logfile import * 
 
 
 

@@ -221,3 +221,6 @@ def get_statType(line):
 
 def get_seqnum(line):
     return line[line.find("seqnum")+len("seqnum="):line.find("|", line.find("seqnum"))]
+
+def get_src(line):
+    return line

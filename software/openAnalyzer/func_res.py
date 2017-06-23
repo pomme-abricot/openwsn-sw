@@ -456,3 +456,87 @@ def fill_simult(df_res, df_tx):
 
     df_res.to_csv('data_csv/res.csv',index=False)
     
+
+#Creer un df avec les données des réservations 
+# fonction pour remplir un csv avec toutes les données res
+def create_df_step_res(data_file):
+    i=0
+    df = pd.DataFrame(columns=('asn', 'src', 'dest', 'owner', 'ch', 'slot', 'queuePos','info'))
+    with open("data/parsed/event/data_OTHER_ParserPrintf.log", "r") as f_res:
+        for line in f_res:
+        # 7 cas: linkreq prep, req tx, req rx - rep prep, rep tx, rep rx, req fail, rep fail
+            if "LinkReq enqueued" in line:
+                df.loc[i]=[line[line.find("asn")+len("asn="):line.find(")", line.find("asn"))],
+                           line[line.find("from")+len("from "):line.find(":", line.find("from"))],
+                           line[line.find("to ")+len("to "):line.find(",", line.find("to "))],
+                           line[line.find("owner")+len("owner="):line.find(",", line.find("owner"))],
+                           "",
+                           "",
+                           line[line.find("queuePos")+len("queuePos="):line.find(",", line.find("queuePos"))],
+                           "linkreq enqueued"
+                          ]
+            if "LinkReq txed" in line:
+                df.loc[i]=[line[line.find("asn")+len("asn="):line.find(")", line.find("asn"))],
+                           line[line.find("from")+len("from "):line.find(":", line.find("from"))],
+                           line[line.find("to ")+len("to "):line.find(",", line.find("to "))],
+                           "",
+                           "",
+                           "",
+                           line[line.find("queuePos")+len("queuePos="):line.find(",", line.find("queuePos"))],
+                           "linkreq txed"
+                          ]
+            if "LinkReq rcvd" in line:
+                df.loc[i]=[line[line.find("asn")+len("asn="):line.find(")", line.find("asn"))],
+                           line[line.find("from",line.find("from")+1)+len("from "):line.find(",", line.find("from",line.find("from")+1))],
+                           line[line.find("from")+len("from "):line.find(":", line.find("from"))],
+                           "",
+                           line[line.find("ch ")+len("ch "):line.find(",", line.find("ch "))],
+                           line[line.find("slot ")+len("slot "):line.find(",", line.find("slot "))],
+                           line[line.find("queuePos")+len("queuePos="):line.find(",", line.find("queuePos"))],
+                           "LinkReq rcvd - LinkRep prepared"
+                          ]
+            if "LinkRep txed" in line:
+                df.loc[i]=[line[line.find("asn")+len("asn="):line.find(")", line.find("asn"))],
+                           line[line.find("to ")+len("to "):line.find(",", line.find("to "))],
+                           line[line.find("from")+len("from "):line.find(":", line.find("from"))],
+                           "",
+                           "",
+                           line[line.find("owner")+len("owner="):line.find(",", line.find("owner"))],
+                           line[line.find("queuePos")+len("queuePos="):line.find(",", line.find("queuePos"))],
+                           "LinkRep txed"
+                          ]
+            if "LinkRep rcvd" in line:
+                df.loc[i]=[line[line.find("asn")+len("asn="):line.find(")", line.find("asn"))],
+                           line[line.find("from")+len("from "):line.find(":", line.find("from"))],
+                           line[line.find("from",line.find("from")+1)+len("from "):line.find(",", line.find("from",line.find("from")+1))],
+                           "",
+                           "",
+                           "",
+                           "",
+                           "LinkRep rcvd - Res successful"
+                          ]
+            if "LinkReq failed" in line:
+                df.loc[i]=[line[line.find("asn")+len("asn="):line.find(")", line.find("asn"))],
+                           line[line.find("from")+len("from "):line.find(":", line.find("from"))],
+                           line[line.find("to ")+len("to "):line.find(",", line.find("to "))],
+                           "",
+                           "",
+                           "",
+                           line[line.find("queuePos")+len("queuePos="):line.find(" ", line.find("queuePos"))],
+                           "LinkReq failed"
+                          ]
+            if "LinkRep failed" in line:
+                df.loc[i]=[line[line.find("asn")+len("asn="):line.find(")", line.find("asn"))],
+                           line[line.find("to ")+len("to "):line.find(",", line.find("to "))],
+                           line[line.find("from")+len("from "):line.find(":", line.find("from"))],
+                           "",
+                           "",
+                           "",
+                           line[line.find("queuePos")+len("queuePos="):line.find(",", line.find("queuePos"))],
+                           "LinkRep failed"
+                          ]
+            
+            
+            
+            i+=1
+    df.to_csv('data_csv/res_step.csv',index=False)
