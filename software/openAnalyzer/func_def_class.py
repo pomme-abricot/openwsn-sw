@@ -121,32 +121,52 @@ def make_event_PK_RX(time, addr, comp, asn, statType, trackinstance, trackowner,
 
 class Cell_Reservation(object):
     id = 0
-    asn = []
+    asn1 = ""
+    asn2 = ""
+    asn3 = ""
     succes = 0.
     numAttempts = ""
     simult = ""
     queuePos = []
-    slot = ""
-    ch = ""
+    slot1 = ""
+    ch1 = ""
+    s1 = ''
+    lot2 = ""
+    ch2 = ""
+    s2 = ''
+    lot3 = ""
+    ch3 = ""
+    s3 = ''
     src = ""
     dest = ""
     owner = ""
     state = 0
     
-    def __init__(self, id, asn, succes, numAttempts, simult, queuePos, slot, ch, src, dest, owner, state):
+    def __init__(self, id, asn1, asn2, asn3, succes, numAttempts, simult, queuePos, slot1, ch1, s1, slot2, ch2, s2, slot3, ch3, s3, src, dest, owner, state, nbCellsReq, nbCellsRep):
         self.id = id
-        self.asn = asn
+        self.asn1 = asn1
+        self.asn2 = asn2
+        self.asn3 = asn3
         self.succes = succes
         self.numAttempts = numAttempts
         self.simult = simult
         self.queuePos = queuePos
-        self.slot = slot
-        self.ch = ch
+        self.slot1 = slot1
+        self.ch1 = ch1
+        self.s1= s1
+        self.slot2 = slot2
+        self.ch2 = ch2
+        self.s2= s2
+        self.slot3 = slot3
+        self.ch3 = ch3
+        self.s3= s3
         self.src = src
         self.dest = dest
         self.owner = owner
         self.state = state
+        self.nbCellsReq = nbCellsReq
+        self.nbCellsRep = nbCellsRep
         
-def make_cell_reservation(id, asn, succes, numAttempts, simult, queuePos, slot, ch, src, dest, owner, state):
-    cell_Reservation = Cell_Reservation(id, asn, succes, numAttempts, simult, queuePos, slot, ch, src, dest, owner, state)
+def make_cell_reservation(id, asn1, asn2, asn3, succes, numAttempts, simult, queuePos, slot1, ch1, s1, slot2, ch2, s2, slot3, ch3, s3, src, dest, owner, state, nbCellsReq, nbCellsRep):
+    cell_Reservation = Cell_Reservation(id, asn1, asn2, asn3, succes, numAttempts, simult, queuePos, slot1, ch1, s1, slot2, ch2, s2, slot3, ch3, s3, src, dest, owner, state, nbCellsReq, nbCellsRep)
     return cell_Reservation

@@ -3,272 +3,272 @@ asn,src,dest,owner,ch,slot,queuePos,info
 1221,b381,b868,b868,,,0,linkreq enqueued
 1221,1162,b868,b868,,,0,linkreq enqueued
 1299,b381,b868,,,,0,linkreq txed
-1299,b381,b868,,11,93,1,LinkReq rcvd - LinkRep prepared
+1299,b381,b868,b868,11,93,1,LinkReq rcvd - LinkRep prepared
 1339,8772,b868,,,,0,linkreq txed
-1339,8772,b868,,9,141,2,LinkReq rcvd - LinkRep prepared
-1562,8772,b868,,,b868,2,LinkRep txed
-1562,8772,b868,,,,,LinkRep rcvd - Res successful
-1583,b381,b868,,,b868,1,LinkRep txed
-1583,b381,b868,,,,,LinkRep rcvd - Res successful
+1339,8772,b868,b868,9,141,2,LinkReq rcvd - LinkRep prepared
+1562,8772,b868,b868,,,2,LinkRep txed
+1562,8772,b868,b868,,,,LinkRep rcvd - Res successful
+1583,b381,b868,b868,,,1,LinkRep txed
+1583,b381,b868,b868,,,,LinkRep rcvd - Res successful
 1627,c280,8772,b868,,,0,linkreq enqueued
 1664,c280,8772,,,,0,linkreq txed
-1664,c280,8772,,7,21,1,LinkReq rcvd - LinkRep prepared
-1705,c280,8772,,,b868,1,LinkRep txed
+1664,c280,8772,b868,7,21,1,LinkReq rcvd - LinkRep prepared
+1705,c280,8772,b868,,,1,LinkRep txed
 1830,c280,8772,b868,,,0,linkreq enqueued
 1867,c280,8772,,,,0,linkreq txed
-1867,c280,8772,,4,45,1,LinkReq rcvd - LinkRep prepared
-2233,c280,8772,,,,,LinkRep rcvd - Res successful
-2233,c280,8772,,,b868,1,LinkRep txed
+1867,c280,8772,b868,4,45,1,LinkReq rcvd - LinkRep prepared
+2233,c280,8772,b868,,,,LinkRep rcvd - Res successful
+2233,c280,8772,b868,,,1,LinkRep txed
 2236,8772,b868,8772,,,1,linkreq enqueued
 2407,1162,b868,,,,0,LinkReq failed
 2439,1162,b868,b868,,,0,linkreq enqueued
 2577,8772,b868,,,,1,linkreq txed
-2577,8772,b868,,12,181,1,LinkReq rcvd - LinkRep prepared
-2780,8772,b868,,,8772,1,LinkRep txed
+2577,8772,b868,8772,12,181,1,LinkReq rcvd - LinkRep prepared
+2780,8772,b868,8772,,,1,LinkRep txed
 2845,8772,b868,8772,,,1,linkreq enqueued
 3048,b381,b868,b381,,,1,linkreq enqueued
 3138,b381,b868,,,,1,linkreq txed
-3138,b381,b868,,7,13,1,LinkReq rcvd - LinkRep prepared
+3138,b381,b868,b381,7,13,1,LinkReq rcvd - LinkRep prepared
 3251,c280,b868,b868,,,0,linkreq enqueued
-3341,b381,b868,,,,,LinkRep rcvd - Res successful
-3341,b381,b868,,,b381,1,LinkRep txed
+3341,b381,b868,b381,,,,LinkRep rcvd - Res successful
+3341,b381,b868,b381,,,1,LinkRep txed
 3938,c280,b868,,,,0,linkreq txed
-3938,c280,b868,,14,101,2,LinkReq rcvd - LinkRep prepared
+3938,c280,b868,b868,14,101,2,LinkReq rcvd - LinkRep prepared
 4116,1162,b868,,,,0,LinkReq failed
-4141,c280,b868,,,,,LinkRep rcvd - Res successful
-4141,c280,b868,,,b868,2,LinkRep txed
+4141,c280,b868,b868,,,,LinkRep rcvd - Res successful
+4141,c280,b868,b868,,,2,LinkRep txed
 4266,c280,b868,c280,,,0,linkreq enqueued
 4266,1162,b868,b868,,,3,linkreq enqueued
 5002,8772,b868,,,,1,LinkReq failed
 5078,8772,b868,8772,,,7,linkreq enqueued
 5115,1162,b868,,,,3,linkreq txed
-5115,1162,b868,,3,58,2,LinkReq rcvd - LinkRep prepared
-5399,1162,b868,,,,,LinkRep rcvd - Res successful
-5399,1162,b868,,,b868,2,LinkRep txed
+5115,1162,b868,b868,3,58,2,LinkReq rcvd - LinkRep prepared
+5399,1162,b868,b868,,,,LinkRep rcvd - Res successful
+5399,1162,b868,b868,,,2,LinkRep txed
 5484,1162,b868,1162,,,4,linkreq enqueued
 5539,1162,b868,,,,4,linkreq txed
-5539,1162,b868,,2,107,1,LinkReq rcvd - LinkRep prepared
-5742,1162,b868,,,,,LinkRep rcvd - Res successful
-5742,1162,b868,,,1162,1,LinkRep txed
+5539,1162,b868,1162,2,107,1,LinkReq rcvd - LinkRep prepared
+5742,1162,b868,1162,,,,LinkRep rcvd - Res successful
+5742,1162,b868,1162,,,1,LinkRep txed
 5890,1162,b381,b868,,,4,linkreq enqueued
 6130,1162,b381,,,,4,linkreq txed
-6130,1162,b381,,11,95,1,LinkReq rcvd - LinkRep prepared
-6171,1162,b381,,,,,LinkRep rcvd - Res successful
-6171,1162,b381,,,b868,1,LinkRep txed
+6130,1162,b381,b868,11,95,1,LinkReq rcvd - LinkRep prepared
+6171,1162,b381,b868,,,,LinkRep rcvd - Res successful
+6171,1162,b381,b868,,,1,LinkRep txed
 6209,c280,8772,,,,0,LinkReq failed
 6231,8772,b868,,,,7,linkreq txed
-6231,8772,b868,,9,166,1,LinkReq rcvd - LinkRep prepared
+6231,8772,b868,8772,9,166,1,LinkReq rcvd - LinkRep prepared
 6296,c280,8772,c280,,,0,linkreq enqueued
 6296,1162,b381,1162,,,5,linkreq enqueued
 6388,1162,b381,,,,5,linkreq txed
-6388,1162,b381,,6,76,2,LinkReq rcvd - LinkRep prepared
-6794,1162,b381,,,,,LinkRep rcvd - Res successful
-6794,1162,b381,,,1162,2,LinkRep txed
+6388,1162,b381,1162,6,76,2,LinkReq rcvd - LinkRep prepared
+6794,1162,b381,1162,,,,LinkRep rcvd - Res successful
+6794,1162,b381,1162,,,2,LinkRep txed
 6905,1162,b381,1162,,,5,linkreq enqueued
 8096,c280,8772,,,,0,LinkReq failed
 8123,c280,8772,c280,,,7,linkreq enqueued
-8368,c280,8772,,13,144,8,LinkReq rcvd - LinkRep prepared
+8368,c280,8772,c280,13,144,8,LinkReq rcvd - LinkRep prepared
 8368,c280,8772,,,,7,linkreq txed
-8464,8772,b868,,,8772,1,LinkRep txed
+8464,8772,b868,8772,,,1,LinkRep txed
 8517,1162,8772,,,,5,LinkReq failed
 8529,8772,b868,8772,,,7,linkreq enqueued
-8977,c280,8772,,,,,LinkRep rcvd - Res successful
-8977,c280,8772,,,c280,8,LinkRep txed
+8977,c280,8772,c280,,,,LinkRep rcvd - Res successful
+8977,c280,8772,c280,,,8,LinkRep txed
 9138,c280,8772,c280,,,3,linkreq enqueued
-9180,c280,8772,,1,153,11,LinkReq rcvd - LinkRep prepared
+9180,c280,8772,c280,1,153,11,LinkReq rcvd - LinkRep prepared
 9180,c280,8772,,,,3,linkreq txed
 9276,8772,b868,,,,7,linkreq txed
-9276,8772,b868,,13,174,2,LinkReq rcvd - LinkRep prepared
+9276,8772,b868,8772,13,174,2,LinkReq rcvd - LinkRep prepared
 9341,c280,8772,c280,,,3,linkreq enqueued
-9479,8772,b868,,,,,LinkRep rcvd - Res successful
-9479,8772,b868,,,8772,2,LinkRep txed
+9479,8772,b868,8772,,,,LinkRep rcvd - Res successful
+9479,8772,b868,8772,,,2,LinkRep txed
 9544,8772,b868,8772,,,7,linkreq enqueued
 9586,c280,8772,,,,3,linkreq txed
-9586,c280,8772,,2,73,10,LinkReq rcvd - LinkRep prepared
+9586,c280,8772,c280,2,73,10,LinkReq rcvd - LinkRep prepared
 9682,8772,b868,,,,7,linkreq txed
-9682,8772,b868,,1,58,1,LinkReq rcvd - LinkRep prepared
-9789,c280,8772,,,,,LinkRep rcvd - Res successful
-9789,c280,8772,,,c280,11,LinkRep txed
+9682,8772,b868,8772,1,58,1,LinkReq rcvd - LinkRep prepared
+9789,c280,8772,c280,,,,LinkRep rcvd - Res successful
+9789,c280,8772,c280,,,11,LinkRep txed
 9865,1162,8772,,,,5,LinkReq failed
-9885,8772,b868,,,,,LinkRep rcvd - Res successful
-9885,8772,b868,,,8772,1,LinkRep txed
+9885,8772,b868,8772,,,,LinkRep rcvd - Res successful
+9885,8772,b868,8772,,,1,LinkRep txed
 9950,1162,8772,b868,,,5,linkreq enqueued
 9950,c280,8772,c280,,,3,linkreq enqueued
 9950,8772,b868,8772,,,6,linkreq enqueued
 10088,8772,b868,,,,6,linkreq txed
-10088,8772,b868,,15,184,1,LinkReq rcvd - LinkRep prepared
-10291,8772,b868,,,,,LinkRep rcvd - Res successful
-10291,8772,b868,,,8772,1,LinkRep txed
+10088,8772,b868,8772,15,184,1,LinkReq rcvd - LinkRep prepared
+10291,8772,b868,8772,,,,LinkRep rcvd - Res successful
+10291,8772,b868,8772,,,1,LinkRep txed
 10356,8772,b868,c280,,,2,linkreq enqueued
-10577,c280,8772,,,,10,LinkRep failed
+10577,c280,8772,c280,,,10,LinkRep failed
 11103,8772,b868,,,,2,linkreq txed
-11103,8772,b868,,0,170,1,LinkReq rcvd - LinkRep prepared
+11103,8772,b868,c280,0,170,1,LinkReq rcvd - LinkRep prepared
 11194,c280,8772,,,,3,LinkReq failed
-11306,8772,b868,,,,,LinkRep rcvd - Res successful
-11306,8772,b868,,,c280,1,LinkRep txed
+11306,8772,b868,c280,,,,LinkRep rcvd - Res successful
+11306,8772,b868,c280,,,1,LinkRep txed
 11371,8772,b868,c280,,,0,linkreq enqueued
 11509,8772,b868,,,,0,linkreq txed
-11509,8772,b868,,0,105,1,LinkReq rcvd - LinkRep prepared
+11509,8772,b868,c280,0,105,1,LinkReq rcvd - LinkRep prepared
 12098,1162,8772,,,,5,LinkReq failed
-12118,8772,b868,,,,,LinkRep rcvd - Res successful
-12118,8772,b868,,,c280,1,LinkRep txed
+12118,8772,b868,c280,,,,LinkRep rcvd - Res successful
+12118,8772,b868,c280,,,1,LinkRep txed
 12589,1162,8772,b868,,,5,linkreq enqueued
 12657,1162,8772,,,,5,LinkReq failed
 12792,1162,8772,b868,,,5,linkreq enqueued
 13195,1162,8772,,,,5,linkreq txed
-13195,1162,8772,,2,138,1,LinkReq rcvd - LinkRep prepared
-13398,1162,8772,,,b868,1,LinkRep txed
-13398,1162,8772,,,,,LinkRep rcvd - Res successful
+13195,1162,8772,b868,2,138,1,LinkReq rcvd - LinkRep prepared
+13398,1162,8772,b868,,,1,LinkRep txed
+13398,1162,8772,b868,,,,LinkRep rcvd - Res successful
 13401,1162,8772,1162,,,10,linkreq enqueued
 13536,1162,8772,,,,10,linkreq txed
-13536,1162,8772,,12,65,1,LinkReq rcvd - LinkRep prepared
-14754,1162,8772,,,1162,1,LinkRep txed
-14754,1162,8772,,,,,LinkRep rcvd - Res successful
+13536,1162,8772,1162,12,65,1,LinkReq rcvd - LinkRep prepared
+14754,1162,8772,1162,,,1,LinkRep txed
+14754,1162,8772,1162,,,,LinkRep rcvd - Res successful
 14822,1162,8772,1162,,,11,linkreq enqueued
 15025,8772,b868,1162,,,1,linkreq enqueued
 15160,1162,8772,,,,11,linkreq txed
-15160,1162,8772,,11,152,4,LinkReq rcvd - LinkRep prepared
+15160,1162,8772,1162,11,152,4,LinkReq rcvd - LinkRep prepared
 15163,8772,b868,,,,1,linkreq txed
-15163,8772,b868,,4,181,1,LinkReq rcvd - LinkRep prepared
-15366,8772,b868,,,,,LinkRep rcvd - Res successful
-15366,8772,b868,,,1162,1,LinkRep txed
-15972,1162,8772,,,,,LinkRep rcvd - Res successful
-15972,1162,8772,,,1162,4,LinkRep txed
+15163,8772,b868,1162,4,181,1,LinkReq rcvd - LinkRep prepared
+15366,8772,b868,1162,,,,LinkRep rcvd - Res successful
+15366,8772,b868,1162,,,1,LinkRep txed
+15972,1162,8772,1162,,,,LinkRep rcvd - Res successful
+15972,1162,8772,1162,,,4,LinkRep txed
 16040,8772,b868,1162,,,3,linkreq enqueued
 16040,1162,8772,1162,,,2,linkreq enqueued
 16378,1162,8772,,,,2,linkreq txed
-16378,1162,8772,,14,62,6,LinkReq rcvd - LinkRep prepared
+16378,1162,8772,1162,14,62,6,LinkReq rcvd - LinkRep prepared
 16381,8772,b868,,,,3,linkreq txed
-16381,8772,b868,,10,61,1,LinkReq rcvd - LinkRep prepared
-16581,1162,8772,,,,,LinkRep rcvd - Res successful
-16581,1162,8772,,,1162,6,LinkRep txed
+16381,8772,b868,1162,10,61,1,LinkReq rcvd - LinkRep prepared
+16581,1162,8772,1162,,,,LinkRep rcvd - Res successful
+16581,1162,8772,1162,,,6,LinkRep txed
 16649,8772,b868,1162,,,3,linkreq enqueued
 16649,1162,8772,1162,,,4,linkreq enqueued
-17396,8772,b868,,,1162,1,LinkRep txed
-17599,8772,b868,,14,186,1,LinkReq rcvd - LinkRep prepared
-18005,8772,b868,,,1162,1,LinkRep txed
+17396,8772,b868,1162,,,1,LinkRep txed
+17599,8772,b868,1162,14,186,1,LinkReq rcvd - LinkRep prepared
+18005,8772,b868,1162,,,1,LinkRep txed
 18738,1162,8772,,,,4,LinkReq failed
 65775,c280,b868,c280,,,1,linkreq enqueued
 67097,c280,8772,,,,1,LinkReq failed
 67196,c280,8772,c280,,,1,linkreq enqueued
 67238,c280,8772,,,,1,linkreq txed
-67238,c280,8772,,13,197,2,LinkReq rcvd - LinkRep prepared
-68432,c280,8772,,,,2,LinkRep failed
+67238,c280,8772,c280,13,197,2,LinkReq rcvd - LinkRep prepared
+68432,c280,8772,c280,,,2,LinkRep failed
 69226,c280,8772,c280,,,2,linkreq enqueued
 69268,c280,8772,,,,2,linkreq txed
-69268,c280,8772,,15,125,5,LinkReq rcvd - LinkRep prepared
-70283,c280,8772,,,,,LinkRep rcvd - Res successful
-70283,c280,8772,,,c280,5,LinkRep txed
+69268,c280,8772,c280,15,125,5,LinkReq rcvd - LinkRep prepared
+70283,c280,8772,c280,,,,LinkRep rcvd - Res successful
+70283,c280,8772,c280,,,5,LinkRep txed
 70444,c280,8772,c280,,,4,linkreq enqueued
 70486,c280,8772,,,,4,linkreq txed
-70486,c280,8772,,4,116,5,LinkReq rcvd - LinkRep prepared
-70689,c280,8772,,,,,LinkRep rcvd - Res successful
-70689,c280,8772,,,c280,5,LinkRep txed
+70486,c280,8772,c280,4,116,5,LinkReq rcvd - LinkRep prepared
+70689,c280,8772,c280,,,,LinkRep rcvd - Res successful
+70689,c280,8772,c280,,,5,LinkRep txed
 206657,c280,b868,c280,,,1,linkreq enqueued
 206755,c280,b868,,,,1,linkreq txed
-206755,c280,b868,,13,13,1,LinkReq rcvd - LinkRep prepared
+206755,c280,b868,c280,13,13,1,LinkReq rcvd - LinkRep prepared
 208078,c280,b868,c280,,,3,linkreq enqueued
 208973,c280,b868,,,,3,LinkReq failed
-209192,c280,b868,,,,1,LinkRep failed
+209192,c280,b868,c280,,,1,LinkRep failed
 210108,c280,b868,c280,,,2,linkreq enqueued
 210409,c280,b868,,,,2,linkreq txed
-210409,c280,b868,,7,164,1,LinkReq rcvd - LinkRep prepared
+210409,c280,b868,c280,7,164,1,LinkReq rcvd - LinkRep prepared
 211935,c280,b868,c280,,,6,linkreq enqueued
-212844,c280,b868,,8,22,3,LinkReq rcvd - LinkRep prepared
-212846,c280,b868,,,,1,LinkRep failed
+212844,c280,b868,c280,8,22,3,LinkReq rcvd - LinkRep prepared
+212846,c280,b868,c280,,,1,LinkRep failed
 212958,b868,c280,8772,,,0,linkreq enqueued
 213047,c280,b868,,,,6,linkreq txed
-213047,c280,b868,,8,22,4,LinkReq rcvd - LinkRep prepared
+213047,c280,b868,c280,8,22,4,LinkReq rcvd - LinkRep prepared
 214980,c280,8772,c280,,,3,linkreq enqueued
 215109,c280,8772,,,,3,LinkReq failed
 215139,b868,c280,,,,0,LinkReq failed
 215183,c280,8772,c280,,,3,linkreq enqueued
 215191,b868,c280,8772,,,0,linkreq enqueued
 215225,c280,8772,,,,3,linkreq txed
-215225,c280,8772,,7,86,4,LinkReq rcvd - LinkRep prepared
-215281,c280,b868,,,,3,LinkRep failed
-215484,c280,b868,,,,4,LinkRep failed
+215225,c280,8772,c280,7,86,4,LinkReq rcvd - LinkRep prepared
+215281,c280,b868,c280,,,3,LinkRep failed
+215484,c280,b868,c280,,,4,LinkRep failed
 216456,b868,c280,,,,0,LinkReq failed
-216849,c280,8772,,,c280,4,LinkRep txed
+216849,c280,8772,c280,,,4,LinkRep txed
 217010,c280,8772,c280,,,9,linkreq enqueued
 217148,c280,8772,,,,9,LinkReq failed
 217213,c280,8772,c280,,,9,linkreq enqueued
 217255,c280,8772,,,,9,linkreq txed
-217255,c280,8772,,14,14,2,LinkReq rcvd - LinkRep prepared
-217458,c280,8772,,,,,LinkRep rcvd - Res successful
-217458,c280,8772,,,c280,2,LinkRep txed
+217255,c280,8772,c280,14,14,2,LinkReq rcvd - LinkRep prepared
+217458,c280,8772,c280,,,,LinkRep rcvd - Res successful
+217458,c280,8772,c280,,,2,LinkRep txed
 217619,c280,8772,c280,,,9,linkreq enqueued
 217661,c280,8772,,,,9,linkreq txed
-217661,c280,8772,,9,64,2,LinkReq rcvd - LinkRep prepared
-217662,c280,8772,,,,5,LinkRep failed
-217864,c280,8772,,,,,LinkRep rcvd - Res successful
-217864,c280,8772,,,c280,2,LinkRep txed
+217661,c280,8772,c280,9,64,2,LinkReq rcvd - LinkRep prepared
+217662,c280,8772,c280,,,5,LinkRep failed
+217864,c280,8772,c280,,,,LinkRep rcvd - Res successful
+217864,c280,8772,c280,,,2,LinkRep txed
 218025,c280,8772,c280,,,8,linkreq enqueued
 218067,c280,8772,,,,8,linkreq txed
-218067,c280,8772,,1,34,2,LinkReq rcvd - LinkRep prepared
-218270,c280,8772,,,c280,2,LinkRep txed
-218270,c280,8772,,,,,LinkRep rcvd - Res successful
+218067,c280,8772,c280,1,34,2,LinkReq rcvd - LinkRep prepared
+218270,c280,8772,c280,,,2,LinkRep txed
+218270,c280,8772,c280,,,,LinkRep rcvd - Res successful
 218431,c280,8772,c280,,,6,linkreq enqueued
 218473,c280,8772,,,,6,linkreq txed
-218473,c280,8772,,6,4,2,LinkReq rcvd - LinkRep prepared
-218879,c280,8772,,,,,LinkRep rcvd - Res successful
-218879,c280,8772,,,c280,2,LinkRep txed
+218473,c280,8772,c280,6,4,2,LinkReq rcvd - LinkRep prepared
+218879,c280,8772,c280,,,,LinkRep rcvd - Res successful
+218879,c280,8772,c280,,,2,LinkRep txed
 219040,c280,8772,c280,,,5,linkreq enqueued
 219082,c280,8772,,,,5,linkreq txed
-219082,c280,8772,,14,173,3,LinkReq rcvd - LinkRep prepared
-219488,c280,8772,,,,,LinkRep rcvd - Res successful
-219488,c280,8772,,,c280,3,LinkRep txed
+219082,c280,8772,c280,14,173,3,LinkReq rcvd - LinkRep prepared
+219488,c280,8772,c280,,,,LinkRep rcvd - Res successful
+219488,c280,8772,c280,,,3,LinkRep txed
 227160,c280,b868,c280,,,1,linkreq enqueued
 227258,c280,b868,,,,1,linkreq txed
-227258,c280,b868,,1,103,3,LinkReq rcvd - LinkRep prepared
+227258,c280,b868,c280,1,103,3,LinkReq rcvd - LinkRep prepared
 228581,c280,b868,c280,,,5,linkreq enqueued
-229695,c280,b868,,,,3,LinkRep failed
+229695,c280,b868,c280,,,3,LinkRep failed
 230462,c280,b868,,,,5,LinkReq failed
 230611,c280,b868,c280,,,5,linkreq enqueued
 230658,c280,b868,,,,5,LinkReq failed
 230814,c280,b868,c280,,,2,linkreq enqueued
 230912,c280,b868,,,,2,linkreq txed
-230912,c280,b868,,9,60,1,LinkReq rcvd - LinkRep prepared
+230912,c280,b868,c280,9,60,1,LinkReq rcvd - LinkRep prepared
 233047,c280,b868,c280,,,7,linkreq enqueued
 233145,c280,b868,,,,7,linkreq txed
-233145,c280,b868,,9,114,4,LinkReq rcvd - LinkRep prepared
-233349,c280,b868,,,,1,LinkRep failed
+233145,c280,b868,c280,9,114,4,LinkReq rcvd - LinkRep prepared
+233349,c280,b868,c280,,,1,LinkRep failed
 234874,c280,8772,c280,,,7,linkreq enqueued
 234916,c280,8772,,,,7,linkreq txed
-234916,c280,8772,,13,27,2,LinkReq rcvd - LinkRep prepared
+234916,c280,8772,c280,13,27,2,LinkReq rcvd - LinkRep prepared
 235077,c280,8772,c280,,,7,linkreq enqueued
-235582,c280,b868,,,,4,LinkRep failed
-236110,c280,8772,,,,2,LinkRep failed
+235582,c280,b868,c280,,,4,LinkRep failed
+236110,c280,8772,c280,,,2,LinkRep failed
 236740,c280,8772,,,,7,LinkReq failed
 236904,c280,8772,c280,,,7,linkreq enqueued
 236991,c280,8772,,,,7,LinkReq failed
 237107,c280,8772,c280,,,7,linkreq enqueued
 238367,c280,8772,,,,7,linkreq txed
-238367,c280,8772,,15,184,1,LinkReq rcvd - LinkRep prepared
-238773,c280,8772,,,,,LinkRep rcvd - Res successful
-238773,c280,8772,,,c280,1,LinkRep txed
+238367,c280,8772,c280,15,184,1,LinkReq rcvd - LinkRep prepared
+238773,c280,8772,c280,,,,LinkRep rcvd - Res successful
+238773,c280,8772,c280,,,1,LinkRep txed
 238934,c280,8772,c280,,,5,linkreq enqueued
 238976,c280,8772,,,,5,linkreq txed
-238976,c280,8772,,8,176,1,LinkReq rcvd - LinkRep prepared
-239179,c280,8772,,,,,LinkRep rcvd - Res successful
-239179,c280,8772,,,c280,1,LinkRep txed
+238976,c280,8772,c280,8,176,1,LinkReq rcvd - LinkRep prepared
+239179,c280,8772,c280,,,,LinkRep rcvd - Res successful
+239179,c280,8772,c280,,,1,LinkRep txed
 239340,c280,8772,c280,,,7,linkreq enqueued
 239382,c280,8772,,,,7,linkreq txed
-239382,c280,8772,,3,195,1,LinkReq rcvd - LinkRep prepared
-240194,c280,8772,,,,,LinkRep rcvd - Res successful
-240194,c280,8772,,,c280,1,LinkRep txed
+239382,c280,8772,c280,3,195,1,LinkReq rcvd - LinkRep prepared
+240194,c280,8772,c280,,,,LinkRep rcvd - Res successful
+240194,c280,8772,c280,,,1,LinkRep txed
 240355,c280,8772,c280,,,4,linkreq enqueued
 240397,c280,8772,,,,4,linkreq txed
-240397,c280,8772,,9,133,1,LinkReq rcvd - LinkRep prepared
-240600,c280,8772,,,,,LinkRep rcvd - Res successful
-240600,c280,8772,,,c280,1,LinkRep txed
+240397,c280,8772,c280,9,133,1,LinkReq rcvd - LinkRep prepared
+240600,c280,8772,c280,,,,LinkRep rcvd - Res successful
+240600,c280,8772,c280,,,1,LinkRep txed
 242588,c280,b868,c280,,,1,linkreq enqueued
 243943,c280,b868,,,,1,LinkReq failed
 244009,c280,b868,c280,,,3,linkreq enqueued
-246137,c280,b868,,12,197,3,LinkReq rcvd - LinkRep prepared
+246137,c280,b868,c280,12,197,3,LinkReq rcvd - LinkRep prepared
 246167,c280,b868,,,,3,LinkReq failed
 246242,c280,b868,c280,,,1,linkreq enqueued
-246340,c280,b868,,,c280,3,LinkRep txed
+246340,c280,b868,c280,,,3,LinkRep txed
 246445,c280,b868,c280,,,2,linkreq enqueued
 246545,c280,b868,,,,1,LinkReq failed
 246648,c280,b868,c280,,,1,linkreq enqueued
@@ -279,9 +279,9 @@ asn,src,dest,owner,ch,slot,queuePos,info
 252035,c280,b868,,,,1,LinkReq failed
 252129,c280,b868,c280,,,1,linkreq enqueued
 254052,c280,b868,,,,1,LinkReq failed
-254054,c280,b868,,6,85,1,LinkReq rcvd - LinkRep prepared
+254054,c280,b868,c280,6,85,1,LinkReq rcvd - LinkRep prepared
 254159,c280,b868,c280,,,1,linkreq enqueued
-255475,c280,b868,,,c280,1,LinkRep txed
+255475,c280,b868,c280,,,1,LinkRep txed
 255580,c280,b868,c280,,,11,linkreq enqueued
 256852,c280,b868,,,,1,LinkReq failed
 257001,c280,b868,c280,,,10,linkreq enqueued
@@ -290,77 +290,77 @@ asn,src,dest,owner,ch,slot,queuePos,info
 260088,c280,8772,,,,11,LinkReq failed
 260249,c280,8772,c280,,,11,linkreq enqueued
 260697,c280,8772,,,,11,linkreq txed
-260697,c280,8772,,5,48,1,LinkReq rcvd - LinkRep prepared
-261306,c280,8772,,,,,LinkRep rcvd - Res successful
-261306,c280,8772,,,c280,1,LinkRep txed
+260697,c280,8772,c280,5,48,1,LinkReq rcvd - LinkRep prepared
+261306,c280,8772,c280,,,,LinkRep rcvd - Res successful
+261306,c280,8772,c280,,,1,LinkRep txed
 261467,c280,8772,c280,,,2,linkreq enqueued
 261712,c280,8772,,,,10,linkreq txed
-261712,c280,8772,,6,79,1,LinkReq rcvd - LinkRep prepared
-262321,c280,8772,,4,71,3,LinkReq rcvd - LinkRep prepared
+261712,c280,8772,c280,6,79,1,LinkReq rcvd - LinkRep prepared
+262321,c280,8772,c280,4,71,3,LinkReq rcvd - LinkRep prepared
 263294,c280,8772,c280,,,1,linkreq enqueued
 263336,c280,8772,,,,1,linkreq txed
-263336,c280,8772,,13,123,6,LinkReq rcvd - LinkRep prepared
-264148,c280,8772,,,,,LinkRep rcvd - Res successful
-264148,c280,8772,,,c280,6,LinkRep txed
-264149,c280,8772,,,,1,LinkRep failed
+263336,c280,8772,c280,13,123,6,LinkReq rcvd - LinkRep prepared
+264148,c280,8772,c280,,,,LinkRep rcvd - Res successful
+264148,c280,8772,c280,,,6,LinkRep txed
+264149,c280,8772,c280,,,1,LinkRep failed
 264309,c280,8772,c280,,,1,linkreq enqueued
-264327,c280,8772,,,,3,LinkRep failed
+264327,c280,8772,c280,,,3,LinkRep failed
 264351,c280,8772,,,,1,linkreq txed
-264351,c280,8772,,4,31,1,LinkReq rcvd - LinkRep prepared
-264757,c280,8772,,,,1,LinkRep failed
+264351,c280,8772,c280,4,31,1,LinkReq rcvd - LinkRep prepared
+264757,c280,8772,c280,,,1,LinkRep failed
 367230,c280,b868,c280,,,1,linkreq enqueued
 367328,c280,b868,,,,1,linkreq txed
-367328,c280,b868,,14,199,1,LinkReq rcvd - LinkRep prepared
+367328,c280,b868,c280,14,199,1,LinkReq rcvd - LinkRep prepared
 369463,c280,8772,c280,,,2,linkreq enqueued
 369505,c280,8772,,,,2,linkreq txed
-369505,c280,8772,,11,26,1,LinkReq rcvd - LinkRep prepared
-369708,c280,8772,,,,,LinkRep rcvd - Res successful
-369708,c280,8772,,,c280,1,LinkRep txed
-369765,c280,b868,,,,1,LinkRep failed
+369505,c280,8772,c280,11,26,1,LinkReq rcvd - LinkRep prepared
+369708,c280,8772,c280,,,,LinkRep rcvd - Res successful
+369708,c280,8772,c280,,,1,LinkRep txed
+369765,c280,b868,c280,,,1,LinkRep failed
 369869,c280,8772,c280,,,2,linkreq enqueued
 369911,c280,8772,,,,2,linkreq txed
-369911,c280,8772,,7,124,1,LinkReq rcvd - LinkRep prepared
-370520,c280,8772,,,,,LinkRep rcvd - Res successful
-370520,c280,8772,,,c280,1,LinkRep txed
+369911,c280,8772,c280,7,124,1,LinkReq rcvd - LinkRep prepared
+370520,c280,8772,c280,,,,LinkRep rcvd - Res successful
+370520,c280,8772,c280,,,1,LinkRep txed
 382455,c280,b868,c280,,,1,linkreq enqueued
 384224,c280,b868,,,,1,LinkReq failed
 385297,c280,b868,c280,,,1,linkreq enqueued
-385801,c280,b868,,14,18,1,LinkReq rcvd - LinkRep prepared
+385801,c280,b868,c280,14,18,1,LinkReq rcvd - LinkRep prepared
 387327,c280,b868,c280,,,8,linkreq enqueued
-388238,c280,b868,,,,1,LinkRep failed
+388238,c280,b868,c280,,,1,LinkRep failed
 389204,c280,b868,,,,1,LinkReq failed
 389357,c280,b868,c280,,,10,linkreq enqueued
 391282,c280,b868,,,,10,linkreq txed
-391282,c280,b868,,11,21,2,LinkReq rcvd - LinkRep prepared
-391891,c280,b868,,7,73,1,LinkReq rcvd - LinkRep prepared
-392500,c280,b868,,,,,LinkRep rcvd - Res successful
+391282,c280,b868,c280,11,21,2,LinkReq rcvd - LinkRep prepared
+391891,c280,b868,c280,7,73,1,LinkReq rcvd - LinkRep prepared
+392500,c280,b868,c280,,,,LinkRep rcvd - Res successful
 392605,c280,b868,c280,,,2,linkreq enqueued
-392702,c280,b868,,3,13,4,LinkReq rcvd - LinkRep prepared
+392702,c280,b868,c280,3,13,4,LinkReq rcvd - LinkRep prepared
 392816,b868,c280,8772,,,3,linkreq enqueued
-393719,c280,b868,,,,2,LinkRep failed
-394328,c280,b868,,,,1,LinkRep failed
+393719,c280,b868,c280,,,2,LinkRep failed
+394328,c280,b868,c280,,,1,LinkRep failed
 394677,c280,8772,,,,2,LinkReq failed
 394838,c280,8772,c280,,,9,linkreq enqueued
 394846,b868,c280,,,,3,LinkReq failed
 394880,c280,8772,,,,9,linkreq txed
-394880,c280,8772,,13,70,1,LinkReq rcvd - LinkRep prepared
+394880,c280,8772,c280,13,70,1,LinkReq rcvd - LinkRep prepared
 395049,b868,c280,8772,,,1,linkreq enqueued
-395083,c280,8772,,,c280,1,LinkRep txed
-395083,c280,8772,,,,,LinkRep rcvd - Res successful
-395139,c280,b868,,,,4,LinkRep failed
+395083,c280,8772,c280,,,1,LinkRep txed
+395083,c280,8772,c280,,,,LinkRep rcvd - Res successful
+395139,c280,b868,c280,,,4,LinkRep failed
 395244,c280,8772,c280,,,8,linkreq enqueued
 395286,c280,8772,,,,8,linkreq txed
-395286,c280,8772,,0,86,2,LinkReq rcvd - LinkRep prepared
-395692,c280,8772,,,,,LinkRep rcvd - Res successful
-395692,c280,8772,,,c280,2,LinkRep txed
+395286,c280,8772,c280,0,86,2,LinkReq rcvd - LinkRep prepared
+395692,c280,8772,c280,,,,LinkRep rcvd - Res successful
+395692,c280,8772,c280,,,2,LinkRep txed
 395853,c280,8772,c280,,,8,linkreq enqueued
 395895,c280,8772,,,,8,linkreq txed
-395895,c280,8772,,4,173,1,LinkReq rcvd - LinkRep prepared
-396098,c280,8772,,,,,LinkRep rcvd - Res successful
-396098,c280,8772,,,c280,1,LinkRep txed
+395895,c280,8772,c280,4,173,1,LinkReq rcvd - LinkRep prepared
+396098,c280,8772,c280,,,,LinkRep rcvd - Res successful
+396098,c280,8772,c280,,,1,LinkRep txed
 396259,c280,8772,c280,,,6,linkreq enqueued
 396504,c280,8772,,,,6,linkreq txed
-396504,c280,8772,,8,93,2,LinkReq rcvd - LinkRep prepared
+396504,c280,8772,c280,8,93,2,LinkReq rcvd - LinkRep prepared
 396662,b868,c280,,,,1,LinkReq failed
-396910,c280,8772,,,,,LinkRep rcvd - Res successful
-396910,c280,8772,,,c280,2,LinkRep txed
+396910,c280,8772,c280,,,,LinkRep rcvd - Res successful
+396910,c280,8772,c280,,,2,LinkRep txed
