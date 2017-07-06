@@ -15,41 +15,8 @@ import pandas as pd
  #separe le fichier log selon les neuds | retourne la liste des noeuds
 #def sep_data_addr(nom_fichier_data):
 
-### POUR DES DONNEES NON IDENTIFIEES
-"""
-def search_mismatch(nom_fichier_data):
-    f_data = open(nom_fichier_data, "r")
-    line1 = 0
-    mismatch = 0
-    for line in f_data:
-        if "send" in line:
-            if line1 == 0:
-                data1 = line[line.find("send"):]
-                #print(data1)
-                line1 = 1
-            else:
-                data2 = line[line.find("send"):]
-                if data1 != data2:
-                    print(line)
-                    mismatch += 1
-                line1 = 0
-    f_data.close()
-    return mismatch
+#TOUS LES GETTERS ET SETTERS VARIABLES LORS DES LECTURE DE LIGNES
 
-
-# pour separer les donnees en une liste num et une liste m3-## d'un fichier tx
-def sep_data_tx(nom_fichier_data): 
-    f_data = open(nom_fichier_data, "r")
-    premiere_occurence = 0
-    data_temps =[]
-    data_code=[]
-    for line in f_data: 
-        premiere_occurence = line.find(";")
-        data_temps.append(line[:line.find(";")])
-        data_code.append(line[line.find(";")+1:line.find(";",premiere_occurence+1)])
-    f_data.close()   
-    return data_temps, data_code
-"""
 
 #replace the substring old by new for the nb of occurrence starting from the END of the string
 def rreplace(s, old, new, occurrence):

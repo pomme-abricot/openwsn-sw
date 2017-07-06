@@ -6,6 +6,24 @@ from func_def_class import *
 import ast
 
 #touve la nieme occurence d'une substring dans str
+#def find_nth(haystack, needle, n):
+    
+# crée un df avec les reservations
+#def create_df_res(data_file):
+
+#def print_res(res):
+
+#fonction get simult df | entrée un df de réservation tmp et df des paquets transmis, en sortie une liste du nombre de paquets simultanés transmis pour chaque réservation de df tmp et leur asn
+#def get_simult_df(df_tmp, df_tx):
+
+#remplis le df de réservation | ajoute les données sur les transmissions de paquets et leurs collisions.
+#def fill_simult(df_res, df_tx):
+
+#Creer un df avec les données des réservations 
+# fonction pour remplir un csv avec toutes les données res
+#def create_df_step_res(data_file):
+
+#touve la nieme occurence d'une substring dans str
 def find_nth(haystack, needle, n):
     start = haystack.find(needle)
     while start >= 0 and n > 1:
@@ -383,7 +401,7 @@ def create_df_res(data_file):
     
     
     i=0
-    df = pd.DataFrame(columns=('asn creation', 'asn_req', 'asn_rep', 'asn_tx', 'src', 'dest', 'owner', 'succes', 'numAttempts', 'nb_req', 'req_1', 'req_2', 'req_3', 'req_4','nb_rep', 'rep_1', 'rep_2', 'rep_3', 'rep_4', 'queuePos', 'nbCellsReq','nbCellsRep', 'slot1', 'ch1', 's1', 'slot2', 'ch2', 's2', 'slot3', 'ch3',  's3','state', 'nb_sibl'))
+    df = pd.DataFrame(columns=('asn creation', 'asn_req', 'asn_rep', 'asn_tx', 'src', 'dest', 'owner', 'succes', 'numAttempts', 'colision', 'nb_req', 'req_1', 'req_2', 'req_3', 'req_4','nb_rep', 'rep_1', 'rep_2', 'rep_3', 'rep_4', 'queuePos', 'nbCellsReq','nbCellsRep', 'slot1', 'ch1', 's1', 'slot2', 'ch2', 's2', 'slot3', 'ch3',  's3','state', 'nb_sibl','nb_fils', 'diff_asn'))
     for elem in list_res:
         df.loc[i]=[elem.asn1, 
                    elem.asn2,
@@ -396,6 +414,7 @@ def create_df_res(data_file):
                    elem.numAttempts, 
                    "", 
                    "", 
+                   "",
                    "",
                    "",
                    "",
@@ -417,7 +436,7 @@ def create_df_res(data_file):
                    elem.ch3, 
                    elem.s3,
                    elem.state,
-                   ""]
+                   "","",""]
                    
         i+=1
     
@@ -438,19 +457,19 @@ def print_res(res):
     else:
         print "Ce n'est pas une réservation"
         
-        
 #fonction get simult df | entrée un df res tmp et df tx, en sortie une liste des simult
 def get_simult_df(df_tmp, df_tx):
     liste_tmp = []
+    liste_asn = []
     del liste_tmp[:]
     i=0
     numAtt = 0
     simult = 0
     asn_tmp=0
-    
+
     #si la liste tmp est vide, on retourne une liste vide. (ne devrait pas arriver)
     if df_tmp.empty:
-        return liste_tmp
+        return liste_tmp, liste_asn
     #    liste_tmp.append(len(  df_tx.loc[ (df_tx['asn']==  df_tmp.iloc[-1]["asn"] )]  ))
     numAtt = df_tmp.iloc[-1]["numTxAttempts"]
     #SI il y a un mismatch dans les res -> par exemple que un pkt avec numAtt = 2/3/4 mais pas les precedent, on ne reonte pas
@@ -459,89 +478,130 @@ def get_simult_df(df_tmp, df_tx):
             asn_tmp = df_tmp.loc[  df_tx['numTxAttempts'] == numAtt-i   ]["asn"].iloc[-1]
             simult = len( df_tx.loc[ (df_tx['asn']==  asn_tmp )] )
             liste_tmp.append( simult )
+            liste_asn.append( asn_tmp )
     else:
         asn_tmp = df_tmp.loc[  df_tx['numTxAttempts'] == numAtt   ]["asn"].iloc[-1]
         simult = len( df_tx.loc[ (df_tx['asn']==  asn_tmp )] )
         liste_tmp.append( simult )
+        liste_asn.append( asn_tmp )
     liste_tmp.reverse()
-    return liste_tmp
-
+    liste_asn.reverse()
+    return liste_tmp, liste_asn
 
 # si la res a marcher (etat == 4) -> les tx de paquets sont entre :
 # linkreq - asn[0] et asn[1]
 #linkrep - asn[1] et asn[2]
-
+       
 #simult est une liste qui prend comme elemts : [A,B] | A=liste:nb de tx simult lors de l'envois du linkreq
 #B=liste:nb de tx simult pour linkrep
 def fill_simult(df_res, df_tx):
     simult = []
     A=[]
     B=[]
+    nb_req=0
+    nb_rep=0
 
     #data frame tmp 
     df_tmp = pd.DataFrame
+    #df qui contient les nouvelles lignes a ajouter dans df_res -> passent par df_trans
+    df_t = pd.DataFrame(columns=('asn creation', 'asn_req', 'asn_rep', 'asn_tx', 'src', 'dest', 'owner', 'succes', 'numAttempts', 'colision', 'nb_req', 'req_1', 'req_2', 'req_3', 'req_4','nb_rep',  'rep_1', 'rep_2', 'rep_3', 'rep_4', 'queuePos', 'nbCellsReq','nbCellsRep', 'slot1', 'ch1', 's1', 'slot2', 'ch2', 's2', 'slot3', 'ch3',  's3','state', 'nb_sibl','nb_fils', 'diff_asn'))
+    df_trans = pd.DataFrame(columns=('asn creation', 'asn_req', 'asn_rep', 'asn_tx', 'src', 'dest', 'owner', 'succes', 'numAttempts', 'colision', 'nb_req', 'req_1', 'req_2', 'req_3', 'req_4','nb_rep', 'rep_1', 'rep_2', 'rep_3', 'rep_4', 'queuePos', 'nbCellsReq','nbCellsRep', 'slot1', 'ch1', 's1', 'slot2', 'ch2', 's2', 'slot3', 'ch3',  's3','state', 'nb_sibl','nb_fils', 'diff_asn'))
+
+    
+    
     #pour A
     i=0
     for i in range(len(df_res)):
-        if (df_res.loc[i]["state"] == 4) or (df_res.loc[i]["state"] == -1) or (df_res.loc[i]["state"] == -2):
+        if (df_res.loc[i]["state"] == 4) or (df_res.loc[i]["state"] == -1) | (df_res.loc[i]["state"] == -2):
             df_tmp = df_tx.loc[ (df_tx['asn']<=ast.literal_eval(df_res.loc[i]["asn_req"])) & 
-                                (df_tx['asn']>=ast.literal_eval(df_res.loc[i]["asn creation"])) &
+                                (df_tx['asn']>=(df_res.loc[i]["asn creation"])) &
                                 (df_tx['addr']==df_res.loc[i]["src"]) &
                                 (df_tx['l2Dest'].str.endswith(df_res.loc[i]["dest"])) &
                                 (df_tx['frameType']=="IEEE154_TYPE_DATA") &
-                                ((df_tx['trackinstance']=="4") | (df_tx['trackinstance']=="0") )]
-            A = get_simult_df(df_tmp, df_tx)
+                                ((df_tx['trackinstance']==4) | (df_tx['trackinstance']==0) )]
+            A, asn_tx = get_simult_df(df_tmp, df_tx)
+            df_t = pd.DataFrame(columns=('asn creation', 'asn_req', 'asn_rep', 'asn_tx', 'src', 'dest', 'owner', 'succes', 'numAttempts', 'colision', 'nb_req', 'req_1', 'req_2', 'req_3', 'req_4','nb_rep', 'rep_1', 'rep_2', 'rep_3', 'rep_4', 'queuePos', 'nbCellsReq','nbCellsRep', 'slot1', 'ch1', 's1', 'slot2', 'ch2', 's2', 'slot3', 'ch3',  's3','state', 'nb_sibl','nb_fils', 'diff_asn'))
+        
             #on rempli chaque case
             if len(A)==4:
+                df_t.loc[0]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[0], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[0], len(A), "", "", "", "", "", "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_1", A[0])
+                df_t.loc[1]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[1], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[1], len(A), "", "", "", "", "",  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_2", A[1])
+                df_t.loc[2]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[2], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[2], len(A), "", "", "", "", "",  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_3", A[2])
+                df_t.loc[3]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[3], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[3], len(A), "", "", "", "", "",  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_4", A[3])
             if len(A)==3:
+                df_t.loc[0]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[0], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[0], len(A), "", "", "", "", "",  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_1", A[0])
+                df_t.loc[1]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[1], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[1], len(A), "", "", "", "", "",  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_2", A[1])
+                df_t.loc[2]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[2], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[2], len(A), "", "", "", "", "", "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_3", A[2])
             if len(A)==2:
+                df_t.loc[0]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[0], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[0], len(A), "", "", "", "", "", "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_1", A[0])
+                df_t.loc[1]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[1], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[1], len(A), "", "", "", "", "", "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_2", A[1])
             if len(A)==1:
+                df_t.loc[0]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[0], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], A[0], len(A), "", "", "", "", "", "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
                 df_res.set_value(i,"req_1", A[0])
+                
+            df_trans = pd.concat([df_trans, df_t])
             
         elif df_res.loc[i]["state"] == -3:
             # pas assez d'info
             pass
-
+        df_res.set_value(i,"nb_req", len(A))
+        
     #pour B
     i=0
     for i in range(len(df_res)):
-        if (df_res.loc[i]["state"] == 4) or (df_res.loc[i]["state"] == -2):
+        B=[]
+        if (df_res.loc[i]["state"] == 4) | (df_res.loc[i]["state"] == -2):
             df_tmp = df_tx.loc[ (df_tx['asn']<=ast.literal_eval(df_res.loc[i]["asn_rep"])) & 
                                 (df_tx['asn']>=ast.literal_eval(df_res.loc[i]["asn_req"])) &
-                                (df_tx['addr']==df_res.loc[i]["src"]) &
-                                (df_tx['l2Dest'].str.endswith(df_res.loc[i]["dest"])) &
+                                (df_tx['addr']==df_res.loc[i]["dest"]) &
+                                (df_tx['l2Dest'].str.endswith(df_res.loc[i]["src"])) &
                                 (df_tx['frameType']=="IEEE154_TYPE_DATA") &
-                                ((df_tx['trackinstance']=="4") | (df_tx['trackinstance']=="0") )]
+                                ((df_tx['trackinstance']==4) | (df_tx['trackinstance']==0) )]
 
-            B = get_simult_df(df_tmp, df_tx)
-            
+            B, asn_tx = get_simult_df(df_tmp, df_tx)
+            df_t = pd.DataFrame(columns=('asn creation', 'asn_req', 'asn_rep', 'asn_tx', 'src', 'dest', 'owner', 'succes', 'numAttempts', 'colision', 'nb_req', 'req_1', 'req_2', 'req_3', 'req_4','nb_rep', 'rep_1', 'rep_2', 'rep_3', 'rep_4', 'queuePos', 'nbCellsReq','nbCellsRep', 'slot1', 'ch1', 's1', 'slot2', 'ch2', 's2', 'slot3', 'ch3',  's3','state', 'nb_sibl','nb_fils', 'diff_asn'))
+
             if len(B)==4:
-                df_res.set_value(i,"rep_1", B[0])
-                df_res.set_value(i,"rep_2", B[1])
-                df_res.set_value(i,"rep_3", B[2])
-                df_res.set_value(i,"rep_4", B[3])
+                df_t.loc[0]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[0], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[0], df_res.loc[i]["nb_req"], "", "", "", "", len(B), "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_1", B[0])
+                df_t.loc[1]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[1], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[1], df_res.loc[i]["nb_req"], "", "", "", "", len(B),  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_2", B[1])
+                df_t.loc[2]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[2], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[2], df_res.loc[i]["nb_req"], "", "", "", "", len(B),  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_3", B[2])
+                df_t.loc[3]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[3], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[3], df_res.loc[i]["nb_req"], "", "", "", "", len(B),  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_4", B[3])
             if len(B)==3:
-                df_res.set_value(i,"rep_1", B[0])
-                df_res.set_value(i,"rep_2", B[1])
-                df_res.set_value(i,"rep_3", B[2])
+                df_t.loc[0]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[0], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[0], df_res.loc[i]["nb_req"], "", "", "", "", len(B),  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_1", B[0])
+                df_t.loc[1]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[1], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[1], df_res.loc[i]["nb_req"], "", "", "", "", len(B),  "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_2", B[1])
+                df_t.loc[2]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[2], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[2], df_res.loc[i]["nb_req"], "", "", "", "", len(B), "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_3", B[2])
             if len(B)==2:
-                df_res.set_value(i,"rep_1", B[0])
-                df_res.set_value(i,"rep_2", B[1])
+                df_t.loc[0]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[0], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[0], df_res.loc[i]["nb_req"], "", "", "", "", len(B), "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_1", B[0])
+                df_t.loc[1]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[1], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[1], df_res.loc[i]["nb_req"], "", "", "", "", len(B), "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_2", B[1])
             if len(B)==1:
-                df_res.set_value(i,"rep_1", B[0])
+                df_t.loc[0]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"], asn_tx[0], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], B[0], df_res.loc[i]["nb_req"], "", "", "", "", len(B), "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"",""]
+                df_res.set_value(i,"req_1", B[0])
+            
+            df_trans = pd.concat([df_trans, df_t])    
+            
         elif df_res.loc[i]["state"] == -3:
             # pas assez d'info
             pass
-
+        df_res.set_value(i,"nb_rep", len(B))
+    df_res = pd.concat([df_res, df_trans], axis=0, ignore_index=True)
     df_res.to_csv('data_csv/res.csv',index=False)
     
 

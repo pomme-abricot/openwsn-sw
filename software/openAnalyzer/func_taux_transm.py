@@ -17,16 +17,11 @@ import numpy as np
 ##calcul le taux de transmission vu par le noeud emeteur (addr1)
 #def transmission_ratio_flow_node(addr_1, addr_2, Dasn, step):
 
-## obtenir les voisins d'un noeud a un asn donné
-#def get_neighbor_node(addr_1, asn_data):
-
 ##obtenir le taux de transm a un asn donné | asn_data  | Dasn est la fenetre pour laquelle on calcule le taux
 ##le taux est de -1 si aucun msg n'a été envoyés 
 #prend en entré PT_OF_VIEW_NODE qui est vrai si on se restraint aux msg dont le noeud recois les aquittements
 #def get_ration_trans_node(addr_1, addr_2, asn_data, Dasn, PT_OF_VIEW_NODE):
 
-##afficher une reservation
-##def print_res(res):
 
 
 #fonction qui calcule le taux de livraison pour un noeud | données : nom du noeud, largeur fenetre asn, pas

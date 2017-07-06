@@ -6,18 +6,26 @@ from func_parsing_logfile import *
 import ast
 
 
-
+#créer le dataframe des paquets transmis
 #def create_df_tx(data_file_tx):
 
+#créer le dataframe des paquets recus
 #def create_df_rx(data_file_tx, data_file_ack_rx):
 
+#rempli les colonnes des réussites de transmission dans le df de paquet transmis 
 #def fill_succes_tx(df_tx, df_rx):
 
+#créer le df des liaisons fils/pere pour chaque réactualisation
 #def create_df_parent(data_file):
 
+#créer le df qui pour chaque parent donne la liste des fils
 #def create_df_sons(df_parent):
 
+#fonction qui donne le pere pour un noeud et un asn donné
 #def get_parent(node_data, asn_data):
+
+#rempli le df des réservation | nombre de frères du noeud source de la réservation
+#def fill_nb_siblings(df_res, df_fils, df_parent):
     
 def create_df_tx(data_file_tx):
     df = pd.DataFrame(columns=('time', 'addr', 'comp','asn', 'statType', 'trackinstance', 'trackowner', 'length', 'frameType', 'slotOffset', 'frequency', 'l2Dest', 'txpower', 'numTxAttempts', 'queuePos','succes_rx', 'succes_ack', 'list_rx'))

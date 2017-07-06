@@ -3,6 +3,17 @@
 import re
 import pandas as pd
 
+ #donne la liste de noeuds de l'experimentation
+#def get_all_addr(nom_fichier_data):
+
+#cree une liste des evenements pour un neud avec une numerotation selon l'ordre d'apparition
+#def list_event(nom_fichier_data):
+
+#cree une liste des evenements pour un neud avec une numerotation predefinie
+#def list_event2(nom_fichier_data):
+
+# obtenir les voisins d'un noeud a un asn donné
+#def get_neighbor_node(addr_1, asn_data):
                     
  #donne la liste de noeuds de l'experimentation
 def get_all_addr(nom_fichier_data):
