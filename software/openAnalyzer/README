@@ -1,0 +1,25 @@
+
+File parsing :
+# See functions in func_parsing_logfile.py
+ 
+It create log files of each event per node in /data/parsed/node/***.log, with *** the name of a node.
+It create log files of each kind of event in /data/parsed/event/data_***.log, with *** the kind of event between : STAT_DATAGEN, STAT_DATARX, STAT_PK_TX, STAT_PK_RX, STAT_CELL_ADD, STAT_CELL_REMOVE, STAT_ACK_TX, STAT_ACK_RX, STAT_PK_TIMEOUT, STAT_PK_ERROR, STAT_PK_BUFFEROVERFLOW, STAT_DIOTX, STAT_DAOTX, STAT_NODESTATE.
+
+Dataframes : 
+
+TX/RX, parents/sons, reservations
+# See function in func_parsing_csvfile.py
+
+TX : The informations on TX of the transmission DF are : the time (time + ASN), the address (source and destination), the tracks infos (trackinstance and trackowner), timeslot (slotOffset), quality (txpower and numAttempts) and if the pkt have been received, ACK and by who.
+
+RX : The informations on the RX DF are : the time (time + ASN), the address (source and destination), the tracks infos (trackinstance and trackowner), timeslot (slotOffset) and quality (crc, lqi, rssi).
+
+Parent : Contain info on the parent a node each time a reservation is started or a parent is updated. 
+
+Sons : For every parent update get the ASN, the parent and its sons.
+
+Reservations : Contain all the reservation attempts. The reservations have some inofs about the ASN : ASN of creation, when the request is received/failed (asn_req) and when the response is received/failed (asn_rep); the address (source, dest and owner); on the succes (0=fail, 1=Succes); on the number of attempts (start to one and increase each time a reservation fail between two node);  the number of request and response packet send; infos on the cells (the number of cells requested and allocated, and which ones), and the number of slibings the src node had when the reservation was enqueued.
+
+Res_sim : all the packets (request and response) with their infos on which reservation they belongs. + ASN of transmission. In the data frame, the reservation (that are not packet transmission) dont have ASN of tx.
+
+

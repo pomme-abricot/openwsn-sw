@@ -123,7 +123,7 @@ def sep_data_addr(nom_fichier_data):
             if "addr" in line:
                 addr_tmp = line[line.find("addr")+5:line.find("|",line.find("addr"))]
                 #si l'element a deja ete compte, on ajoute la ligne au fichier correspondant
-                nom_fichier_dest = "data/parsed/adresse/data_" + addr_tmp +".log"
+                nom_fichier_dest = "data/parsed/node/" + addr_tmp +".log"
                 with open(nom_fichier_dest, "a") as f:
                     f.write(fix_line(line)) 
                     

@@ -52,8 +52,9 @@ def create_df_tx(data_file_tx):
                     0,
                     ""]
             i+=1
-            
-    df.to_csv('data_csv/pkt_tx.csv',index=False)
+    
+    return df
+    #df.to_csv('data_csv/pkt_tx.csv',index=False)
 
     
     
@@ -90,7 +91,8 @@ def create_df_rx(data_file_tx, data_file_ack_rx):
             df.loc[(df['asn']==get_asn(line)) & (df['l2Src'].str.endswith(get_addr(line))), "ACK_RX" ] = 1
             
     
-    df.to_csv('data_csv/pkt_rx.csv',index=False)
+    return df
+    #df.to_csv('data_csv/pkt_rx.csv',index=False)
     
     
 def fill_succes_tx(df_tx, df_rx):
@@ -120,7 +122,8 @@ def fill_succes_tx(df_tx, df_rx):
                 if df_rx.iloc[j]["ACK_RX"] == '1':
                     df_tx.set_value(i,"succes_ack",1)
             
-    df_tx.to_csv('data_csv/pkt_tx.csv',index=False)
+    return df_tx
+    #df_tx.to_csv('data_csv/pkt_tx.csv',index=False)
 
     
     
@@ -158,7 +161,8 @@ def create_df_parent(data_file):
                   ]
                    
         i+=1
-    df_parent.to_csv('data_csv/parent.csv',index=False)
+    return df_parent
+    #df_parent.to_csv('data_csv/parent.csv',index=False)
     
 
 def create_df_sons(df_parent):
@@ -209,8 +213,9 @@ def create_df_sons(df_parent):
                         ]
             p+=1
     
-    df_fils.to_csv('data_csv/sons.csv',index=False)
-
+    return df_fils
+    #df_fils.to_csv('data_csv/sons.csv',index=False)
+ 
             
             
 def get_nb_siblings(node_son, df_fils,asn_data, df_parent):
@@ -238,4 +243,5 @@ def fill_nb_siblings(df_res, df_fils, df_parent):
         else:
             df_res.set_value(i,"nb_sibl",get_nb_siblings(df_res.iloc[i]["src"], df_fils, df_res.iloc[i]["asn creation"] , df_parent) )
             
-    df_res.to_csv('data_csv/res.csv',index=False)
+    return df_res
+    #df_res.to_csv('data_csv/res.csv',index=False)

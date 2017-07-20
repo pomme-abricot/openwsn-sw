@@ -442,8 +442,8 @@ def create_df_res(data_file):
     
     
     
-    
-    df.to_csv('data_csv/res.csv',index=False)
+    return df
+    #df.to_csv('data_csv/res.csv',index=False)
     
     
     
@@ -602,7 +602,8 @@ def fill_simult(df_res, df_tx):
             pass
         df_res.set_value(i,"nb_rep", len(B))
     df_res = pd.concat([df_res, df_trans], axis=0, ignore_index=True)
-    df_res.to_csv('data_csv/res.csv',index=False)
+    return df_res
+    #df_res.to_csv('data_csv/res.csv',index=False)
     
 
 #Creer un df avec les données des réservations 
@@ -687,4 +688,5 @@ def create_df_step_res(data_file):
             
             
             i+=1
-    df.to_csv('data_csv/res_step.csv',index=False)
+    return df
+    #df.to_csv('data_csv/res_step.csv',index=False)
