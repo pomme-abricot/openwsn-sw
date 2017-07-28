@@ -36,7 +36,59 @@ def fix_line(line):
     return line_fixed
 
 
-# separe data.log en sous fichier en fonction du type
+# separe data.log en sous fichier en fonction du type 
+def sep_data_event(nom_fichier_data):
+    with open(nom_fichier_data) as origin_file:
+        for line in origin_file:
+            #Pour trouver ce qu'il y a entre []
+            #data_type = re.findall('\[(.*?)\]', line)
+            #if data_type:
+                #print data_type[0]
+            if "STAT_CELL" in line:
+                with open("data/parsed/event/STAT_CELL.log", "a") as f:
+                    f.write(fix_line(line))
+            elif "STAT_ACK" in line:
+                with open("data/parsed/event/STAT_ACK.log", "a") as f:
+                    f.write(fix_line(line))
+            elif "STAT_PK_TX" in line:
+                with open("data/parsed/event/STAT_PK_TX.log", "a") as f:
+                    f.write(fix_line(line))
+            elif "STAT_PK_RX" in line:
+                with open("data/parsed/event/STAT_PK_RX.log", "a") as f:
+                    f.write(fix_line(line))
+            elif "STAT_6PCMD" in line:
+                with open("data/parsed/event/STAT_6PCMD.log", "a") as f:
+                    f.write(fix_line(line))
+            else:
+                #on traite les cas differents
+                #Pour trouver ce qu'il y a entre []
+                data_type = re.findall('\[(.*?)\]', line)
+                #on verifie qu'il y a [***] dans la ligne
+                if data_type:
+                    if "ParserInfoErrorCritical" in data_type[0]:
+                        with open("data/parsed/event/data_OTHER_ParserInfoErrorCritical.log", "a") as f:
+                            f.write(line) 
+                    elif "moteState" in data_type[0]:
+                        with open("data/parsed/event/data_OTHER_moteState.log", "a") as f:
+                            f.write(line) 
+                    elif "ParserPrintf" in data_type[0]:
+                        with open("data/parsed/event/data_OTHER_ParserPrintf.log", "a") as f:
+                            f.write(line) 
+                    # pour ne pas separer [openvisualizer] des lignes qui le suivent
+                    elif "openVisualizerApp" in data_type[0]: 
+                        with open("data/parsed/event/data_OTHER.log", "a") as f:
+                            f.write(line)
+                    else: 
+                        with open("data/parsed/event/data_OTHER_.log", "a") as f:
+                            f.write(line)
+                else:
+                    with open("data/parsed/event/data_OTHER.log", "a") as f:
+                            f.write(line)
+                            
+                            
+#modifier pour nouveau type de données
+"""                           
+# separe data.log en sous fichier en fonction du type 
 def sep_data_event(nom_fichier_data):
     with open(nom_fichier_data) as origin_file:
         for line in origin_file:
@@ -111,7 +163,7 @@ def sep_data_event(nom_fichier_data):
                 else:
                     with open("data/parsed/event/data_OTHER.log", "a") as f:
                             f.write(line)
-
+"""
              
  #separe le fichier log selon les neuds | retourne la liste des noeuds
 def sep_data_addr(nom_fichier_data):
@@ -188,6 +240,42 @@ def get_statType(line):
 
 def get_seqnum(line):
     return line[line.find("seqnum")+len("seqnum="):line.find("|", line.find("seqnum"))]
+
+def get_L3Src(line):
+    return line[line.find("L3Src")+len("L3Src="):line.find("|", line.find("L3Src"))]
+
+def get_L3Dest(line):
+    return line[line.find("L3Dest")+len("L3Dest="):line.find("|", line.find("L3Dest"))]
+
+def get_L4Proto(line):
+    return line[line.find("L4Proto")+len("L4Proto="):line.find("|", line.find("L4Proto"))]
+
+def get_L4SrcPort(line):
+    return line[line.find("L4SrcPort")+len("L4SrcPort="):line.find("|", line.find("L4SrcPort"))]
+
+def get_status(line):
+    return line[line.find("status")+len("status="):line.find("|", line.find("status"))]
+
+def get_command(line):
+    return line[line.find("command")+len("command="):line.find("|", line.find("command"))]
+
+def get_choffset(line):
+    return line[line.find("choffset")+len("choffset="):line.find("|", line.find("choffset"))]
+
+def get_slotoffset(line):
+    return line[line.find("slotoffset")+len("slotoffset="):line.find("|", line.find("slotoffset"))]
+
+def get_neigh(line):
+    return line[line.find("neigh")+len("neigh="):line.find("|", line.find("neigh"))]
+
+def get_command(line):
+    return line[line.find("command")+len("command="):line.find("|", line.find("command"))]
+
+def get_celltype(line):
+    return line[line.find("celltype")+len("celltype="):line.find("|", line.find("celltype"))]
+
+def get_neighbor(line):
+    return line[line.find("neighbor")+len("neighbor="):line.find("|", line.find("neighbor"))]
 
 def get_src(line):
     return line

@@ -28,18 +28,14 @@ import ast
 #def fill_nb_siblings(df_res, df_fils, df_parent):
     
 def create_df_tx(data_file_tx):
-    df = pd.DataFrame(columns=('time', 'addr', 'comp','asn', 'statType', 'trackinstance', 'trackowner', 'length', 'frameType', 'slotOffset', 'frequency', 'l2Dest', 'txpower', 'numTxAttempts', 'queuePos','succes_rx', 'succes_ack', 'list_rx'))
+    df = pd.DataFrame(columns=('time', 'addr', 'asn', 'length', 'frameType', 'slotOffset', 'frequency', 'l2Dest', 'txpower', 'numTxAttempts', 'L3Src', 'L3Dest', 'L4Proto', 'L4SrcPort', 'L4DestPort', 'succes_rx', 'succes_ack', 'list_rx'))
 
     i=0
     with open(data_file_tx, "r") as f_tx:
         for line in f_tx:
             df.loc[i]=[get_time(line), 
                     get_addr(line), 
-                    get_comp(line), 
                     get_asn(line), 
-                    get_statType(line), 
-                    get_trackinstance(line), 
-                    get_trackowner(line), 
                     get_length(line), 
                     get_frameType(line), 
                     get_slotOffset(line), 
@@ -47,7 +43,11 @@ def create_df_tx(data_file_tx):
                     get_l2Dest(line), 
                     get_txpower(line), 
                     get_numTxAttempts(line),
-                    get_queuePos(line),
+                     get_L3Src(line), 
+                    get_L3Dest(line), 
+                    get_L4Proto(line), 
+                    get_L4SrcPort(line), 
+                    get_L4DestPort(line),
                     0,
                     0,
                     ""]
@@ -60,18 +60,12 @@ def create_df_tx(data_file_tx):
     
 def create_df_rx(data_file_tx, data_file_ack_rx):
     i=0
-    df = pd.DataFrame(columns=('time', 'addr', 'comp','asn', 'statType', 'trackinstance', 'trackowner',
-                                 'length', 'frameType', 'slotOffset', 'frequency', 'l2Src', 'rssi', 
-                                  'lqi', 'crc', 'queuePos', 'ACK_RX'))
+    df = pd.DataFrame(columns=('time', 'addr','asn', 'length', 'frameType', 'slotOffset', 'frequency', 'l2Src', 'rssi', 'lqi', 'crc',  'ACK_RX'))
     with open(data_file_tx, "r") as f_rx:
         for line in f_rx:
             df.loc[i]=[get_time(line), 
                     get_addr(line), 
-                    get_comp(line), 
                     get_asn(line), 
-                    get_statType(line), 
-                    get_trackinstance(line), 
-                    get_trackowner(line), 
                     get_length(line), 
                     get_frameType(line), 
                     get_slotOffset(line), 
@@ -80,7 +74,6 @@ def create_df_rx(data_file_tx, data_file_ack_rx):
                     get_rssi(line), 
                     get_lqi(line),
                     get_crc(line),
-                    get_queuePos(line),
                     0]
             i+=1
     
@@ -88,7 +81,8 @@ def create_df_rx(data_file_tx, data_file_ack_rx):
         for line in f_rx:
             #pour chaque ligne on met la variable ack de la rx associée a 1
             #si il existe une rx associée a l'ack
-            df.loc[(df['asn']==get_asn(line)) & (df['l2Src'].str.endswith(get_addr(line))), "ACK_RX" ] = 1
+            if get_status(line) == "RCVD":
+                df.loc[(df['asn']==get_asn(line)) & (df['l2Src'].str.endswith(get_addr(line))), "ACK_RX" ] = 1
             
     
     return df
