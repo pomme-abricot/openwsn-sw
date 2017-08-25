@@ -690,3 +690,59 @@ def create_df_step_res(data_file):
             i+=1
     return df
     #df.to_csv('data_csv/res_step.csv',index=False)
+    
+    
+def add_column_numRes_MState(df_res):
+    #Mstate : 
+    #0=infos generales
+    #1=creation req
+    #2=tx req
+    #3=rx req
+    #4=echec
+
+    df_res["MState"]=1
+    df_res["num_res"]=0
+
+    # remplit le df res avec une colonne MSTATE + ajoute des lignes pour les créations de res
+    df_tmp = pd.DataFrame(columns=( df_res.columns.tolist()  ))
+    p = 0
+
+    for i in range(len(df_res)):
+        if df_res.loc[i]["asn_tx"]=="":
+            df_res.set_value(i,"MState", 0)
+            df_res.set_value(i,"num_res", (p+1))
+            #on ajoute des lignes
+            df_tmp.loc[p]=[df_res.loc[i]["asn creation"], df_res.loc[i]["asn_req"], df_res.loc[i]["asn_rep"],  df_res.loc[i]["asn_tx"], df_res.loc[i]["src"], df_res.loc[i]["dest"], df_res.loc[i]["owner"], df_res.loc[i]["succes"], df_res.loc[i]["numAttempts"], df_res.loc[i]["colision"], df_res.loc[i]["nb_req"], "", "", "", "", df_res.loc[i]["nb_rep"], "", "", "", "", df_res.loc[i]["queuePos"], df_res.loc[i]["nbCellsReq"], df_res.loc[i]["nbCellsRep"], df_res.loc[i]["slot1"], df_res.loc[i]["ch1"], df_res.loc[i]["s1"], df_res.loc[i]["slot2"], df_res.loc[i]["ch2"], df_res.loc[i]["s2"], df_res.loc[i]["slot3"], df_res.loc[i]["ch3"], df_res.loc[i]["s3"], df_res.loc[i]["state"], df_res.loc[i]["nb_sibl"],"","",1,(p+1)]
+            p+=1
+        else:
+            #on remplit MState
+            if (int(df_res.loc[i]["asn creation"]) <=  int(df_res.loc[i]["asn_tx"]) ) and ( int(df_res.loc[i]["asn_tx"]) <  int(df_res.loc[i]["asn_req"]) ):
+                df_res.set_value(i,"MState", 1)
+                df_res.set_value(i,"num_res", p)
+
+            if ( df_res.loc[i]["state"] == 4) or ( df_res.loc[i]["state"] == -2):
+                if (int(df_res.loc[i]["asn_req"]) <=  int(df_res.loc[i]["asn_tx"]) ) and ( int(df_res.loc[i]["asn_tx"]) <  int(df_res.loc[i]["asn_rep"]) ):
+                    df_res.set_value(i,"MState", 2)
+                    df_res.set_value(i,"num_res", p)
+            if ( df_res.loc[i]["state"] == 4):
+                if (int(df_res.loc[i]["asn_rep"]) ==  int(df_res.loc[i]["asn_tx"]) ):
+                    df_res.set_value(i,"MState", 3)
+                    df_res.set_value(i,"num_res", p)
+            if ( df_res.loc[i]["state"] == -2):
+                if (int(df_res.loc[i]["asn_rep"]) ==  int(df_res.loc[i]["asn_tx"]) ):
+                    df_res.set_value(i,"MState", 4)
+                    df_res.set_value(i,"num_res", p)
+            if ( df_res.loc[i]["state"] == -1):
+                if (int(df_res.loc[i]["asn_req"]) ==  int(df_res.loc[i]["asn_tx"]) ):
+                    df_res.set_value(i,"MState", 4)
+                    df_res.set_value(i,"num_res", p)
+            #on calcul ASN diff
+            df_res.set_value(i,"diff_asn", int(df_res.loc[i]["asn_tx"]) - int(df_res.loc[i]["asn creation"]) )
+
+    df_res = pd.concat([df_res, df_tmp], axis=0, ignore_index=True)
+
+      ##############     
+
+    df_res.sort_values(['asn creation', 'asn_req', 'asn_tx'], ascending=[True, True, True], inplace=True)
+    df_res = df_res.reset_index(drop=True)
+    return df_res

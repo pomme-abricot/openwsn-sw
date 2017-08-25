@@ -122,7 +122,8 @@ def fill_succes_tx(df_tx, df_rx):
     
     
 #creer la df avec les infos sur les changements de parents
-def create_df_parent(data_file):
+# doesnt work with new logs
+def create_df_parent_old(data_file):
 
     list_parent=[]
     del list_parent[:]
@@ -158,6 +159,48 @@ def create_df_parent(data_file):
     return df_parent
     #df_parent.to_csv('data_csv/parent.csv',index=False)
     
+    
+def create_df_parent(data_file):
+
+    list_parent=[]
+    del list_parent[:]
+    df_parent = pd.DataFrame(columns=('asn', 'addr', 'parent', 'old_parent', 'info'))
+    
+    i=0
+    with open(data_file) as origin_file:
+        for line in origin_file:
+            if (get_command(line)=="ADD") and ( get_celltype(line)!="TXRX" ) :
+                #Si le noeud a un pere pour la premiere fois
+                if (get_addr(line) not in df_parent["addr"].values) and (get_celltype(line)=="TX"):
+                    df_parent.loc[i]=[get_asn(line),
+                                      get_addr(line),
+                                      get_neighbor(line)[-4:],
+                                      '',
+                                      "new parent"]
+                    i+=1
+                
+                #test si rx
+                if (get_neighbor(line)[-4:] not in df_parent["addr"].values) and (get_celltype(line)=="RX"):
+                    df_parent.loc[i]=[get_asn(line),
+                                      get_neighbor(line)[-4:],
+                                      get_addr(line),
+                                      '',
+                                      "new parent"]
+                    i+=1
+                
+                if (get_celltype(line)=="TX"):
+                    #SI ON CHANGE DE PERE si le noeud est deja dans la liste des addr avec un pere + son pere dans line est different:
+                    if (  get_addr(line) in df_parent["addr"].values ) and (df_parent.loc[df_parent["addr"]==get_addr(line)].tail(1)["parent"].values[0]!=get_neighbor(line)[-4:] ):
+                        df_parent.loc[i]=[get_asn(line),
+                                          get_addr(line),
+                                          get_neighbor(line)[-4:],
+                                          df_parent.loc[df_parent["addr"]==get_addr(line)].tail(1)["parent"].values[0],
+                                          "parent update"]
+                    
+                        i+=1
+    return df_parent
+    #df_parent.to_csv('data_csv/parent.csv',index=False)
+    
 
 def create_df_sons(df_parent):
     df_fils = pd.DataFrame(columns=('asn', 'parent', 'fils'))
@@ -174,7 +217,7 @@ def create_df_sons(df_parent):
         parent= df_parent.loc[i]["parent"]
         info = df_parent.loc[i]["info"]
         old = df_parent.loc[i]["old_parent"]
-        if info == "res triggered":
+        if info == "new parent":
             #on verifie si le noeud est dans la liste
             if not addr in list_fils[ list_parent.index(parent) ] :
                 list_fils[ list_parent.index(parent) ].append(addr)

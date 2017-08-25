@@ -37,27 +37,37 @@ def fix_line(line):
 
 
 # separe data.log en sous fichier en fonction du type 
-def sep_data_event(nom_fichier_data):
-    with open(nom_fichier_data) as origin_file:
+def sep_data_event(file_name):
+    LOG_FILE="data/"+file_name+".log"
+    CELL_FILE = "data/parsed/"+file_name+"/event/STAT_CELL.log"
+    ACK_FILE = "data/parsed/"+file_name+"/event/STAT_ACK.log"
+    PK_TX_FILE = "data/parsed/"+file_name+"/event/STAT_PK_TX.log"
+    PK_RX_FILE = "data/parsed/"+file_name+"/event/STAT_PK_RX.log"
+    RES_FILE = "data/parsed/"+file_name+"/event/STAT_6PCMD.log"
+    PARSER_ERROR_FILE="data/parsed/"+file_name+"/event/data_OTHER_ParserInfoErrorCritical.log"
+    MOTE_STATE_FILE="data/parsed/"+file_name+"/event/data_OTHER_moteState.log"
+    PARSERPRINTF_FILE="data/parsed/"+file_name+"/event/data_OTHER_ParserPrintf.log"
+    OTHER_FILE="data/parsed/"+file_name+"/event/data_OTHER.log"
+    with open(LOG_FILE) as origin_file:
         for line in origin_file:
             #Pour trouver ce qu'il y a entre []
             #data_type = re.findall('\[(.*?)\]', line)
             #if data_type:
                 #print data_type[0]
             if "STAT_CELL" in line:
-                with open("data/parsed/event/STAT_CELL.log", "a") as f:
+                with open(CELL_FILE, "a") as f:
                     f.write(fix_line(line))
             elif "STAT_ACK" in line:
-                with open("data/parsed/event/STAT_ACK.log", "a") as f:
+                with open(ACK_FILE, "a") as f:
                     f.write(fix_line(line))
             elif "STAT_PK_TX" in line:
-                with open("data/parsed/event/STAT_PK_TX.log", "a") as f:
+                with open(PK_TX_FILE, "a") as f:
                     f.write(fix_line(line))
             elif "STAT_PK_RX" in line:
-                with open("data/parsed/event/STAT_PK_RX.log", "a") as f:
+                with open(PK_RX_FILE, "a") as f:
                     f.write(fix_line(line))
             elif "STAT_6PCMD" in line:
-                with open("data/parsed/event/STAT_6PCMD.log", "a") as f:
+                with open(RES_FILE, "a") as f:
                     f.write(fix_line(line))
             else:
                 #on traite les cas differents
@@ -66,27 +76,27 @@ def sep_data_event(nom_fichier_data):
                 #on verifie qu'il y a [***] dans la ligne
                 if data_type:
                     if "ParserInfoErrorCritical" in data_type[0]:
-                        with open("data/parsed/event/data_OTHER_ParserInfoErrorCritical.log", "a") as f:
+                        with open(PARSER_ERROR_FILE, "a") as f:
                             f.write(line) 
                     elif "moteState" in data_type[0]:
-                        with open("data/parsed/event/data_OTHER_moteState.log", "a") as f:
+                        with open(MOTE_STATE_FILE, "a") as f:
                             f.write(line) 
                     elif "ParserPrintf" in data_type[0]:
-                        with open("data/parsed/event/data_OTHER_ParserPrintf.log", "a") as f:
+                        with open(PARSERPRINTF_FILE, "a") as f:
                             f.write(line) 
                     # pour ne pas separer [openvisualizer] des lignes qui le suivent
                     elif "openVisualizerApp" in data_type[0]: 
-                        with open("data/parsed/event/data_OTHER.log", "a") as f:
+                        with open(OTHER_FILE, "a") as f:
                             f.write(line)
                     else: 
-                        with open("data/parsed/event/data_OTHER_.log", "a") as f:
+                        with open(OTHER_FILE, "a") as f:
                             f.write(line)
                 else:
-                    with open("data/parsed/event/data_OTHER.log", "a") as f:
+                    with open(OTHER_FILE, "a") as f:
                             f.write(line)
                             
                             
-#modifier pour nouveau type de données
+#modifié pour nouveau type de données
 """                           
 # separe data.log en sous fichier en fonction du type 
 def sep_data_event(nom_fichier_data):
@@ -166,16 +176,17 @@ def sep_data_event(nom_fichier_data):
 """
              
  #separe le fichier log selon les neuds | retourne la liste des noeuds
-def sep_data_addr(nom_fichier_data):
+def sep_data_addr(file_name):
+    LOG_FILE="data/"+file_name+".log"
     addr = []
     nom_fichier_dest = ""
-    with open(nom_fichier_data) as origin_file:
+    with open(LOG_FILE) as origin_file:
         for line in origin_file:
             #Pour trouver l'addresse
             if "addr" in line:
                 addr_tmp = line[line.find("addr")+5:line.find("|",line.find("addr"))]
                 #si l'element a deja ete compte, on ajoute la ligne au fichier correspondant
-                nom_fichier_dest = "data/parsed/node/" + addr_tmp +".log"
+                nom_fichier_dest = "data/parsed/"+file_name+"/node/" + addr_tmp +".log"
                 with open(nom_fichier_dest, "a") as f:
                     f.write(fix_line(line)) 
                     
@@ -247,6 +258,12 @@ def get_L3Src(line):
 def get_L3Dest(line):
     return line[line.find("L3Dest")+len("L3Dest="):line.find("|", line.find("L3Dest"))]
 
+def get_L3Proto(line):
+    return line[line.find("L3Proto")+len("L3Proto="):line.find("|", line.find("L3Proto"))]
+
+def get_L4DestPort(line):
+    return line[line.find("L4DestPort")+len("L4DestPort="):line.find("|", line.find("L4DestPort"))]
+
 def get_L4Proto(line):
     return line[line.find("L4Proto")+len("L4Proto="):line.find("|", line.find("L4Proto"))]
 
@@ -267,9 +284,6 @@ def get_slotoffset(line):
 
 def get_neigh(line):
     return line[line.find("neigh")+len("neigh="):line.find("|", line.find("neigh"))]
-
-def get_command(line):
-    return line[line.find("command")+len("command="):line.find("|", line.find("command"))]
 
 def get_celltype(line):
     return line[line.find("celltype")+len("celltype="):line.find("|", line.find("celltype"))]
