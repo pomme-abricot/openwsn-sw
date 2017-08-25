@@ -1,0 +1,14 @@
+asn,addr,parent,old_parent,info
+1012,0006,0001,,new parent
+1056,0004,0001,,new parent
+1078,0009,0001,,new parent
+1155,0007,0001,,new parent
+1441,0003,0004,,new parent
+1463,0008,0001,,new parent
+2002,000b,0003,,new parent
+2233,000e,0009,,new parent
+2519,000f,000b,,new parent
+2563,000d,000f,,new parent
+2970,0005,0009,,new parent
+4521,000c,0006,,new parent
+37147,0003,0009,0004,parent update
