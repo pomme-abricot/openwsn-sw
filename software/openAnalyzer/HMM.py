@@ -130,12 +130,19 @@ def HMM_find_best(seq_train_s, seq_train_f, seq_test_s, seq_test_f, sigma, nb_st
     #indicator
     precision_tmp, recall_tmp, fmeasure_tmp = 0,0,0
     m_best_ini = ghmm.DiscreteEmissionHMM
+    l_fmeasure = []
+    l_precision = []
+    l_recall = []
 
     A = []
     B = []
     l_tmp = []
 
     for n in range(2,nb_states+1):
+        del l_fmeasure[:]
+        del l_precision[:]
+        del l_recall[:]
+
         for loop in range(nb_loops):
             #A matrice proba transition etats | ici on a n etats
             #on ne teste que pour un A avce des valeurs aléatoire
@@ -165,9 +172,74 @@ def HMM_find_best(seq_train_s, seq_train_f, seq_test_s, seq_test_f, sigma, nb_st
             m_fail.baumWelch(seq_train_f)
 
             precision, recall, fmeasure, vp, vn, fp, fn = HMM_calcul_score(seq_test_s, seq_test_f, m_succes, m_fail)
+            l_fmeasure.append(fmeasure)
+            l_recall.append(recall)
+            l_precision.append(precision)
             if fmeasure > fmeasure_tmp:
                 m_best_ini = m_ini
                 fmeasure_tmp = fmeasure
                 recall_tmp = recall
                 precision_tmp = precision
+        
+        plt.figure()
+        plt.title("nb_state : %d" % n)
+        plt.plot()
+        
     return m_best_ini, fmeasure_tmp, recall_tmp, precision_tmp
+
+
+def HMM_get_indicators(seq_train_s, seq_train_f, seq_test_s, seq_test_f, sigma, nb_states=5, nb_loops=10):
+
+    #indicator
+    precision_tmp, recall_tmp, fmeasure_tmp = 0,0,0
+    m_best_ini = ghmm.DiscreteEmissionHMM
+    l_fmeasure = []
+    del l_fmeasure[:]
+    l_precision = []
+    del l_precision[:]
+    l_recall = []
+    del l_recall[:]
+
+    A = []
+    B = []
+    l_tmp = []
+    n=nb_states
+
+    for loop in range(nb_loops):
+        #A matrice proba transition etats | ici on a n etats
+        #on ne teste que pour un A avce des valeurs aléatoire
+        del A[:]
+        for i in range(n):
+            l_tmp = [random.randint(1,100) for i in xrange(n)]
+            l_tmp[:]= [float(x)/sum(l_tmp) for x in l_tmp]
+            A.append( l_tmp )
+
+        #matrice de proba des evenements
+        del B[:]
+        for i in range(n):
+            l_tmp = [random.randint(1,100) for i in xrange(len(sigma))]
+            l_tmp[:]= [float(x)/sum(l_tmp) for x in l_tmp]
+            B.append( l_tmp )
+
+        #proba de l'etat initial
+        pi = [random.randint(1,100) for i in xrange(n)]
+        pi[:]= [float(x)/sum(pi) for x in pi]
+
+
+        m_ini = HMMFromMatrices(sigma, DiscreteDistribution(sigma), A, B, pi)
+        m_succes = HMMFromMatrices(sigma, DiscreteDistribution(sigma), A, B, pi)
+        m_fail = HMMFromMatrices(sigma, DiscreteDistribution(sigma), A, B, pi)
+
+        m_succes.baumWelch(seq_train_s)
+        m_fail.baumWelch(seq_train_f)
+
+        precision, recall, fmeasure, vp, vn, fp, fn = HMM_calcul_score(seq_test_s, seq_test_f, m_succes, m_fail)
+        l_fmeasure.append(fmeasure)
+        l_recall.append(recall)
+        l_precision.append(precision)
+        if fmeasure > fmeasure_tmp:
+            m_best_ini = m_ini
+            fmeasure_tmp = fmeasure
+            recall_tmp = recall
+            precision_tmp = precision
+    return m_best_ini, fmeasure_tmp, recall_tmp, precision_tmp, l_fmeasure, l_recall, l_precision
